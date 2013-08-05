@@ -1,0 +1,26 @@
+{
+  "name": "jquery.postcodes",
+  "title": "Ideal Postcodes jQuery Plugin",
+  "description": "Add UK Address lookups using postcodes on any address form using Royal Mail's addressing database",
+  "version": "0.1.0",
+  "homepage": "https://github.com/ideal-postcodes/jquery.postcodes",
+  "author": {
+    "name": "Christopher Blanchard",
+    "email": "cablanchard@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ideal-postcodes/jquery.postcodes.git"
+  },
+  "bugs": "https://github.com/ideal-postcodes/jquery.postcodes/issues",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/ideal-postcodes/jquery.postcodes/blob/master/LICENSE-MIT"
+    }
+  ],
+  "dependencies": {
+    "jquery": "*"
+  },
+  "keywords": []
+}
