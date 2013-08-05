@@ -56,14 +56,14 @@
 
   
 
-  /* Testing below this point requires an API key to work 
+  // Testing below this point requires an API key to work 
 
-  // Requires a functioning api key - does not consume lookups
-  var api_key = "";
+  /* Requires a functioning api key. This will not consume any lookups
+  var api_key = "ak_hiz3hxtptxNJLibBOHFrzzC0u3Zhq";
 
   var $dropdown;
 
-  asyncTest('successful postcode lookup', 6, function () {
+  asyncTest('successful postcode lookup', 7, function () {
     $('#postcode_lookup').idealPostcodes({
       api_key: api_key,
       disable_interval: 0
@@ -76,9 +76,10 @@
     $input_field.val("ID11QD");
     $lookup_button.trigger("click");
     $(document).off("completedJsonp").on("completedJsonp", function () {
+      start();
       $dropdown = $("#"+defaults.dropdown_id);
       ok($dropdown.length, "it has a dropdown menu");
-      start();
+      strictEqual($dropdown.children('option[value=ideal]').text(), defaults.dropdown_select_message, "it has the correct display text");
       $dropdown.val("5").trigger("change"); // Select 3 lined output
       [defaults.address_line_one, defaults.address_line_two, defaults.address_line_three, defaults.post_town_line, defaults.postcode_line].forEach(function (elem) {
         ok($(elem).val(), elem + "has content");
@@ -99,9 +100,9 @@
     $input_field.val("ID11QE");
     $lookup_button.trigger("click");
     $(document).off("completedJsonp").on("completedJsonp", function () {
+      start();
       ok($("#" + defaults.error_message_id).length, "it has an error message");
       strictEqual($("#" + defaults.error_message_id).html(), defaults.error_message_not_found, "it has the correct error message");
-      start();
     });
   });
 

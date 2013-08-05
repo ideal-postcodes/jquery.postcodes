@@ -5,7 +5,7 @@
  * Copyright (c) 2013 Christopher Blanchard
  * Licensed under the MIT license.
  *
- * This plugin requires a registered account at 
+ * This plugin requires an account at 
  * https://ideal-postcodes.co.uk
  */
 
@@ -77,13 +77,20 @@
           Idpc.$input.val(Idpc.input_label);
           Idpc.$input.attr('style', Idpc.input_muted_style);
         }
-      }).appendTo(Idpc.$context);
+      })
+      .submit(function () {
+        return false;
+      })
+      .appendTo(Idpc.$context);
 
       //Introduce user defined submission
       Idpc.$button = $('<button />', {
         html: Idpc.button_label,
         id: Idpc.button_id,
         class: Idpc.button_class
+      })
+      .submit(function () {
+        return false;
       })
       .click(function () {
         var postcode = Idpc.$input.val();
@@ -92,6 +99,7 @@
           Idpc.clear_existing_fields();
           Idpc.lookup_postcode(postcode);
         }
+        return false;
       })
       .appendTo(Idpc.$context);
     },
@@ -106,13 +114,13 @@
           timeout: 5000,
           success: function (data) {
             Idpc.handle_api_success(data);
-            $.event.trigger("completedJsonp"); // added for API testing
-            // Introduce callback
+            $.event.trigger("completedJsonp"); // added for API testing, better solution needed
+            // To introduce callback
           },
           error: function () {
             Idpc.show_error("Unable to connect to server");
             $.event.trigger("completedJsonp");
-            // Introduce callback
+            // To introduce callback
           }
         });
       } else {
@@ -186,11 +194,11 @@
       var length = data.length;
       var dropDown = $('<select />', {
         id: Idpc.dropdown_id,
-        class: Idpc.postcode_dropdown_class
+        class: Idpc.dropdown_class
       });
       $('<option />', {
         value: "ideal",
-        text: Idpc.postcode_dropdown_select_message
+        text: Idpc.dropdown_select_message
       }).appendTo(dropDown);
       
       for (var i = 0; i < length; i += 1) {
@@ -222,7 +230,7 @@
     // Puts up an error message if called
     show_error: function (message) {
       Idpc.enable_lookup_button();
-      Idpc.$postcode_error_message = $('<p />', {
+      Idpc.$error_message = $('<p />', {
         html: message,
         id: Idpc.error_message_id,
         class: Idpc.error_message_class
