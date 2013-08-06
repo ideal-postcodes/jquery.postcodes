@@ -1,15 +1,14 @@
 # Ideal Postcodes jQuery Plugin
 
-Add UK Address lookups using postcodes on any address form using Royal Mail's addressing database
+Add UK Address lookups using postcodes on any address form using Royal Mail's addressing database, the Postcode Address File (PAF).
 
-This plugin is the fastest way to integrate Ideal Postcodes' UK lookup API on a user data entry form.
+## How it Works
 
-jQuery.postcodes generates 2 form elements within a specified div element. These are an input field to receive postcode inputs from the user and a button to run address lookups via the Ideal Postcodes API.
+jQuery.postcodes creates an input field to receive postcode inputs from the user and a button to run address lookups via the Ideal Postcodes API.
 
 If a matching is found, a selection menu is created and the selected address is piped into the form.
 
 If no matching postcode is found or an error occurred, the plugin will append an appropriate message.
-
 
 ## Getting Started
 Download the [production version][min] or the [development version][max].
@@ -17,7 +16,7 @@ Download the [production version][min] or the [development version][max].
 [min]: https://raw.github.com/ideal-postcodes/jquery.postcodes/master/dist/jquery.postcodes.min.js
 [max]: https://raw.github.com/ideal-postcodes/jquery.postcodes/master/dist/jquery.postcodes.js
 
-[Sign up](https://ideal-postcodes.co.uk/users/sign_up) to receive an API key
+[Sign up](https://ideal-postcodes.co.uk) to get an API key
 
 In your web page:
 

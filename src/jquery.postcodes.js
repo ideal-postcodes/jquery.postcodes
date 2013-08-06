@@ -13,7 +13,7 @@
   "use strict";
 
   var defaults = {
-    // Required user data starts here...
+    // Required parameters start here...
     api_key: "",
     address_line_one: "#address_line_one",
     address_line_two: "#address_line_two",
