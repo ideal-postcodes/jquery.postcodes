@@ -2,11 +2,11 @@
 
 Add UK Address lookups using postcodes on any address form using Royal Mail's addressing database, the Postcode Address File (PAF).
 
+![Ideal Postcodes Plugin Example](https://raw.github.com/ideal-postcodes/jquery.postcodes/master/misc/ideal_postcodes_snippet.png)
+
 ## How it Works
 
-jQuery.postcodes creates an input field to receive postcode inputs from the user and a button to run address lookups via the Ideal Postcodes API.
-
-If a matching is found, a selection menu is created and the selected address is piped into the form.
+This plugin creates an input field to lookup postcodes on the Ideal Postcodes API. If the user, a selection menu is created and the selected address is piped into the form.
 
 If no matching postcode is found or an error occurred, the plugin will append an appropriate message.
 
@@ -38,3 +38,6 @@ $('#postcode_lookup_field').idealPostcodes({
 
 ## Documentation
 Documentation can be found [here](https://ideal-postcodes.co.uk/documentation)
+
+## Testing
+Use the postcode "ID1 1QD" to test the service
