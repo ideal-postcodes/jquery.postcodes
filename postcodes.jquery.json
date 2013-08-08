@@ -1,5 +1,5 @@
 {
-  "name": "jquery.postcodes",
+  "name": "postcodes",
   "title": "Ideal Postcodes jQuery Plugin",
   "description": "Add UK Address lookups using postcodes on any address form using Royal Mail's addressing database",
   "version": "0.1.0",
