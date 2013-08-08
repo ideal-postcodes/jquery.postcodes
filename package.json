@@ -1,6 +1,6 @@
 {
-  "name": "jquery-plugin",
-  "version": "0.0.0-ignored",
+  "name": "jquery-postcodes",
+  "version": "0.1.0",
   "engines": {
     "node": ">= 0.8.0"
   },
@@ -15,5 +15,31 @@
     "grunt-contrib-watch": "~0.4.0",
     "grunt-contrib-clean": "~0.4.0",
     "grunt": "~0.4.1"
-  }
+  },
+  "readmeFilename": "README.md",
+  "gitHead": "37dd02355d0e9607168422f8db8537346b6254a9",
+  "description": "Add UK address lookups with a simple postcode input field on any web form with the Ideal-Postcodes.co.uk API. Ideal Postcodes uses Royal Mail's addressing database, the Postcode Address File (PAF).",
+  "main": "dist/jquery.postcodes.min.js",
+  "dependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-clean": "~0.4.1",
+    "grunt-contrib-qunit": "~0.2.2",
+    "grunt-contrib-jshint": "~0.6.0",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-uglify": "~0.2.2",
+    "grunt-contrib-watch": "~0.4.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ideal-postcodes/jquery.postcodes.git"
+  },
+  "keywords": [
+    "postcode",
+    "lookup",
+    "uk",
+    "jquery",
+    "plugin"
+  ],
+  "author": "Ideal Postcodes",
+  "license": "MIT"
 }
