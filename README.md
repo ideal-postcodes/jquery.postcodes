@@ -1,10 +1,8 @@
 # Postcodes jQuery Plugin
 
-Get a UK address with just a postcode using Ideal-Postcodes.co.uk API.
-
 Add UK address lookups with a simple postcode input field on any web form with the Ideal-Postcodes.co.uk API. Ideal Postcodes uses Royal Mail's addressing database, the Postcode Address File (PAF).
 
-PAF is licensed from the Royal Mail and is, unfortunately, not free to use. Ideal Postcodes aims to be simple to use and fairly priced to use for web and mobile developers.
+PAF is licensed from the Royal Mail and is, unfortunately, not free to use. Ideal Postcodes aims to be simple to use and fairly priced to use for web and mobile developers. A free version (but less complete) free version will be available in the near future.
 
 ## How it Works
 
