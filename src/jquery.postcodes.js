@@ -97,7 +97,7 @@
         if (Idpc.last_lookup !== postcode) {
           Idpc.disable_lookup_button();
           Idpc.clear_existing_fields();
-          Idpc.lookup_postcode(postcode);
+          Idpc.lookupPostcode(postcode);
         }
         return false;
       })
@@ -105,24 +105,19 @@
     },
 
     // Perform AJAX (JSONP) request
-    lookup_postcode: function (postcode) {
+    lookupPostcode: function (postcode) {
       if (Idpc.valid_postcode(postcode)) {
-        var url = Idpc.api_endpoint + postcode + "?api_key=" + Idpc.api_key;
-        $.ajax({
-          url: url,
-          dataType: 'jsonp',
-          timeout: 5000,
-          success: function (data) {
-            Idpc.handle_api_success(data);
-            $.event.trigger("completedJsonp"); // added for API testing, better solution needed
-            // To introduce callback
-          },
-          error: function () {
-            Idpc.show_error("Unable to connect to server");
-            $.event.trigger("completedJsonp");
-            // To introduce callback
-          }
-        });
+        var success = function (data) {
+          Idpc.handle_api_success(data);
+          $.event.trigger("completedJsonp"); // added for API testing, better solution needed
+          // To introduce callback
+        };
+        var error = function () {
+          Idpc.show_error("Unable to connect to server");
+          $.event.trigger("completedJsonp");
+          // To introduce callback
+        };
+        $.lookupPostcode(postcode, Idpc.api_key, success, error);
       } else {
         Idpc.show_error(Idpc.error_message_invalid_postcode);
       }
@@ -242,6 +237,18 @@
   $.fn.idealPostcodes = function (options) {
     Idpc.init(this, options);
     return this;
+  };
+
+  $.lookupPostcode = function (postcode, api_key, success, error) {
+    var endpoint = Idpc.api_endpoint || defaults.api_endpoint,
+      url = endpoint + postcode + "?api_key=" + api_key;
+    $.ajax({
+      url: url,
+      dataType: 'jsonp',
+      timeout: 5000,
+      success: success,
+      error: error
+    });
   };
 
   // Expost defaults for testing purposes

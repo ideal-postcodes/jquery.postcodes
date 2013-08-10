@@ -59,7 +59,7 @@
   // Testing below this point requires an API key to work 
 
   /* Requires a functioning api key. This will not consume any lookups
-  var api_key = "ak_hiz3hxtptxNJLibBOHFrzzC0u3Zhq";
+  var api_key = "";
 
   var $dropdown;
 
