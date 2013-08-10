@@ -23,7 +23,7 @@ This plugin creates an input field to lookup postcodes on the Ideal Postcodes AP
 <script src="jquery.js"></script>
 <script src="dist/jquery.postcodes.min.js"></script>
 ```
-
+	
 4. Include an empty div tag to house the postcode entry elements
 
 ```html
@@ -45,16 +45,22 @@ $('#postcode_lookup_field').idealPostcodes({
 </script>
 ```
 
-## Testing
-Use the postcode "ID1 1QD"
+6. Test using the postcode "ID1 1QD"
 
 # Advanced Usage
 
 ## $.lookupPostcode(postcode, api_key, success[, error])
 
-Performs a simple postcode lookup on the Ideal Postcodes API
+Performs a postcode lookup on the Ideal Postcodes API
 
-Example:
+**Arguments:**
+
+- **postcode. ** (string) The postcode to lookup (case insensitive)
+- **api_key. ** (string) Key to access service
+- **success. ** (function) Asynchronous handler when data is received. If data.code !== 2000, an error has occured 
+- **error. ** (function, optional) Asynchronous handler in case of request timeout
+
+**Example:**
 
 ```html
 var API_KEY = 'ak_Iddqd8Idkfa7Idchoppers8';
