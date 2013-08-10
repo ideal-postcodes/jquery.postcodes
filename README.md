@@ -57,10 +57,10 @@ Performs a postcode lookup on the Ideal Postcodes API
 
 **Arguments:**
 
-- **postcode. ** (string) The postcode to lookup (case insensitive)
-- **api_key. ** (string) Key to access service
-- **success. ** (function) Asynchronous handler when data is received. If data.code !== 2000, an error has occured 
-- **error. ** (function, optional) Asynchronous handler in case of request timeout
+- **postcode.** (string) The postcode to lookup (case insensitive)
+- **api_key.** (string) Key to access service
+- **success.** (function) Asynchronous handler when data is received. If data.code !== 2000, an error has occured 
+- **error.** (function, optional) Asynchronous handler in case of request timeout
 
 **Example:**
 
