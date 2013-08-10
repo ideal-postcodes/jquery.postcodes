@@ -241,14 +241,19 @@
 
   $.lookupPostcode = function (postcode, api_key, success, error) {
     var endpoint = Idpc.api_endpoint || defaults.api_endpoint,
-      url = endpoint + postcode + "?api_key=" + api_key;
-    $.ajax({
-      url: url,
-      dataType: 'jsonp',
-      timeout: 5000,
-      success: success,
-      error: error
-    });
+        url = endpoint + postcode + "?api_key=" + api_key,
+        options = {
+          url: url,
+          dataType: 'jsonp',
+          timeout: 5000,
+          success: success
+        };
+
+    if (error) {
+      options.error = error;
+    }
+
+    $.ajax(options);
   };
 
   // Expost defaults for testing purposes

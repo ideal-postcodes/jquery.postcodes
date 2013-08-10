@@ -4,34 +4,33 @@ Add UK address lookups with a simple postcode input field on any web form with t
 
 PAF is licensed from the Royal Mail and is, unfortunately, not free to use. Ideal Postcodes aims to be simple to use and fairly priced to use for web and mobile developers.
 
-## How it Works
+# How it Works
 
 This plugin creates an input field to lookup postcodes on the Ideal Postcodes API. If the user searches a valid postcode, a dropdown menu is displayed and the selected address is piped into appropriate fields.
 
 ![Ideal Postcodes Plugin Example](https://raw.github.com/ideal-postcodes/jquery.postcodes/master/misc/ideal_postcodes_snippet.png)
 
-## Getting Started
-Download the [production version][min] or the [development version][max].
+# Getting Started
+1. [Download the minified version][min]
 
 [min]: https://raw.github.com/ideal-postcodes/jquery.postcodes/master/dist/jquery.postcodes.min.js
-[max]: https://raw.github.com/ideal-postcodes/jquery.postcodes/master/dist/jquery.postcodes.js
 
-[Sign up](https://ideal-postcodes.co.uk) to get an API key
+2. [Sign up](https://ideal-postcodes.co.uk) to get an API key
 
-Load the plugin on your page
+3. Load the plugin on your page
 
 ```html
 <script src="jquery.js"></script>
 <script src="dist/jquery.postcodes.min.js"></script>
 ```
 
-Include an empty div tag to house the postcode entry elements
+4. Include an empty div tag to house the postcode entry elements
 
 ```html
 <div id="postcode_lookup_field"></div>
 ```
 
-Call idealPostcodes() on your empty div tag wrapped in a jQuery object, passing your API key and CSS selectors to indicate where the results should be piped to.
+5. Call idealPostcodes() on your empty div tag wrapped in a jQuery object, passing your API key and CSS selectors to indicate where the results should be piped to.
 
 ```html
 <script>
@@ -47,7 +46,23 @@ $('#postcode_lookup_field').idealPostcodes({
 ```
 
 ## Testing
-Use the postcode "ID1 1QD".
+Use the postcode "ID1 1QD"
+
+# Advanced Usage
+
+## $.lookupPostcode(postcode, api_key, success[, error])
+
+Performs a simple postcode lookup on the Ideal Postcodes API
+
+Example:
+
+```html
+var API_KEY = 'ak_Iddqd8Idkfa7Idchoppers8';
+
+$.lookupPostcode('ID11QD', API_KEY, function (data) {
+	console.log(data.result[0]); // => {postcode: "ID1 1QD", post_town: "LONDON", line_1: "Kingsley Hall", line_2: "Powis Road", line_3: ""} 
+})
+```
 
 ## Documentation
-Documentation can be found [here](https://ideal-postcodes.co.uk/documentation)
+More documentation can be found [here](https://ideal-postcodes.co.uk/documentation)
