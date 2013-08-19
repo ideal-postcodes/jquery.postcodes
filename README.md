@@ -62,7 +62,7 @@ Performs a postcode lookup on the Ideal Postcodes API
 
 **Example:**
 
-```html
+```javascript
 var API_KEY = 'ak_Iddqd8Idkfa7Idchoppers8';
 
 $.lookupPostcode('ID11QD', API_KEY, function (data) {
