@@ -11,26 +11,26 @@ This plugin creates an input field to lookup postcodes on the Ideal Postcodes AP
 ![Ideal Postcodes Plugin Example](https://raw.github.com/ideal-postcodes/jquery.postcodes/master/misc/ideal_postcodes_snippet.png)
 
 ## Getting Started
-1. [Download the minified version][min]
+1) [Download the minified version][min]
 
 [min]: https://raw.github.com/ideal-postcodes/jquery.postcodes/master/dist/jquery.postcodes.min.js
 
-2. [Sign up](https://ideal-postcodes.co.uk) to get an API key
+2) [Sign up](https://ideal-postcodes.co.uk) to get an API key
 
-3. Load the plugin on your page
+3) Load the plugin on your page
 
 ```html
 <script src="jquery.js"></script>
 <script src="dist/jquery.postcodes.min.js"></script>
 ```
 	
-4. Include an empty div tag to house the postcode entry elements
+4) Include an empty div tag to house the postcode entry elements
 
 ```html
 <div id="postcode_lookup_field"></div>
 ```
 
-5. Call idealPostcodes() on your empty div tag wrapped in a jQuery object, passing your API key and CSS selectors to indicate where the results should be piped to.
+5) Call idealPostcodes() on your empty div tag wrapped in a jQuery object, passing your API key and CSS selectors to indicate where the results should be piped to.
 
 ```html
 <script>
@@ -45,7 +45,7 @@ $('#postcode_lookup_field').idealPostcodes({
 </script>
 ```
 
-6. Test using the postcode "ID1 1QD"
+6) Test using the postcode "ID1 1QD"
 
 ## Advanced Usage
 
@@ -55,10 +55,10 @@ Performs a postcode lookup on the Ideal Postcodes API
 
 **Arguments:**
 
-- **postcode.** (string) The postcode to lookup (case insensitive)
-- **api_key.** (string) Key to access service
-- **success.** (function) Asynchronous handler when data is received. If data.code !== 2000, an error has occured 
-- **error.** (function, optional) Asynchronous handler in case of request timeout
+- **postcode** (string) The postcode to lookup (case insensitive)
+- **api_key** (string) Key to access service
+- **success** (function) Asynchronous handler when data is received. If data.code !== 2000, an error has occured 
+- **error** (function, optional) Asynchronous handler in case of request timeout
 
 **Example:**
 
