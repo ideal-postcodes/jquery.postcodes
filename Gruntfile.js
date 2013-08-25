@@ -21,7 +21,8 @@ module.exports = function(grunt) {
         stripBanners: true
       },
       dist: {
-        src: ['src/<%= pkg.name %>.js'],
+        // Manually point to right file
+        src: ['src/jquery.postcodes.js'],
         dest: 'dist/<%= pkg.name %>.js'
       },
     },
