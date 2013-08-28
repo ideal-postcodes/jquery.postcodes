@@ -15,7 +15,7 @@ This plugin creates an input field to lookup postcodes on the Ideal Postcodes AP
 ![Ideal Postcodes Plugin Example](https://raw.github.com/ideal-postcodes/jquery.postcodes/master/misc/ideal_postcodes_snippet.png)
 
 ## Getting Started
-1) [Download the minified version][min]
+1) [Download the minified version](https://raw.github.com/ideal-postcodes/jquery.postcodes/master/dist/postcodes.min.js)
 
 [min]: https://raw.github.com/ideal-postcodes/jquery.postcodes/master/dist/jquery.postcodes.min.js
 
