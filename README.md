@@ -17,8 +17,6 @@ This plugin creates an input field to lookup postcodes on the Ideal Postcodes AP
 ## Getting Started
 1) [Download the minified version](https://raw.github.com/ideal-postcodes/jquery.postcodes/master/dist/postcodes.min.js)
 
-[min]: https://raw.github.com/ideal-postcodes/jquery.postcodes/master/dist/jquery.postcodes.min.js
-
 2) [Sign up](https://ideal-postcodes.co.uk) to get an API key
 
 3) Load the plugin on your page
@@ -76,3 +74,6 @@ $.lookupPostcode('ID11QD', API_KEY, function (data) {
 
 ## Documentation
 More documentation can be found [here](https://ideal-postcodes.co.uk/documentation)
+
+## License
+MIT
