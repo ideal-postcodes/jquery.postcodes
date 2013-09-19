@@ -1,4 +1,4 @@
-/*! Ideal Postcodes jQuery Plugin - v0.1.1 - 2013-09-19
+/*! Ideal Postcodes jQuery Plugin - v0.1.1 - 2013-09-20
 * https://github.com/ideal-postcodes/jquery.postcodes
 * Copyright (c) 2013 Christopher Blanchard; Licensed MIT */
 (function($) {
