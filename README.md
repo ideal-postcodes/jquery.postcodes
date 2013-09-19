@@ -45,7 +45,7 @@ $.idealPostcodes.setup({
 </script>
 ```
 
-4) **Setup a Postcode Search Field** by inserting an empty <div> and calling .setupPostcodeLookup()
+4) **Setup a Postcode Search Field** by inserting an empty div tag and calling .setupPostcodeLookup()
 
 ```html
 <div id="postcode_lookup_field"></div>
@@ -75,11 +75,9 @@ The additional information (and handle's to access them) is listed here:
 - PO Box Number (po_box)
 - Postcode Inward Code (postcode_inward)
 - Postcode Outward Code (postcode_outward)
-
 - Building Number (building_number)
 - Building Name (building_name)
 - Sub Building Name (sub_building_name)
-
 - Thoroughfare (thoroughfare)
 - Dependant Thoroughfare (dependant_thoroughfare)
 - Dependant Locality (dependant_locality)
