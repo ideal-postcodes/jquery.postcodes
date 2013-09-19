@@ -60,7 +60,7 @@ $('#postcode_lookup_field').setupPostcodeLookup();
 
 By rigging just 5 fields in the above example, you will have the necessary information you need (and in the correct formatting) to identify any household in the UK by mail.
 
-However, you can extract further information on each address by passing more arguments into the output_fields object.
+However, you can extract more information on each address for your addresss form by passing more properties into the output_fields object.
 
 The additional information (and handle's to access them) is listed here:
 
