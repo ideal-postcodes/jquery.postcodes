@@ -13,10 +13,6 @@
   "use strict";
 
   var defaults = {
-    /*
-    * Required parameters start here...
-    */
-
     // Please Enter your API Key
     api_key: "",
 
@@ -49,7 +45,7 @@
     },
     
     // Below is not required
-    api_endpoint: "https://api.ideal-postcodes.co.uk/v1/postcodes/",
+    api_endpoint: "https://api.ideal-postcodes.co.uk/v1",
 
     // Input Field Configuration
     $input: "",
@@ -88,18 +84,15 @@
   var Idpc = {
 
     // Update defaults and call setup() to begin loading form elements
-    init: function (context, options) {
-      Idpc.$context = context;
+    init: function (options) {
       $.extend(Idpc, defaults);
       if (options) {
         $.extend(Idpc, options);
       }
-      Idpc.setup();
+      Idpc.rig_output_fields();
     },
-    
-    // Create and append postcode input and submit button to specified div context
-    setup: function () {
-      // Rig output fields
+
+    rig_output_fields: function () {
       var $output_fields = {};
       for (var key in Idpc.output_fields) {
         if (Idpc.output_fields[key] !== undefined) {
@@ -110,6 +103,15 @@
         }
       }
       Idpc.output_fields = $output_fields;
+    },
+    
+    // Create and append postcode input and submit button to specified div context
+    setup_dropdown: function (context, options) {
+      Idpc.$context = context;
+
+      if (options) {
+        $.extend(Idpc, options);
+      }
 
       // Introduce user defined input
       Idpc.$input = $('<input />', {
@@ -170,7 +172,7 @@
           $.event.trigger("completedJsonp");
           // To introduce callback
         };
-        $.lookupPostcode(postcode, Idpc.api_key, success, error);
+        $.idealPostcodes.lookupPostcode(postcode, Idpc.api_key, success, error);
       } else {
         Idpc.show_error(Idpc.error_message_invalid_postcode);
       }
@@ -299,29 +301,44 @@
 
   };
 
-  $.fn.idealPostcodes = function (options) {
-    Idpc.init(this, options);
+  $.idealPostcodes = {
+    // Expost defaults for testing
+    defaults: function () {
+      return defaults;
+    },
+
+    // Call to register key, configure misc options
+    setup: function (options) {
+      Idpc.init(options);
+    },
+
+    // Lookup postcode on API
+    lookupPostcode: function (postcode, api_key, success, error) {
+      var endpoint = Idpc.api_endpoint || defaults.api_endpoint,
+          resource = "postcodes",
+          url = [endpoint, resource, postcode].join('/'),
+          options = {
+            url: url,
+            data: {
+              api_key: api_key
+            },
+            dataType: 'jsonp',
+            timeout: 5000,
+            success: success
+          };
+
+      if (error) {
+        options.error = error;
+      }
+
+      $.ajax(options);
+    },
+  };
+
+  // Creates Postcode lookup field and button when called on <div>
+  $.fn.setupPostcodeLookup = function (options) {
+    Idpc.setup_dropdown($(this), options);
     return this;
   };
-
-  $.lookupPostcode = function (postcode, api_key, success, error) {
-    var endpoint = Idpc.api_endpoint || defaults.api_endpoint,
-        url = endpoint + postcode + "?api_key=" + api_key,
-        options = {
-          url: url,
-          dataType: 'jsonp',
-          timeout: 5000,
-          success: success
-        };
-
-    if (error) {
-      options.error = error;
-    }
-
-    $.ajax(options);
-  };
-
-  // Expost defaults for testing purposes
-  $.fn.idealPostcodes.defaults = defaults;
 
 }(jQuery));

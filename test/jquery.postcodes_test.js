@@ -27,8 +27,12 @@
   var defaults, $input_field, $lookup_button;
 
   test('has postcode input box', 6, function () {
-    $('#postcode_lookup').idealPostcodes({});
-    defaults = $.fn.idealPostcodes.defaults;
+    $.idealPostcodes.setup({
+      api_key: 'api_key',
+      disable_interval: 0
+    });
+    $('#postcode_lookup_field').setupPostcodeLookup();
+    defaults = $.idealPostcodes.defaults();
     $input_field = $("#"+defaults.input_id);
     $lookup_button = $("#"+defaults.button_id);
 
@@ -43,8 +47,12 @@
   });
 
   test('postcode validation', 2, function () {
-    $('#postcode_lookup').idealPostcodes({});
-    defaults = $.fn.idealPostcodes.defaults;
+    $.idealPostcodes.setup({
+      api_key: 'api_key',
+      disable_interval: 0
+    });
+    $('#postcode_lookup_field').setupPostcodeLookup();
+    defaults = $.idealPostcodes.defaults();
     $input_field = $("#"+defaults.input_id);
     $lookup_button = $("#"+defaults.button_id);
 
@@ -52,9 +60,7 @@
     $lookup_button.trigger("click");
     ok($("#" + defaults.error_message_id).length, "it has an error message");
     strictEqual($("#" + defaults.error_message_id).html(), defaults.error_message_invalid_postcode,"it has the correct error message");
-  });
-
-  
+  });  
 
   // Testing below this point requires an API key to work 
 
@@ -64,12 +70,13 @@
   var $dropdown;
 
   asyncTest('successful postcode lookup', 7, function () {
-    $('#postcode_lookup').idealPostcodes({
+    $.idealPostcodes.setup({
       api_key: api_key,
       disable_interval: 0
     });
+    $('#postcode_lookup_field').setupPostcodeLookup();
 
-    defaults = $.fn.idealPostcodes.defaults;
+    defaults = $.idealPostcodes.defaults();
     $input_field = $("#"+defaults.input_id);
     $lookup_button = $("#"+defaults.button_id);
 
@@ -88,12 +95,13 @@
   });
 
   asyncTest('no postcode result', 2, function () {
-    $('#postcode_lookup').idealPostcodes({
+    $.idealPostcodes.setup({
       api_key: api_key,
       disable_interval: 0
     });
+    $('#postcode_lookup_field').setupPostcodeLookup();
 
-    defaults = $.fn.idealPostcodes.defaults;
+    defaults = $.idealPostcodes.defaults();
     $input_field = $("#"+defaults.input_id);
     $lookup_button = $("#"+defaults.button_id);
 
