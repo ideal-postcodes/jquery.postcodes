@@ -72,6 +72,8 @@
       .focus(function () {
         Idpc.$input.removeAttr('style').val("");
       })
+      .attr("type", "button")
+      .attr("onclick", "return false;")
       .blur(function () {
         if (!Idpc.$input.val()) {
           Idpc.$input.val(Idpc.input_label);
