@@ -17,7 +17,6 @@
     "grunt": "~0.4.1"
   },
   "readmeFilename": "README.md",
-  "gitHead": "37dd02355d0e9607168422f8db8537346b6254a9",
   "description": "Add UK address lookups with a simple postcode input field on any web form with the Ideal-Postcodes.co.uk API. Ideal Postcodes uses Royal Mail's addressing database, the Postcode Address File (PAF).",
   "main": "dist/jquery.postcodes.min.js",
   "dependencies": {
