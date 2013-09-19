@@ -81,8 +81,8 @@
       ok($dropdown.length, "it has a dropdown menu");
       strictEqual($dropdown.children('option[value=ideal]').text(), defaults.dropdown_select_message, "it has the correct display text");
       $dropdown.val("5").trigger("change"); // Select 3 lined output
-      [defaults.address_line_one, defaults.address_line_two, defaults.address_line_three, defaults.post_town_line, defaults.postcode_line].forEach(function (elem) {
-        ok($(elem).val(), elem + "has content");
+      [defaults.output_fields.line_1, defaults.output_fields.line_2, defaults.output_fields.line_3, defaults.output_fields.post_town, defaults.output_fields.postcode].forEach(function (elem) {
+        ok($(elem).val(), elem + " has content");
       });
     });
   });

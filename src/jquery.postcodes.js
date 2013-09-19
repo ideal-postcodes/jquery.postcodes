@@ -13,36 +13,75 @@
   "use strict";
 
   var defaults = {
-    // Required parameters start here...
-    api_key: "",
-    address_line_one: "#address_line_one",
-    address_line_two: "#address_line_two",
-    address_line_three: "#address_line_three",
-    post_town_line: "#post_town_line",
-    postcode_line: "#postcode_line",
+    /*
+    * Required parameters start here...
+    */
 
+    // Please Enter your API Key
+    api_key: "",
+
+    // Required Fields to Populate your Form
+    // Please enter an appropriate CSS selector that
+    // uniquely identifies the input field you wish
+    // the result to be piped in
+    output_fields: {
+      line_1: "#line_1",
+      line_2: "#line_2",
+      line_3: "#line_3",
+      post_town: "#post_town",
+      postcode: "#postcode",
+      postcode_inward: undefined,
+      postcode_outward: undefined,
+      udprn: undefined,
+      dependant_locality: undefined,
+      double_dependant_locality: undefined,
+      thoroughfare: undefined,
+      dependant_thoroughfare: undefined,
+      building_number: undefined,
+      building_name: undefined,
+      sub_building_name: undefined,
+      po_box: undefined,
+      department_name: undefined,
+      organisation_name: undefined,
+      postcode_type: undefined,
+      su_organisation_indicator: undefined,
+      delivery_point_suffix: undefined
+    },
+    
     // Below is not required
     api_endpoint: "https://api.ideal-postcodes.co.uk/v1/postcodes/",
+
+    // Input Field Configuration
     $input: "",
     input_label: "Please enter your postcode",
     input_muted_style: "color:#CBCBCB;",
     input_class: "",
     input_id: "idpc_input",
+
+    // Button configuration
     $button: "",
     button_id: "idpc_button",
     button_label: "Find my Address",
     button_class: "",
+
+    // Dropdown configuration
     dropdown_id: "idpc_dropdown",
     dropdown_select_message: "Please select your address",
     dropdown_class: "",
+
+    // Error Message Configuration
     $error_message: "",
     error_message_id: "idpc_error_message",
     error_message_invalid_postcode: "Please check your postcode, it seems to be incorrect",
     error_message_not_found: "Your postcode could not be found. Please type in your address",
     error_message_default: "Sorry, we weren't able to get the address you were looking for. Please type your address manually",
     error_message_class: "",
-    last_lookup: "",
-    disable_interval: 1000,
+
+    // Configuration to prevent wasting lookups
+    last_lookup: "", // Tracks previous lookup, prevents consecutive lookup of same postcode
+    disable_interval: 1000, // Disables lookup button in (ms) after lookup
+
+    // Debug - Set to true to pipe API error messages to client
     debug_mode: false
   };
 
@@ -60,6 +99,18 @@
     
     // Create and append postcode input and submit button to specified div context
     setup: function () {
+      // Rig output fields
+      var $output_fields = {};
+      for (var key in Idpc.output_fields) {
+        if (Idpc.output_fields[key] !== undefined) {
+          $output_fields[key] = $(Idpc.output_fields[key]);
+          if (Idpc.debug_mode && $output_fields[key] === 0) {
+            console.log("Warning! Invalid CSS selector provided for ", key);
+          } 
+        }
+      }
+      Idpc.output_fields = $output_fields;
+
       // Introduce user defined input
       Idpc.$input = $('<input />', {
         type: "text",
@@ -72,8 +123,6 @@
       .focus(function () {
         Idpc.$input.removeAttr('style').val("");
       })
-      .attr("type", "button")
-      .attr("onclick", "return false;")
       .blur(function () {
         if (!Idpc.$input.val()) {
           Idpc.$input.val(Idpc.input_label);
@@ -91,6 +140,8 @@
         id: Idpc.button_id,
         class: Idpc.button_class
       })
+      .attr("type", "button")
+      .attr("onclick", "return false;")
       .submit(function () {
         return false;
       })
@@ -173,17 +224,27 @@
 
     // Empties fields including user specified address fields and returns them to normal state
     clear_existing_fields: function () {
+      Idpc.clear_dropdown_menu();
+      Idpc.clear_error_messages();
+      Idpc.clear_input_fields();
+    },
+
+    clear_dropdown_menu: function () {
       if (Idpc.$dropdown && Idpc.$dropdown.length) {
         Idpc.$dropdown.remove();
       }
+    },
+
+    clear_error_messages: function () {
       if (Idpc.$error_message && Idpc.$error_message.length) {
         Idpc.$error_message.remove();
       }
-      $(Idpc.address_line_one).val("");
-      $(Idpc.address_line_two).val("");
-      $(Idpc.address_line_three).val("");
-      $(Idpc.post_town_line).val("");
-      $(Idpc.line).val("");
+    },
+
+    clear_input_fields: function () {
+      for (var key in Idpc.output_fields) {
+        Idpc.output_fields[key].val("");
+      }
     },
 
     // Creates a dropdown menu with address data - selection is forwarded to user form
@@ -215,13 +276,15 @@
       return $address_dropdown.change(function () {
         var index = $(this).val();
         if (index >= 0) {
-          $(Idpc.address_line_one).val(data[index].line_1);
-          $(Idpc.address_line_two).val(data[index].line_2);
-          $(Idpc.address_line_three).val(data[index].line_3);
-          $(Idpc.post_town_line).val(data[index].post_town);
-          $(Idpc.postcode_line).val(data[index].postcode);
+          Idpc.populate_output_fields(data[index])
         }
       });
+    },
+
+    populate_output_fields: function (result_object) {
+      for (var key in Idpc.output_fields) {
+        Idpc.output_fields[key].val(result_object[key]);
+      }
     },
 
     // Puts up an error message if called
