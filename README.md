@@ -6,52 +6,115 @@ Add UK address lookups with a simple postcode input field on any web form with t
 
 PAF is licensed from the Royal Mail and is, unfortunately, not free to use. Ideal Postcodes aims to be simple to use and fairly priced to use for web and mobile developers.
 
-We charge _2p_ per [external](https://ideal-postcodes.co.uk/termsandconditions#external) lookup.
+We charge **2p** per [external](https://ideal-postcodes.co.uk/termsandconditions#external) lookup.
 
 ## How it Works
 
 This plugin creates an input field to lookup postcodes on the Ideal Postcodes API. If the user searches a valid postcode, a dropdown menu is displayed and the selected address is piped into appropriate fields.
 
+The plugin provides addresses according to [Royal Mail's Addressing Guidelines](http://www.royalmail.com/personal/help-and-support/How-do-I-address-my-mail-correctly). I.e. Maximum of 3 address lines, a Post Town and Postcode. More address data is also available.
+
 ![Ideal Postcodes Plugin Example](https://raw.github.com/ideal-postcodes/jquery.postcodes/master/misc/ideal_postcodes_snippet.png)
 
 ## Getting Started
-1) [Download the minified version](https://raw.github.com/ideal-postcodes/jquery.postcodes/master/dist/postcodes.min.js)
-
-2) [Sign up](https://ideal-postcodes.co.uk) to get an API key
-
-3) Load the plugin on your page
+1) **[Download the plugin](https://raw.github.com/ideal-postcodes/jquery.postcodes/master/dist/postcodes.min.js)** and load the plugin on your page
 
 ```html
 <script src="jquery.js"></script>
-<script src="dist/jquery.postcodes.min.js"></script>
-```
-	
-4) Include an empty div tag to house the postcode entry elements
-
-```html
-<div id="postcode_lookup_field"></div>
+<script src="jquery.postcodes.min.js"></script>
 ```
 
-5) Call idealPostcodes() on your empty div tag wrapped in a jQuery object, passing your API key and CSS selectors to indicate where the results should be piped to.
+2) **[Sign up](https://ideal-postcodes.co.uk)** to get an API key
+
+3) **Configure Ideal Postcodes** by telling it your API Key and which fields to pipe Address data using CSS selectors 
 
 ```html
 <script>
-$('#postcode_lookup_field').idealPostcodes({
-	api_key: 'ak_Iddqd8Idkfa7Idchoppers8',  // Set your API key
-	address_line_one: '#first_line',	// Enter CSS selectors to your input...
-	address_line_two: '#second_line',	// fields to pipe your results
-	address_line_three: '#third_line',
-	post_town_line: '#town',
-	postcode_line: '#postcode'
+$.idealPostcodes.setup({
+	// Set your API key
+	api_key: 'ak_Iddqd8Idkfa7Idchoppers8',
+	// Pass in CSS selectors pointing to your input fields to pipe the results
+	output_fields: {
+		line_1: '#first_line',
+	  line_2: '#second_line',
+	  line_3: '#third_line',
+	  post_town: '#post_town',
+	  postcode: '#postcode'
+	}
 });
 </script>
 ```
 
-6) Test using the postcode "ID1 1QD"
+4) **Setup a Postcode Search Field** by inserting an empty <div> and calling .setupPostcodeLookup()
+
+```html
+<div id="postcode_lookup_field"></div>
+<script>
+$('#postcode_lookup_field').setupPostcodeLookup();
+</script>
+```
+
+5) **Test for free** using the postcode "ID1 1QD"
+
+## More Addressing Data Available
+
+By rigging just 5 fields in the above example, you will have the necessary information you need (and in the correct formatting) to identify any household in the UK by mail.
+
+However, you can extract further information on each address by passing more arguments into the output_fields object.
+
+The additional information (and handle's to access them) is listed here:
+
+**Unique Address Identifier**
+- Unique Delivery Point Reference Number (udprn)
+
+**Organisational Information**
+- Organisation Name (organisation_name)
+- Department Name (department_name)
+
+**Further Addressing Information**
+- PO Box Number (po_box)
+- Postcode Inward Code (postcode_inward)
+- Postcode Outward Code (postcode_outward)
+
+- Building Number (building_number)
+- Building Name (building_name)
+- Sub Building Name (sub_building_name)
+
+- Thoroughfare (thoroughfare)
+- Dependant Thoroughfare (dependant_thoroughfare)
+- Dependant Locality (dependant_locality)
+- Double Dependant Locality (double_dependant_locality)
+
+**Miscellaneous**
+- Postcode Type (postcode_type)
+- Organisation Type (su_organisation_indicator)
+- Delivery Point Suffix (delivery_point_suffix)
+
+More information on what these fields mean can be found [here](https://ideal-postcodes.co.uk/paf-data)
+
+To add them into your form, simply include it in output_fields when initialising Ideal Postcodes. The example below demonstrates how the organisation name can be routed to the input with the id "organisation_field"
+
+```html
+<script>
+$.idealPostcodes.setup({
+	// Set your API key
+	api_key: 'ak_Iddqd8Idkfa7Idchoppers8',
+	// Pass in CSS selectors pointing to your input fields to pipe the results
+	output_fields: {
+		line_1: '#first_line',
+	  line_2: '#second_line',
+	  line_3: '#third_line',
+	  post_town: '#post_town',
+	  postcode: '#postcode',
+	  organisation_name: '#organisation_field'
+	}
+});
+</script>
+```
 
 ## Advanced Usage
 
-### $.lookupPostcode(postcode, api_key, success[, error])
+### $.idealPostcodes.lookupPostcode(postcode, api_key, success[, error])
 
 Performs a postcode lookup on the Ideal Postcodes API
 
@@ -77,3 +140,10 @@ More documentation can be found [here](https://ideal-postcodes.co.uk/documentati
 
 ## License
 MIT
+
+## Changelog
+
+**v 1.0.0**
+- Refactored setup into 2 step process for more flexibility
+- Expanded postcode lookup to include complete PAF data including UDPRN, Organisation Names, etc.
+- Bug fixes

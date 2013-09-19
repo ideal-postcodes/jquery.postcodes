@@ -97,9 +97,6 @@
       for (var key in Idpc.output_fields) {
         if (Idpc.output_fields[key] !== undefined) {
           $output_fields[key] = $(Idpc.output_fields[key]);
-          if (Idpc.debug_mode && $output_fields[key] === 0) {
-            console.log("Warning! Invalid CSS selector provided for ", key);
-          } 
         }
       }
       Idpc.output_fields = $output_fields;
@@ -278,7 +275,7 @@
       return $address_dropdown.change(function () {
         var index = $(this).val();
         if (index >= 0) {
-          Idpc.populate_output_fields(data[index])
+          Idpc.populate_output_fields(data[index]);
         }
       });
     },
