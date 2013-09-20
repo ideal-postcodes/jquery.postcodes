@@ -56,37 +56,39 @@ $('#postcode_lookup_field').setupPostcodeLookup();
 
 5) **Test for free** using the postcode "ID1 1QD"
 
-## More Addressing Data Available
+## Complete List of Available Data
 
 By rigging just 5 fields in the above example, you will have the necessary information you need (and in the correct formatting) to identify any household in the UK by mail.
 
 However, you can extract more information on each address for your addresss form by passing more properties into the output_fields object.
 
-The additional information (and handle's to access them) is listed here:
+Here's the complete list of available data fields:
 
-**Unique Address Identifier**
-- Unique Delivery Point Reference Number (udprn)
-
-**Organisational Information**
-- Organisation Name (organisation_name)
-- Department Name (department_name)
-
-**Further Addressing Information**
-- PO Box Number (po_box)
-- Postcode Inward Code (postcode_inward)
-- Postcode Outward Code (postcode_outward)
-- Building Number (building_number)
-- Building Name (building_name)
-- Sub Building Name (sub_building_name)
-- Thoroughfare (thoroughfare)
-- Dependant Thoroughfare (dependant_thoroughfare)
-- Dependant Locality (dependant_locality)
-- Double Dependant Locality (double_dependant_locality)
-
-**Miscellaneous**
-- Postcode Type (postcode_type)
-- Organisation Type (su_organisation_indicator)
-- Delivery Point Suffix (delivery_point_suffix)
+```javascript
+output_fields: {
+	line_1: "<css_selector>",												// Address Line 1 
+	line_2: "<css_selector>",												// Address Line 2
+	line_3: "<css_selector>",												// Address Line 3
+	post_town: "<css_selector>",										// Post Town
+	postcode: "<css_selector>",											// Postcode
+	udprn : "<css_selector>",												// Unique Delivery Point Reference Number
+	organisation_name : "<css_selector>",						// Organisation Name
+	department_name : "<css_selector>",							// Department Name
+	po_box : "<css_selector>",											// PO Box Number
+	postcode_inward : "<css_selector>",							// Postcode Inward Code
+	postcode_outward : "<css_selector>",						// Postcode Outward Code
+	building_number : "<css_selector>",							// Building Number
+	building_name : "<css_selector>",								// Building Name
+	sub_building_name : "<css_selector>",						// Sub Building Name
+	thoroughfare : "<css_selector>",								// Thoroughfare
+	dependant_thoroughfare : "<css_selector>",			// Dependant Thoroughfare
+	dependant_locality : "<css_selector>",					// Dependant Locality
+	double_dependant_locality : "<css_selector>",		// Double Dependant Locality
+	postcode_type : "<css_selector>",								// Postcode Type
+	su_organisation_indicator : "<css_selector>",		// Organisation Type
+	delivery_point_suffix : "<css_selector>"				// Delivery Point Suffix
+}
+```
 
 More information on what these fields mean can be found [here](https://ideal-postcodes.co.uk/paf-data)
 
