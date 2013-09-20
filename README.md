@@ -128,7 +128,7 @@ Performs a postcode lookup on the Ideal Postcodes API
 ```javascript
 var API_KEY = 'ak_Iddqd8Idkfa7Idchoppers8';
 
-$.lookupPostcode('ID11QD', API_KEY, function (data) {
+$.idealPostcodes.lookupPostcode('ID11QD', API_KEY, function (data) {
 	console.log(data.result[0]); // => {postcode: "ID1 1QD", post_town: "LONDON", line_1: "Kingsley Hall", line_2: "Powis Road", line_3: ""} 
 })
 ```
