@@ -90,7 +90,7 @@ output_fields: {
 }
 ```
 
-More information on what these fields mean can be found [here](https://ideal-postcodes.co.uk/paf-data)
+More information on what these fields mean can be found [here](https://ideal-postcodes.co.uk/documentation/paf-data)
 
 To add them into your form, simply include it in output_fields when initialising Ideal Postcodes. The example below demonstrates how the organisation name can be routed to the input with the id "organisation_field"
 
@@ -112,19 +112,17 @@ $.idealPostcodes.setup({
 
 ## Advanced Usage
 
-### $.idealPostcodes.lookupPostcode(postcode, api_key, success[, error])
+#### $.idealPostcodes.lookupPostcode(postcode, api_key, success[, error])
 
-Performs a postcode lookup on the Ideal Postcodes API
+**Performs a postcode lookup on the Ideal Postcodes API**
 
-**Arguments:**
-
+Arguments
 - **postcode** (string) The postcode to lookup (case insensitive)
 - **api_key** (string) Key to access service
 - **success** (function) Asynchronous handler when data is received. If data.code !== 2000, an error has occured 
 - **error** (function, optional) Asynchronous handler in case of request timeout
 
-**Example:**
-
+Example
 ```javascript
 var API_KEY = 'ak_Iddqd8Idkfa7Idchoppers8';
 
