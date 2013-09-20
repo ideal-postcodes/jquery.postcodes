@@ -12,12 +12,12 @@ We charge **2p** per [external](https://ideal-postcodes.co.uk/termsandconditions
 
 This plugin creates an input field to lookup postcodes on the Ideal Postcodes API. If the user searches a valid postcode, a dropdown menu is displayed and the selected address is piped into appropriate fields.
 
-The plugin provides addresses according to [Royal Mail's Addressing Guidelines](http://www.royalmail.com/personal/help-and-support/How-do-I-address-my-mail-correctly). I.e. Maximum of 3 address lines, a Post Town and Postcode. More address data is also available.
+The plugin provides addresses according to [Royal Mail's Addressing Guidelines](http://www.royalmail.com/personal/help-and-support/How-do-I-address-my-mail-correctly). i.e. Maximum of 3 address lines, a Post Town and Postcode. More address data is also available.
 
 ![Ideal Postcodes Plugin Example](https://raw.github.com/ideal-postcodes/jquery.postcodes/master/misc/ideal_postcodes_snippet.png)
 
 ## Getting Started
-1) **[Download the plugin](https://raw.github.com/ideal-postcodes/jquery.postcodes/master/dist/postcodes.min.js)** and load the plugin on your page
+1) **[Download the plugin](https://raw.github.com/ideal-postcodes/jquery.postcodes/master/dist/postcodes.min.js)** and add to your page
 
 ```html
 <script src="jquery.js"></script>
@@ -26,7 +26,7 @@ The plugin provides addresses according to [Royal Mail's Addressing Guidelines](
 
 2) **[Sign up](https://ideal-postcodes.co.uk)** to get an API key
 
-3) **Configure Ideal Postcodes** by telling it your API Key and which fields to pipe Address data using CSS selectors 
+3) **Configure Ideal Postcodes** by applying your API Key and identifying your address fields with CSS selectors 
 
 ```html
 <script>
@@ -95,9 +95,7 @@ To add them into your form, simply include it in output_fields when initialising
 ```html
 <script>
 $.idealPostcodes.setup({
-	// Set your API key
 	api_key: 'ak_Iddqd8Idkfa7Idchoppers8',
-	// Pass in CSS selectors pointing to your input fields to pipe the results
 	output_fields: {
 		line_1: '#first_line',
 	  line_2: '#second_line',
