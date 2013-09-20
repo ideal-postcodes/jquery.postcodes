@@ -66,27 +66,27 @@ Here's the complete list of available data fields:
 
 ```javascript
 output_fields: {
-	line_1: "<css_selector>",												// Address Line 1 
-	line_2: "<css_selector>",												// Address Line 2
-	line_3: "<css_selector>",												// Address Line 3
-	post_town: "<css_selector>",										// Post Town
-	postcode: "<css_selector>",											// Postcode
-	udprn : "<css_selector>",												// Unique Delivery Point Reference Number
-	organisation_name : "<css_selector>",						// Organisation Name
-	department_name : "<css_selector>",							// Department Name
-	po_box : "<css_selector>",											// PO Box Number
-	postcode_inward : "<css_selector>",							// Postcode Inward Code
-	postcode_outward : "<css_selector>",						// Postcode Outward Code
-	building_number : "<css_selector>",							// Building Number
-	building_name : "<css_selector>",								// Building Name
-	sub_building_name : "<css_selector>",						// Sub Building Name
-	thoroughfare : "<css_selector>",								// Thoroughfare
-	dependant_thoroughfare : "<css_selector>",			// Dependant Thoroughfare
-	dependant_locality : "<css_selector>",					// Dependant Locality
-	double_dependant_locality : "<css_selector>",		// Double Dependant Locality
-	postcode_type : "<css_selector>",								// Postcode Type
-	su_organisation_indicator : "<css_selector>",		// Organisation Type
-	delivery_point_suffix : "<css_selector>"				// Delivery Point Suffix
+	line_1: "<css_selector>",                      // Address Line 1 
+	line_2: "<css_selector>",                      // Address Line 2
+	line_3: "<css_selector>",                      // Address Line 3
+	post_town: "<css_selector>",                   // Post Town
+	postcode: "<css_selector>",                    // Postcode
+	udprn : "<css_selector>",                      // Unique Delivery Point Reference Number
+	organisation_name : "<css_selector>",          // Organisation Name
+	department_name : "<css_selector>",            // Department Name
+	po_box : "<css_selector>",                     // PO Box Number
+	postcode_inward : "<css_selector>",            // Postcode Inward Code
+	postcode_outward : "<css_selector>",           // Postcode Outward Code
+	building_number : "<css_selector>",            // Building Number
+	building_name : "<css_selector>",              // Building Name
+	sub_building_name : "<css_selector>",          // Sub Building Name
+	thoroughfare : "<css_selector>",               // Thoroughfare
+	dependant_thoroughfare : "<css_selector>",     // Dependant Thoroughfare
+	dependant_locality : "<css_selector>",         // Dependant Locality
+	double_dependant_locality : "<css_selector>",  // Double Dependant Locality
+	postcode_type : "<css_selector>",              // Postcode Type
+	su_organisation_indicator : "<css_selector>",  // Organisation Type
+	delivery_point_suffix : "<css_selector>"       // Delivery Point Suffix
 }
 ```
 
