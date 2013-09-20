@@ -36,10 +36,10 @@ $.idealPostcodes.setup({
 	// Pass in CSS selectors pointing to your input fields to pipe the results
 	output_fields: {
 		line_1: '#first_line',
-	  line_2: '#second_line',
-	  line_3: '#third_line',
-	  post_town: '#post_town',
-	  postcode: '#postcode'
+		line_2: '#second_line',
+		line_3: '#third_line',
+		post_town: '#post_town',
+		postcode: '#postcode'
 	}
 });
 </script>
@@ -100,11 +100,11 @@ $.idealPostcodes.setup({
 	api_key: 'ak_Iddqd8Idkfa7Idchoppers8',
 	output_fields: {
 		line_1: '#first_line',
-	  line_2: '#second_line',
-	  line_3: '#third_line',
-	  post_town: '#post_town',
-	  postcode: '#postcode',
-	  organisation_name: '#organisation_field'
+		line_2: '#second_line',
+		line_3: '#third_line',
+		post_town: '#post_town',
+		postcode: '#postcode',
+		organisation_name: '#organisation_field'
 	}
 });
 </script>
