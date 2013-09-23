@@ -131,6 +131,19 @@ $.idealPostcodes.lookupPostcode('ID11QD', API_KEY, function (data) {
 })
 ```
 
+#### $.idealPostcodes.validatePostcodeFormat(postcode)
+
+**Checks if postcode is correctly formatted.**
+
+Arguments
+- **postcode** (string) The postcode to validate
+
+Example
+```javascript
+$.idealPostcodes.validatePostcodeFormat('ID11QD') # => true
+$.idealPostcodes.validatePostcodeFormat('IDDQD') # => false
+```
+
 ## Documentation
 More documentation can be found [here](https://ideal-postcodes.co.uk/documentation)
 
@@ -139,7 +152,12 @@ MIT
 
 ## Changelog
 
-**v 1.0.0**
+**v1.0.0**
 - Refactored setup into 2 step process for more flexibility
 - Expanded postcode lookup to include complete PAF data including UDPRN, Organisation Names, etc.
 - Bug fixes
+
+**v.1.0.1**
+- Added overloading of output field properties (Todo)
+- Exposed postcode validation method
+- Exposed UDPRN lookup method (Todo)

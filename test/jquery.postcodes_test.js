@@ -22,7 +22,21 @@
       throws(block, [expected], [message])
   */
 
-  module('jQuery#idealPostcodes');
+  module('idealPostcodes.validatePostcodeFormat');
+
+  test('correctly ascertains validity of submitted postcode format', 5, function () {
+    equal($.idealPostcodes.validatePostcodeFormat('ID11QD'), true);
+    equal($.idealPostcodes.validatePostcodeFormat('id11qd'), true);
+    equal($.idealPostcodes.validatePostcodeFormat('id1 1qd'), true);
+    equal($.idealPostcodes.validatePostcodeFormat('ID1 1QD'), true);
+    equal($.idealPostcodes.validatePostcodeFormat('IDDQD'), false);
+  });
+
+  module('jquery#lookupPostcode');
+
+  module('jquery#lookupAddress');
+
+  module('jQuery#setupPostcodeLookup');
 
   var defaults, $input_field, $lookup_button;
 

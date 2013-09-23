@@ -11,7 +11,6 @@
 
 (function($) {
   "use strict";
-
   var defaults = {
     // Please Enter your API Key
     api_key: "",
@@ -147,6 +146,7 @@
       .click(function () {
         var postcode = Idpc.$input.val();
         if (Idpc.last_lookup !== postcode) {
+          Idpc.last_lookup = postcode;
           Idpc.disable_lookup_button();
           Idpc.clear_existing_fields();
           Idpc.lookupPostcode(postcode);
@@ -158,7 +158,7 @@
 
     // Perform AJAX (JSONP) request
     lookupPostcode: function (postcode) {
-      if (Idpc.valid_postcode(postcode)) {
+      if ($.idealPostcodes.validatePostcodeFormat(postcode)) {
         var success = function (data) {
           Idpc.handle_api_success(data);
           $.event.trigger("completedJsonp"); // added for API testing, better solution needed
@@ -185,12 +185,6 @@
       setTimeout(function (){
         Idpc.$button.prop('disabled', false).html(Idpc.button_label);
       }, Idpc.disable_interval);
-    },
-
-    // Test for valid postcode format
-    valid_postcode: function (postcode) {
-      var regex = /^[a-zA-Z0-9]{1,4}\s?\d[a-zA-Z]{2}$/;
-      return !!postcode.match(regex);
     },
 
     // Callback if JSONP request returns with code 2000
@@ -299,6 +293,7 @@
   };
 
   $.idealPostcodes = {
+
     // Expost defaults for testing
     defaults: function () {
       return defaults;
@@ -309,11 +304,36 @@
       Idpc.init(options);
     },
 
+    validatePostcodeFormat: function (postcode) {
+      return !!postcode.match(/^[a-zA-Z0-9]{1,4}\s?\d[a-zA-Z]{2}$/);
+    },
+
     // Lookup postcode on API
     lookupPostcode: function (postcode, api_key, success, error) {
       var endpoint = Idpc.api_endpoint || defaults.api_endpoint,
           resource = "postcodes",
           url = [endpoint, resource, postcode].join('/'),
+          options = {
+            url: url,
+            data: {
+              api_key: api_key
+            },
+            dataType: 'jsonp',
+            timeout: 5000,
+            success: success
+          };
+
+      if (error) {
+        options.error = error;
+      }
+
+      $.ajax(options);
+    },
+
+    lookupAddress: function (udprn, api_key, success, error) {
+      var endpoint = Idpc.api_endpoint || defaults.api_endpoint,
+          resource = "addresses",
+          url = [endpoint, resource, udprn].join('/'),
           options = {
             url: url,
             data: {
