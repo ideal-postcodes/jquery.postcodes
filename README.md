@@ -141,6 +141,8 @@ Arguments
 Example
 ```javascript
 $.idealPostcodes.validatePostcodeFormat('ID11QD') # => true
+$.idealPostcodes.validatePostcodeFormat('ID1 1QD') # => true
+$.idealPostcodes.validatePostcodeFormat('id1 1qd') # => true
 $.idealPostcodes.validatePostcodeFormat('IDDQD') # => false
 ```
 
@@ -160,4 +162,4 @@ MIT
 **v.1.0.1**
 - Added overloading of output field properties (Todo)
 - Exposed postcode validation method
-- Exposed UDPRN lookup method (Todo)
+- Added clearAll method to remove postcode lookup elements

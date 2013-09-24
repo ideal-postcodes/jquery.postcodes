@@ -21,6 +21,8 @@
       notStrictEqual(actual, expected, [message])
       throws(block, [expected], [message])
   */
+  var $input_field, $lookup_button, $dropdown, setup,
+      defaults = $.idealPostcodes.defaults;
 
   module('idealPostcodes.validatePostcodeFormat');
 
@@ -32,15 +34,7 @@
     equal($.idealPostcodes.validatePostcodeFormat('IDDQD'), false);
   });
 
-  module('jquery#lookupPostcode');
-
-  module('jquery#lookupAddress');
-
-  module('jQuery#setupPostcodeLookup');
-
-  var defaults, $input_field, $lookup_button;
-
-  test('has postcode input box', 6, function () {
+  setup = function () {
     $.idealPostcodes.setup({
       api_key: 'api_key',
       disable_interval: 0
@@ -49,7 +43,11 @@
     defaults = $.idealPostcodes.defaults();
     $input_field = $("#"+defaults.input_id);
     $lookup_button = $("#"+defaults.button_id);
+  };
 
+  module('jQuery#setupPostcodeLookup', { setup: setup });
+
+  test('has postcode input box', 6, function () {
     ok($input_field.length, "there appears to be an input");
     ok($lookup_button.length, "there appears to be button");
     strictEqual($lookup_button.html(), defaults.button_label,"button has correct labeling");
@@ -61,39 +59,37 @@
   });
 
   test('postcode validation', 2, function () {
-    $.idealPostcodes.setup({
-      api_key: 'api_key',
-      disable_interval: 0
-    });
-    $('#postcode_lookup_field').setupPostcodeLookup();
-    defaults = $.idealPostcodes.defaults();
-    $input_field = $("#"+defaults.input_id);
-    $lookup_button = $("#"+defaults.button_id);
-
     $input_field.val("BOGUSPOSTCODE");
     $lookup_button.trigger("click");
     ok($("#" + defaults.error_message_id).length, "it has an error message");
     strictEqual($("#" + defaults.error_message_id).html(), defaults.error_message_invalid_postcode,"it has the correct error message");
-  });  
+  }); 
 
-  // Testing below this point requires an API key to work 
 
-  /* Requires a functioning api key. This will not consume any lookups
-  var api_key = "";
+  /*
+  *
+  * Everything below this point requires an API key to work as it connects
+  * with the Ideal Postcodes API
+  *
+  */
 
-  var $dropdown;
+  //Requires a functioning api key. This will not consume any lookups
 
-  asyncTest('successful postcode lookup', 7, function () {
+  var api_key = "ak_hk71kco54zGSgVf9ExxRVVNmolLNh";
+
+  setup = function () {
     $.idealPostcodes.setup({
       api_key: api_key,
       disable_interval: 0
     });
     $('#postcode_lookup_field').setupPostcodeLookup();
-
-    defaults = $.idealPostcodes.defaults();
     $input_field = $("#"+defaults.input_id);
     $lookup_button = $("#"+defaults.button_id);
+  };
 
+  module("Postcode lookups", { setup: setup });
+
+  asyncTest('successful postcode lookup', 7, function () {
     $input_field.val("ID11QD");
     $lookup_button.trigger("click");
     $(document).off("completedJsonp").on("completedJsonp", function () {
@@ -107,18 +103,23 @@
       });
     });
   });
+  
+  asyncTest("Postcode lookup cleanup", 6, function () {
+    $input_field.val("ID11QD");
+    $lookup_button.trigger("click");
+    $(document).off("completedJsonp").on("completedJsonp", function () {
+      start();
+      notEqual($("#" + defaults.input_id).length, 0);
+      notEqual($("#" + defaults.dropdown_id).length, 0);
+      notEqual($("#" + defaults.button_id).length, 0);
+      $.idealPostcodes.clearAll();
+      equal($("#" + defaults.input_id).length, 0);
+      equal($("#" + defaults.dropdown_id).length, 0);
+      equal($("#" + defaults.button_id).length, 0);
+    });
+  });
 
   asyncTest('no postcode result', 2, function () {
-    $.idealPostcodes.setup({
-      api_key: api_key,
-      disable_interval: 0
-    });
-    $('#postcode_lookup_field').setupPostcodeLookup();
-
-    defaults = $.idealPostcodes.defaults();
-    $input_field = $("#"+defaults.input_id);
-    $lookup_button = $("#"+defaults.button_id);
-
     $input_field.val("ID11QE");
     $lookup_button.trigger("click");
     $(document).off("completedJsonp").on("completedJsonp", function () {
@@ -128,6 +129,43 @@
     });
   });
 
-  */
+  asyncTest("Postcode lookup cleanup with error message", 6, function () {
+    $input_field.val("ID11QE");
+    $lookup_button.trigger("click");
+    $(document).off("completedJsonp").on("completedJsonp", function () {
+      start();
+      notEqual($("#" + defaults.input_id).length, 0);
+      notEqual($("#" + defaults.error_message_id).length, 0);
+      notEqual($("#" + defaults.button_id).length, 0);
+      $.idealPostcodes.clearAll();
+      equal($("#" + defaults.input_id).length, 0);
+      equal($("#" + defaults.error_message_id).length, 0);
+      equal($("#" + defaults.button_id).length, 0);
+    });
+  });
+
+  module('jquery#lookupPostcode');
+
+  asyncTest('Successful postcode lookup', 4, function () {
+    var success = function (data, status, jqxhr) {
+      start();
+      equal(jqxhr.status, 200);
+      equal(data.code, 2000);
+      notEqual(data.result.length, 0);
+      notEqual(data.result[0].postcode, "ID11QD");
+    };
+    $.idealPostcodes.lookupPostcode("ID11QD", api_key, success);
+  });
+
+  asyncTest("Postcode doesn't exist", 2, function () {
+    var success = function (data, status, jqxhr) {
+      start();
+      equal(jqxhr.status, 200);
+      equal(data.code, 4040);
+    };
+    $.idealPostcodes.lookupPostcode("ID11QE", api_key, success);
+  });
+
+  //
 
 }(jQuery));

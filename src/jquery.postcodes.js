@@ -47,25 +47,26 @@
     api_endpoint: "https://api.ideal-postcodes.co.uk/v1",
 
     // Input Field Configuration
-    $input: "",
+    $input: undefined,
     input_label: "Please enter your postcode",
     input_muted_style: "color:#CBCBCB;",
     input_class: "",
     input_id: "idpc_input",
 
     // Button configuration
-    $button: "",
+    $button: undefined,
     button_id: "idpc_button",
     button_label: "Find my Address",
     button_class: "",
 
     // Dropdown configuration
+    $dropdown: undefined,
     dropdown_id: "idpc_dropdown",
     dropdown_select_message: "Please select your address",
     dropdown_class: "",
 
     // Error Message Configuration
-    $error_message: "",
+    $error_message: undefined,
     error_message_id: "idpc_error_message",
     error_message_invalid_postcode: "Please check your postcode, it seems to be incorrect",
     error_message_not_found: "Your postcode could not be found. Please type in your address",
@@ -102,7 +103,7 @@
     },
     
     // Create and append postcode input and submit button to specified div context
-    setup_dropdown: function (context, options) {
+    setupPostcodeInput: function (context, options) {
       Idpc.$context = context;
 
       if (options) {
@@ -330,31 +331,19 @@
       $.ajax(options);
     },
 
-    lookupAddress: function (udprn, api_key, success, error) {
-      var endpoint = Idpc.api_endpoint || defaults.api_endpoint,
-          resource = "addresses",
-          url = [endpoint, resource, udprn].join('/'),
-          options = {
-            url: url,
-            data: {
-              api_key: api_key
-            },
-            dataType: 'jsonp',
-            timeout: 5000,
-            success: success
-          };
+    clearAll: function () {
+      Idpc.$context = null;
 
-      if (error) {
-        options.error = error;
-      }
-
-      $.ajax(options);
-    },
+      if (Idpc.$input) Idpc.$input.remove();
+      if (Idpc.$button) Idpc.$button.remove();
+      if (Idpc.$dropdown) Idpc.$dropdown.remove();
+      if (Idpc.$error_message) Idpc.$error_message.remove();
+    }
   };
 
   // Creates Postcode lookup field and button when called on <div>
   $.fn.setupPostcodeLookup = function (options) {
-    Idpc.setup_dropdown($(this), options);
+    Idpc.setupPostcodeInput($(this), options);
     return this;
   };
 
