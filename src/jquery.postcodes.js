@@ -131,6 +131,11 @@
       .submit(function () {
         return false;
       })
+      .keypress(function (event) {
+        if (event.which === 13) {
+          Idpc.$button.trigger("click");
+        }
+      })
       .appendTo(Idpc.$context);
 
       //Introduce user defined submission
@@ -157,7 +162,7 @@
       .appendTo(Idpc.$context);
     },
 
-    // Perform AJAX (JSONP) request
+    // Perform postcode lookup request via JSONP
     lookupPostcode: function (postcode) {
       if ($.idealPostcodes.validatePostcodeFormat(postcode)) {
         var success = function (data) {

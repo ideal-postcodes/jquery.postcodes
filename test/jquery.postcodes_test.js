@@ -68,14 +68,14 @@
 
   /*
   *
-  * Everything below this point requires an API key to work as it connects
-  * with the Ideal Postcodes API
+  *  Everything below this point requires an API key to work as it connects
+  *  with the Ideal Postcodes API
   *
   */
 
-  //Requires a functioning api key. This will not consume any lookups
+  //  Requires a functioning api key. This will not consume any lookups
 
-  var api_key = "ak_hk71kco54zGSgVf9ExxRVVNmolLNh";
+  var api_key = "";
 
   setup = function () {
     $.idealPostcodes.setup({
@@ -89,7 +89,7 @@
 
   module("Postcode lookups", { setup: setup });
 
-  asyncTest('successful postcode lookup', 7, function () {
+  asyncTest('successful postcode lookup', 5, function () {
     $input_field.val("ID11QD");
     $lookup_button.trigger("click");
     $(document).off("completedJsonp").on("completedJsonp", function () {
@@ -98,7 +98,7 @@
       ok($dropdown.length, "it has a dropdown menu");
       strictEqual($dropdown.children('option[value=ideal]').text(), defaults.dropdown_select_message, "it has the correct display text");
       $dropdown.val("5").trigger("change"); // Select 3 lined output
-      [defaults.output_fields.line_1, defaults.output_fields.line_2, defaults.output_fields.line_3, defaults.output_fields.post_town, defaults.output_fields.postcode].forEach(function (elem) {
+      [defaults.output_fields.line_1, defaults.output_fields.post_town, defaults.output_fields.postcode].forEach(function (elem) {
         ok($(elem).val(), elem + " has content");
       });
     });
@@ -119,13 +119,34 @@
     });
   });
 
-  asyncTest('no postcode result', 2, function () {
-    $input_field.val("ID11QE");
-    $lookup_button.trigger("click");
+  // To introduce postcode that will induce specific errors
+  //
+  // asyncTest('no postcode result', 2, function () {
+  //   $input_field.val("ID11QE");
+  //   $lookup_button.trigger("click");
+  //   $(document).off("completedJsonp").on("completedJsonp", function () {
+  //     start();
+  //     ok($("#" + defaults.error_message_id).length, "it has an error message");
+  //     strictEqual($("#" + defaults.error_message_id).html(), defaults.error_message_not_found, "it has the correct error message");
+  //   });
+  // });
+
+  asyncTest("Postcode lookup should be triggered by enter key in input box", 6, function () {
+    $input_field.val("ID11QD");
+
+    var e = $.Event('keypress');
+    e.which = 13;
+    $input_field.trigger(e);
+
     $(document).off("completedJsonp").on("completedJsonp", function () {
       start();
-      ok($("#" + defaults.error_message_id).length, "it has an error message");
-      strictEqual($("#" + defaults.error_message_id).html(), defaults.error_message_not_found, "it has the correct error message");
+      notEqual($("#" + defaults.input_id).length, 0);
+      notEqual($("#" + defaults.dropdown_id).length, 0);
+      notEqual($("#" + defaults.button_id).length, 0);
+      $.idealPostcodes.clearAll();
+      equal($("#" + defaults.input_id).length, 0);
+      equal($("#" + defaults.dropdown_id).length, 0);
+      equal($("#" + defaults.button_id).length, 0);
     });
   });
 
@@ -144,7 +165,7 @@
     });
   });
 
-  module('jquery#lookupPostcode');
+  module('$.lookupPostcode');
 
   asyncTest('Successful postcode lookup', 4, function () {
     var success = function (data, status, jqxhr) {
@@ -157,15 +178,17 @@
     $.idealPostcodes.lookupPostcode("ID11QD", api_key, success);
   });
 
-  asyncTest("Postcode doesn't exist", 2, function () {
-    var success = function (data, status, jqxhr) {
-      start();
-      equal(jqxhr.status, 200);
-      equal(data.code, 4040);
-    };
-    $.idealPostcodes.lookupPostcode("ID11QE", api_key, success);
-  });
-
+  // To introduce postcode that will induce specific errors
   //
+  // asyncTest("Postcode doesn't exist", 2, function () {
+  //   var success = function (data, status, jqxhr) {
+  //     start();
+  //     equal(jqxhr.status, 200);
+  //     equal(data.code, 4040);
+  //   };
+  //   $.idealPostcodes.lookupPostcode("ID11QE", api_key, success);
+  // });
+  
+  module('')
 
 }(jQuery));

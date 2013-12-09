@@ -86,7 +86,11 @@ output_fields: {
 	double_dependant_locality : "<css_selector>",  // Double Dependant Locality
 	postcode_type : "<css_selector>",              // Postcode Type
 	su_organisation_indicator : "<css_selector>",  // Organisation Type
-	delivery_point_suffix : "<css_selector>"       // Delivery Point Suffix
+	delivery_point_suffix : "<css_selector>",      // Delivery Point Suffix
+	longitude : "<css_selector>",  								 // Organisation Type
+	latitude : "<css_selector>",  								 // Organisation Type
+	northings : "<css_selector>",  								 // Northings
+	eastings : "<css_selector>"	  								 // Eastings
 }
 ```
 
