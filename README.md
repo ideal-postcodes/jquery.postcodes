@@ -167,3 +167,6 @@ MIT
 - Added overloading of output field properties (Todo)
 - Exposed postcode validation method
 - Added clearAll method to remove postcode lookup elements
+
+***v1.1.0***
+- Pressing enter in the postcode lookup field will trigger a lookup

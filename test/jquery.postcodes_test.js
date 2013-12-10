@@ -75,7 +75,7 @@
 
   //  Requires a functioning api key. This will not consume any lookups
 
-  var api_key = "";
+  var api_key = "ak_hokks5b8iVnsbg1HisZ2IPSjCSZih";
 
   setup = function () {
     $.idealPostcodes.setup({
