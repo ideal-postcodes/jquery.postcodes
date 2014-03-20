@@ -65,7 +65,6 @@
     strictEqual($("#" + defaults.error_message_id).html(), defaults.error_message_invalid_postcode,"it has the correct error message");
   }); 
 
-
   /*
   *
   *  Everything below this point requires an API key to work as it connects
@@ -175,7 +174,5 @@
     };
     $.idealPostcodes.lookupPostcode("ID11QD", api_key, success);
   });
-
-
 
 }(jQuery));
