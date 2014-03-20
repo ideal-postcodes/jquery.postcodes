@@ -75,7 +75,7 @@
 
   //  Requires a functioning api key. This will not consume any lookups
 
-  var api_key = "ak_hokks5b8iVnsbg1HisZ2IPSjCSZih";
+  var api_key = "iddqd";
 
   setup = function () {
     $.idealPostcodes.setup({
@@ -118,18 +118,16 @@
       equal($("#" + defaults.button_id).length, 0);
     });
   });
-
-  // To introduce postcode that will induce specific errors
-  //
-  // asyncTest('no postcode result', 2, function () {
-  //   $input_field.val("ID11QE");
-  //   $lookup_button.trigger("click");
-  //   $(document).off("completedJsonp").on("completedJsonp", function () {
-  //     start();
-  //     ok($("#" + defaults.error_message_id).length, "it has an error message");
-  //     strictEqual($("#" + defaults.error_message_id).html(), defaults.error_message_not_found, "it has the correct error message");
-  //   });
-  // });
+  
+  asyncTest('Postcode not found result', 2, function () {
+    $input_field.val("ID11QE");
+    $lookup_button.trigger("click");
+    $(document).off("completedJsonp").on("completedJsonp", function () {
+      start();
+      ok($("#" + defaults.error_message_id).length, "it has an error message");
+      strictEqual($("#" + defaults.error_message_id).html(), defaults.error_message_not_found, "it has the correct error message");
+    });
+  });
 
   asyncTest("Postcode lookup should be triggered by enter key in input box", 6, function () {
     $input_field.val("ID11QD");
@@ -178,17 +176,6 @@
     $.idealPostcodes.lookupPostcode("ID11QD", api_key, success);
   });
 
-  // To introduce postcode that will induce specific errors
-  //
-  // asyncTest("Postcode doesn't exist", 2, function () {
-  //   var success = function (data, status, jqxhr) {
-  //     start();
-  //     equal(jqxhr.status, 200);
-  //     equal(data.code, 4040);
-  //   };
-  //   $.idealPostcodes.lookupPostcode("ID11QE", api_key, success);
-  // });
-  
-  module('')
+
 
 }(jQuery));

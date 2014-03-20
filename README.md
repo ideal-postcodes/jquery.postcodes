@@ -164,7 +164,7 @@ MIT
 - Bug fixes
 
 **v.1.0.1**
-- Added overloading of output field properties (Todo)
+- Added overloading of output field properties
 - Exposed postcode validation method
 - Added clearAll method to remove postcode lookup elements
 

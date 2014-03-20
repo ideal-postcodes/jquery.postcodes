@@ -43,7 +43,11 @@
       delivery_point_suffix: undefined
     },
     
-    // Below is not required
+    /* 
+     * Below is not required
+     *
+     */
+
     api_endpoint: "https://api.ideal-postcodes.co.uk/v1",
 
     // Input Field Configuration
@@ -162,7 +166,7 @@
       .appendTo(Idpc.$context);
     },
 
-    // Perform postcode lookup request via JSONP
+    // Request postcode via JSONP
     lookupPostcode: function (postcode) {
       if ($.idealPostcodes.validatePostcodeFormat(postcode)) {
         var success = function (data) {
