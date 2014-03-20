@@ -56,7 +56,7 @@ $('#postcode_lookup_field').setupPostcodeLookup();
 
 5) **Test for free** using the postcode "ID1 1QD"
 
-## Complete List of Available Data
+## Available Data
 
 By rigging just 5 fields in the above example, you will have the necessary information you need (and in the correct formatting) to identify any household in the UK by mail.
 
@@ -114,42 +114,6 @@ $.idealPostcodes.setup({
 </script>
 ```
 
-## Advanced Usage
-
-#### $.idealPostcodes.lookupPostcode(postcode, api_key, success[, error])
-
-**Performs a postcode lookup on the Ideal Postcodes API**
-
-Arguments
-- **postcode** (string) The postcode to lookup (case insensitive)
-- **api_key** (string) Key to access service
-- **success** (function) Asynchronous handler when data is received. If data.code !== 2000, an error has occured 
-- **error** (function, optional) Asynchronous handler in case of request timeout
-
-Example
-```javascript
-var API_KEY = 'ak_Iddqd8Idkfa7Idchoppers8';
-
-$.idealPostcodes.lookupPostcode('ID11QD', API_KEY, function (data) {
-	console.log(data.result[0]); // => {postcode: "ID1 1QD", post_town: "LONDON", line_1: "Kingsley Hall", line_2: "Powis Road", line_3: ""} 
-})
-```
-
-#### $.idealPostcodes.validatePostcodeFormat(postcode)
-
-**Checks if postcode is correctly formatted.**
-
-Arguments
-- **postcode** (string) The postcode to validate
-
-Example
-```javascript
-$.idealPostcodes.validatePostcodeFormat('ID11QD') # => true
-$.idealPostcodes.validatePostcodeFormat('ID1 1QD') # => true
-$.idealPostcodes.validatePostcodeFormat('id1 1qd') # => true
-$.idealPostcodes.validatePostcodeFormat('IDDQD') # => false
-```
-
 ## Documentation
 More documentation can be found [here](https://ideal-postcodes.co.uk/documentation)
 
@@ -158,15 +122,5 @@ MIT
 
 ## Changelog
 
-**v1.0.0**
-- Refactored setup into 2 step process for more flexibility
-- Expanded postcode lookup to include complete PAF data including UDPRN, Organisation Names, etc.
-- Bug fixes
-
-**v.1.0.1**
-- Added overloading of output field properties
-- Exposed postcode validation method
-- Added clearAll method to remove postcode lookup elements
-
-***v1.1.0***
-- Pressing enter in the postcode lookup field will trigger a lookup
+***v1.1.1***
+- Callbacks for successful lookup, erroneous lookup, address selection added

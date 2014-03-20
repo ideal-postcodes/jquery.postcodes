@@ -82,7 +82,12 @@
     disable_interval: 1000, // Disables lookup button in (ms) after lookup
 
     // Debug - Set to true to pipe API error messages to client
-    debug_mode: false
+    debug_mode: false,
+
+    // Register callbacks at specific stages
+    onLookupSuccess: undefined,
+    onLookupError: undefined,
+    onAddressSelected: undefined
   };
 
   var Idpc = {
@@ -171,13 +176,15 @@
       if ($.idealPostcodes.validatePostcodeFormat(postcode)) {
         var success = function (data) {
           Idpc.handle_api_success(data);
-          $.event.trigger("completedJsonp"); // added for API testing, better solution needed
-          // To introduce callback
+          if (Idpc.onLookupSuccess) {
+            Idpc.onLookupSuccess(data);
+          }
         };
         var error = function () {
           Idpc.show_error("Unable to connect to server");
-          $.event.trigger("completedJsonp");
-          // To introduce callback
+          if (Idpc.onLookupError) {
+            Idpc.onLookupError();
+          }
         };
         $.idealPostcodes.lookupPostcode(postcode, Idpc.api_key, success, error);
       } else {
@@ -276,12 +283,16 @@
     // Creates event handler that pipes selected address to user form
     link_to_fields: function ($address_dropdown) {
       var data = Idpc.result;
-      return $address_dropdown.change(function () {
+      $address_dropdown.change(function () {
         var index = $(this).val();
         if (index >= 0) {
           Idpc.populate_output_fields(data[index]);
         }
+        if (Idpc.onAddressSelected) {
+          Idpc.onAddressSelected.call(this, data[index]);
+        }
       });
+      return $address_dropdown;
     },
 
     populate_output_fields: function (result_object) {
