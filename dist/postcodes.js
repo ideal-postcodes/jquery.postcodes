@@ -346,10 +346,18 @@
     clearAll: function () {
       Idpc.$context = null;
 
-      if (Idpc.$input) Idpc.$input.remove();
-      if (Idpc.$button) Idpc.$button.remove();
-      if (Idpc.$dropdown) Idpc.$dropdown.remove();
-      if (Idpc.$error_message) Idpc.$error_message.remove();
+      if (Idpc.$input) {
+        Idpc.$input.remove();
+      }
+      if (Idpc.$button) {
+        Idpc.$button.remove();
+      }
+      if (Idpc.$dropdown) {
+        Idpc.$dropdown.remove();
+      }
+      if (Idpc.$error_message) {
+        Idpc.$error_message.remove();
+      }
     }
   };
 
