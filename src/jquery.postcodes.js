@@ -287,9 +287,9 @@
         var index = $(this).val();
         if (index >= 0) {
           Idpc.populate_output_fields(data[index]);
-        }
-        if (Idpc.onAddressSelected) {
-          Idpc.onAddressSelected.call(this, data[index]);
+          if (Idpc.onAddressSelected) {
+            Idpc.onAddressSelected.call(this, data[index]);
+          }
         }
       });
       return $address_dropdown;

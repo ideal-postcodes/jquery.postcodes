@@ -122,5 +122,6 @@ MIT
 
 ## Changelog
 
-***v1.1.1***
-- Callbacks for successful lookup, erroneous lookup, address selection added
+*v1.1.2*
+- Minor fix for when label is selected in address dropdown
+
