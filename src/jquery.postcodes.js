@@ -2,7 +2,7 @@
  * jquery.postcodes
  * https://github.com/ideal-postcodes/jquery.postcodes
  *
- * Copyright (c) 2013 Christopher Blanchard
+ * Copyright (c) 2014 Ideal Postcodes
  * Licensed under the MIT license.
  *
  * This plugin requires an account at 
@@ -11,6 +11,8 @@
 
 (function($) {
   "use strict";
+  var idealInstances = [];
+  var globalInstance;
   var defaults = {
     // Please Enter your API Key
     api_key: "",
@@ -45,7 +47,6 @@
     
     /* 
      * Below is not required
-     *
      */
 
     api_endpoint: "https://api.ideal-postcodes.co.uk/v1",
@@ -62,6 +63,7 @@
     button_id: "idpc_button",
     button_label: "Find my Address",
     button_class: "",
+    button_disabled_message: "Looking up postcode...",
 
     // Dropdown configuration
     $dropdown: undefined,
@@ -90,228 +92,276 @@
     onAddressSelected: undefined
   };
 
-  var Idpc = {
+  function IdealPostcodes (options) {
+    // Load in defaults
+    this.config = {};
+    $.extend(this, defaults);
 
-    // Update defaults and call setup() to begin loading form elements
-    init: function (options) {
-      $.extend(Idpc, defaults);
-      if (options) {
-        $.extend(Idpc, options);
-      }
-      Idpc.rig_output_fields();
-    },
-
-    rig_output_fields: function () {
-      var $output_fields = {};
-      for (var key in Idpc.output_fields) {
-        if (Idpc.output_fields[key] !== undefined) {
-          $output_fields[key] = $(Idpc.output_fields[key]);
-        }
-      }
-      Idpc.output_fields = $output_fields;
-    },
-    
-    // Create and append postcode input and submit button to specified div context
-    setupPostcodeInput: function (context, options) {
-      Idpc.$context = context;
-
-      if (options) {
-        $.extend(Idpc, options);
-      }
-
-      // Introduce user defined input
-      Idpc.$input = $('<input />', {
-        type: "text",
-        id: Idpc.input_id,
-        value: Idpc.input_label,
-        class: Idpc.input_class
-      })
-      .val(Idpc.input_label)
-      .attr("style", Idpc.input_muted_style)
-      .focus(function () {
-        Idpc.$input.removeAttr('style').val("");
-      })
-      .blur(function () {
-        if (!Idpc.$input.val()) {
-          Idpc.$input.val(Idpc.input_label);
-          Idpc.$input.attr('style', Idpc.input_muted_style);
-        }
-      })
-      .submit(function () {
-        return false;
-      })
-      .keypress(function (event) {
-        if (event.which === 13) {
-          Idpc.$button.trigger("click");
-        }
-      })
-      .appendTo(Idpc.$context);
-
-      //Introduce user defined submission
-      Idpc.$button = $('<button />', {
-        html: Idpc.button_label,
-        id: Idpc.button_id,
-        class: Idpc.button_class
-      })
-      .attr("type", "button")
-      .attr("onclick", "return false;")
-      .submit(function () {
-        return false;
-      })
-      .click(function () {
-        var postcode = Idpc.$input.val();
-        if (Idpc.last_lookup !== postcode) {
-          Idpc.last_lookup = postcode;
-          Idpc.disable_lookup_button();
-          Idpc.clear_existing_fields();
-          Idpc.lookupPostcode(postcode);
-        }
-        return false;
-      })
-      .appendTo(Idpc.$context);
-    },
-
-    // Request postcode via JSONP
-    lookupPostcode: function (postcode) {
-      if ($.idealPostcodes.validatePostcodeFormat(postcode)) {
-        var success = function (data) {
-          Idpc.handle_api_success(data);
-          if (Idpc.onLookupSuccess) {
-            Idpc.onLookupSuccess(data);
-          }
-        };
-        var error = function () {
-          Idpc.show_error("Unable to connect to server");
-          if (Idpc.onLookupError) {
-            Idpc.onLookupError();
-          }
-        };
-        $.idealPostcodes.lookupPostcode(postcode, Idpc.api_key, success, error);
-      } else {
-        Idpc.show_error(Idpc.error_message_invalid_postcode);
-      }
-    },
-
-    // Disable lookup button to prevent further AJAX requests
-    disable_lookup_button: function (message) {
-      Idpc.$button.prop('disabled', true).html(message || "Looking up postcode...");
-    },
-
-    // Enables lookup button and return it to a normal state after a short interval (see defaults)
-    enable_lookup_button: function () {
-      setTimeout(function (){
-        Idpc.$button.prop('disabled', false).html(Idpc.button_label);
-      }, Idpc.disable_interval);
-    },
-
-    // Callback if JSONP request returns with code 2000
-    handle_api_success: function (data) {
-      Idpc.response_code = data.code;
-      Idpc.response_message = data.message;
-      Idpc.result = data.result;
-      if (Idpc.response_code === 2000) {
-        Idpc.last_lookup = Idpc.$input.val();
-        Idpc.show_dropdown(Idpc.result).appendTo(Idpc.$context);
-        Idpc.enable_lookup_button();
-      } else { // Unable to connect to server
-        Idpc.handle_api_error();
-      }
-    },
-
-    // Callback if JSONP request does not return with code 2000
-    handle_api_error: function () {
-      if (Idpc.response_code === 4040) { // Postcode not found
-        Idpc.show_error(Idpc.error_message_not_found); 
-      } else {
-        if (Idpc.debug_mode) {
-          Idpc.show_error("(" + Idpc.response_code + ") " + Idpc.response_message);
-        } else {
-          Idpc.show_error(Idpc.error_message_default);  
-        } 
-      }
-      Idpc.enable_lookup_button();
-    },
-
-    // Empties fields including user specified address fields and returns them to normal state
-    clear_existing_fields: function () {
-      Idpc.clear_dropdown_menu();
-      Idpc.clear_error_messages();
-      Idpc.clear_input_fields();
-    },
-
-    clear_dropdown_menu: function () {
-      if (Idpc.$dropdown && Idpc.$dropdown.length) {
-        Idpc.$dropdown.remove();
-      }
-    },
-
-    clear_error_messages: function () {
-      if (Idpc.$error_message && Idpc.$error_message.length) {
-        Idpc.$error_message.remove();
-      }
-    },
-
-    clear_input_fields: function () {
-      for (var key in Idpc.output_fields) {
-        Idpc.output_fields[key].val("");
-      }
-    },
-
-    // Creates a dropdown menu with address data - selection is forwarded to user form
-    show_dropdown: function (data) {
-      var length = data.length;
-      var dropDown = $('<select />', {
-        id: Idpc.dropdown_id,
-        class: Idpc.dropdown_class
-      });
-      $('<option />', {
-        value: "ideal",
-        text: Idpc.dropdown_select_message
-      }).appendTo(dropDown);
-      
-      for (var i = 0; i < length; i += 1) {
-        $('<option />', {
-          value: i,
-          text: data[i].line_1 + " " + data[i].line_2
-        }).appendTo(dropDown);
-      }
-      Idpc.link_to_fields(dropDown);
-      Idpc.$dropdown = dropDown;
-      return dropDown;
-    },
-
-    // Creates event handler that pipes selected address to user form
-    link_to_fields: function ($address_dropdown) {
-      var data = Idpc.result;
-      $address_dropdown.change(function () {
-        var index = $(this).val();
-        if (index >= 0) {
-          Idpc.populate_output_fields(data[index]);
-          if (Idpc.onAddressSelected) {
-            Idpc.onAddressSelected.call(this, data[index]);
-          }
-        }
-      });
-      return $address_dropdown;
-    },
-
-    populate_output_fields: function (result_object) {
-      for (var key in Idpc.output_fields) {
-        Idpc.output_fields[key].val(result_object[key]);
-      }
-    },
-
-    // Puts up an error message if called
-    show_error: function (message) {
-      Idpc.enable_lookup_button();
-      Idpc.$error_message = $('<p />', {
-        html: message,
-        id: Idpc.error_message_id,
-        class: Idpc.error_message_class
-      }).appendTo(Idpc.$context);
+    // Override with options
+    if (options) {
+      $.extend(this, options);
     }
 
+    // Convert output_fields container to jQuery objects
+    var $output_fields = {};
+    for (var key in this.output_fields) {
+      if (this.output_fields[key] !== undefined) {
+        $output_fields[key] = $(this.output_fields[key]);
+      }
+    }
+    this.$output_fields = $output_fields;
+  }
+
+
+  IdealPostcodes.prototype.setupPostcodeInput = function (context) {
+    var self = this;
+    this.$context = context;
+
+    // Introduce user defined input
+    this.$input = $('<input />', {
+      type: "text",
+      id: this.input_id,
+      value: this.input_label,
+      class: this.input_class
+    })
+    .val(this.input_label)
+    .attr("style", this.input_muted_style)
+    .focus(function () {
+      self.$input.removeAttr('style').val("");
+    })
+    .blur(function () {
+      if (!self.$input.val()) {
+        self.$input.val(self.input_label);
+        self.$input.attr('style', self.input_muted_style);
+      }
+    })
+    .submit(function () {
+      return false;
+    })
+    .keypress(function (event) {
+      if (event.which === 13) {
+        self.$button.trigger("click");
+      }
+    })
+    .appendTo(this.$context);
+
+    //Introduce user defined submission
+    this.$button = $('<button />', {
+      html: this.button_label,
+      id: this.button_id,
+      class: this.button_class
+    })
+    .attr("type", "button")
+    .attr("onclick", "return false;")
+    .submit(function () {
+      return false;
+    })
+    .click(function () {
+      var postcode = self.$input.val();
+      if (self.last_lookup !== postcode) {
+        self.last_lookup = postcode;
+        self.disableLookup();
+        self.clearAll();
+        self.lookupPostcode(postcode);
+      }
+      return false;
+    })
+    .appendTo(this.$context);
   };
+
+  /*
+   * Prevents lookup button from being triggered
+   */
+
+  IdealPostcodes.prototype.disableLookup = function (message) {
+    message = message || this.button_disabled_message;
+    this.$button.prop('disabled', true).html(message);
+  };
+
+  /*
+   * Allows lookup button to be triggered
+   */
+
+  IdealPostcodes.prototype.enableLookup = function () {
+    var self = this;
+    if (self.disable_interval === 0) {
+      self.$button.prop('disabled', false).html(self.button_label);
+    } else {
+      setTimeout(function (){
+        self.$button.prop('disabled', false).html(self.button_label);
+      }, self.disable_interval);
+    }
+  }; 
+
+  /*
+   * Clears the following fields
+   *
+   */
+
+  IdealPostcodes.prototype.clearAll = function () {
+    this.setDropDown();
+    this.setErrorMessage();
+    this.setAddressFields();
+  };
+
+  /*
+   * Removes all elements from DOM
+   *
+   */
+
+  IdealPostcodes.prototype.removeAll = function () {
+    this.$context = null;
+
+    [this.$input, this.$button, this.$dropdown, this.$error_message].forEach(function (element) {
+      if (element) {
+        element.remove();
+      }
+    });
+  };
+
+  /*
+   * Triggers a postcode lookup and appropriate response
+   *
+   */
+
+  IdealPostcodes.prototype.lookupPostcode = function (postcode) {
+    var self = this;
+    if (!$.idealPostcodes.validatePostcodeFormat(postcode)) {
+      this.enableLookup();
+      return self.setErrorMessage(this.error_message_invalid_postcode);
+    }
+
+    $.idealPostcodes.lookupPostcode(postcode, self.api_key, 
+      // Successful result
+      function (data) {
+        self.response_code = data.code;
+        self.response_message = data.message;
+        self.result = data.result;
+        self.enableLookup();
+
+        if (self.response_code === 2000) {
+          self.last_lookup = postcode;
+          self.setDropDown(self.result);
+        } else if (self.response_code === 4040) {
+          self.setErrorMessage(self.error_message_not_found); 
+        } else {
+          if (self.debug_mode) {
+            self.setErrorMessage("(" + self.response_code + ") " + self.response_message);
+          } else {
+            self.setErrorMessage(self.error_message_default);  
+          } 
+        }
+        if (self.onLookupSuccess) {
+          self.onLookupSuccess(data);
+        }
+      }, 
+      // Unsuccessful result
+      function () {
+        self.setErrorMessage("Unable to connect to server");
+        self.enableLookup();
+        if (self.onLookupError) {
+          self.onLookupError();
+        }
+      }
+    );
+  };
+
+  /*
+   * Sets the dropdown menu
+   *
+   * Removes dropdown from DOM if data is undefined
+   */
+
+  IdealPostcodes.prototype.setDropDown = function (data) {
+    var self = this;
+
+    // Remove dropdown menu
+    if (this.$dropdown && this.$dropdown.length) {
+      this.$dropdown.remove();
+      delete this.$dropdown;
+    }
+
+    // Return if data undefined
+    if (!data) {
+      return;
+    }
+
+    var dropDown = $('<select />', {
+      id: self.dropdown_id,
+      class: self.dropdown_class
+    });
+
+    $('<option />', {
+      value: "ideal",
+      text: self.dropdown_select_message
+    }).appendTo(dropDown);
+    
+    var length = data.length;
+    for (var i = 0; i < length; i += 1) {
+      $('<option />', {
+        value: i,
+        text: data[i].line_1 + " " + data[i].line_2
+      }).appendTo(dropDown);
+    }
+
+    dropDown.appendTo(self.$context)
+    .change(function () {
+      var index = $(this).val();
+      if (index >= 0) {
+        self.setAddressFields(data[index]);
+        if (self.onAddressSelected) {
+          self.onAddressSelected.call(this, data[index]);
+        }
+      }
+    });
+    
+    self.$dropdown = dropDown;
+
+    return dropDown;
+  };
+
+  /*
+   * Sets the error message
+   *
+   * Removes error message from DOM if undefined
+   */
+
+  IdealPostcodes.prototype.setErrorMessage = function (message) {
+    if (this.$error_message && this.$error_message.length) {
+      this.$error_message.remove();
+      delete this.$error_message;
+    }
+
+    if (!message) {
+      return;
+    }
+
+    // Need to enable lookup button
+    // Idpc.enable_lookup_button();
+    this.$error_message = $('<p />', {
+      html: message,
+      id: this.error_message_id,
+      class: this.error_message_class
+    }).appendTo(this.$context);
+
+    return this.$error_message;
+  };
+
+  /*
+   * Sets the address output fields
+   *
+   * Empties output fields if undefined
+   */
+
+  IdealPostcodes.prototype.setAddressFields = function (data) {
+    data = data || {};
+
+    for (var key in this.$output_fields) {
+      this.$output_fields[key].val(data[key] || "");
+    }
+  };
+
+  
 
   $.idealPostcodes = {
 
@@ -322,16 +372,17 @@
 
     // Call to register key, configure misc options
     setup: function (options) {
-      Idpc.init(options);
+      globalInstance = new IdealPostcodes(options);
+      idealInstances.push(globalInstance);
     },
 
     validatePostcodeFormat: function (postcode) {
-      return !!postcode.match(/^[a-zA-Z0-9]{1,4}\s?\d[a-zA-Z]{2}$/);
+      return !!postcode.match(/^[a-zA-Z0-9]{1,4}\s?\d[a-zA-Z]{2}$/) || !!postcode.match(/^id1/i);
     },
 
     // Lookup postcode on API
     lookupPostcode: function (postcode, api_key, success, error) {
-      var endpoint = Idpc.api_endpoint || defaults.api_endpoint,
+      var endpoint = defaults.api_endpoint,
           resource = "postcodes",
           url = [endpoint, resource, postcode].join('/'),
           options = {
@@ -352,26 +403,24 @@
     },
 
     clearAll: function () {
-      Idpc.$context = null;
-
-      if (Idpc.$input) {
-        Idpc.$input.remove();
-      }
-      if (Idpc.$button) {
-        Idpc.$button.remove();
-      }
-      if (Idpc.$dropdown) {
-        Idpc.$dropdown.remove();
-      }
-      if (Idpc.$error_message) {
-        Idpc.$error_message.remove();
+      var length = idealInstances.length;
+      for (var i = 0; i < length; i += 1) {
+        idealInstances[i].removeAll();
       }
     }
   };
 
   // Creates Postcode lookup field and button when called on <div>
   $.fn.setupPostcodeLookup = function (options) {
-    Idpc.setupPostcodeInput($(this), options);
+    if (options) {
+      // Create new postcode lookup instance
+      var postcodeLookup = new IdealPostcodes(options);
+      idealInstances.push(postcodeLookup);
+      postcodeLookup.setupPostcodeInput($(this));
+    } else {
+      // Use global postcode lookup instance (created by .setup)
+      globalInstance.setupPostcodeInput($(this));
+    }
     return this;
   };
 
