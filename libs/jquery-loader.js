@@ -5,7 +5,7 @@
   var jqversion = location.search.match(/[?&]jquery=(.*?)(?=&|$)/);
   // If a version was specified, use that version from code.jquery.com.
   if (jqversion) {
-    path = 'http://code.jquery.com/jquery-' + jqversion[1] + '.js';
+    path = '../libs/jquery/jquery-' + jqversion[1] + '.min.js';
   }
   // This is the only time I'll ever use document.write, I promise!
   document.write('<script src="' + path + '"></script>');
