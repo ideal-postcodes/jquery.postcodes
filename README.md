@@ -5,15 +5,15 @@
 
 Add UK address lookups with a simple postcode input field on any web form with the Ideal-Postcodes.co.uk API. Ideal Postcodes uses Royal Mail's addressing database, the Postcode Address File (PAF).
 
-PAF is licensed from the Royal Mail and is, unfortunately, not free to use. Ideal Postcodes aims to be simple to use and fairly priced to use for web and mobile developers. We charge **2p** per [external](https://ideal-postcodes.co.uk/termsandconditions#external) lookup.
+PAF is licensed from the Royal Mail and incures a license fee per lookup. We make PAF available to the public at **2p** per [external](https://ideal-postcodes.co.uk/termsandconditions#external) lookup.
 
 ## How it Works
 
 This plugin creates an input field to lookup postcodes on the Ideal Postcodes API. If your user searches a valid postcode, a dropdown menu is displayed and the selected address is piped into appropriate fields.
 
-The plugin provides addresses according to [Royal Mail's Addressing Guidelines](http://www.royalmail.com/personal/help-and-support/How-do-I-address-my-mail-correctly). i.e. Maximum of 3 address lines, a Post Town and Postcode.
+The plugin provides addresses according to [Royal Mail's Addressing Guidelines](http://www.royalmail.com/personal/help-and-support/How-do-I-address-my-mail-correctly). This consists of 3 address lines, a Post Town and Postcode and is sufficient to uniquely identify a premise in the UK.
 
-![Ideal Postcodes Plugin Example](https://raw.github.com/ideal-postcodes/jquery.postcodes/master/misc/ideal_postcodes_snippet.png)
+![Ideal Postcodes Plugin Example](https://raw.github.com/ideal-postcodes/jquery.postcodes/master/examples/ideal_postcodes_snippet.png)
 
 ## Getting Started
 1) **[Download the plugin](https://raw.github.com/ideal-postcodes/jquery.postcodes/master/dist/postcodes.min.js)** and add to your page
@@ -25,7 +25,7 @@ The plugin provides addresses according to [Royal Mail's Addressing Guidelines](
 
 2) **[Sign up](https://ideal-postcodes.co.uk)** to get an API key
 
-3) **Setup a Postcode Search Field** by inserting an empty div tag and calling .setupPostcodeLookup(). Pass in a configuration object identifying (at minimum) your API Key and your address fields (via CSS selectors)
+3) **Setup a Postcode Search Field** by inserting an empty div tag and calling `.setupPostcodeLookup()`. Pass in a configuration object identifying specifying your API Key and address fields (using CSS selectors)
 
 ```html
 <div id="postcode_lookup_field"></div>
@@ -45,20 +45,31 @@ $('#postcode_lookup_field').setupPostcodeLookup({
 </script>
 ```
 
-## Available Data
+## Additional Configuration
 
-By rigging just 5 fields in the above example, you will have the necessary information you need (and in the correct formatting) to identify any household in the UK by mail. However, you can extract more information on each address by passing additional properties into the output_fields object. The complete list of available data fields can be found [here](https://ideal-postcodes.co.uk/documentation/paf-data).
+You can extract more information on each address by passing additional properties into the output_fields object. The complete list of available data fields can be found [here](https://ideal-postcodes.co.uk/documentation/paf-data).
+
+You can also configure the css classes of the generated lookup elements for custom styling. [Read our documentation](https://ideal-postcodes.co.uk/documentation/jquery-plugin) to find out more. [Or play with a jsFiddle](http://jsfiddle.net/ideal_postcodes/GrScV/) to familiarise yourself.
 
 ## Documentation
-More documentation can be found [here](https://ideal-postcodes.co.uk/documentation/jquery-plugin)
+
+[More documentation can be found at ideal-postcodes.co.uk](https://ideal-postcodes.co.uk/documentation/jquery-plugin)
 
 ## Testing
+
+Run automated tests with
 
 ```
 grunt test
 ```
 
-Tested against jQuery versions: 1.7.x, 1.8.x, 1.9.x, 1.10.x, 1.11.x, 2.0.x, 2.1.x
+This plugin has been tested against jQuery 1.7.x, 1.8.x, 1.9.x, 1.10.x, 1.11.x, 2.0.x and 2.1.x.
+
+Our test postcodes are:
+- **ID1 1QD** Returns a successful postcode lookup response (2000)
+- **ID1 KFA** Returns "postcode not found" error (4040)
+- **ID1 CLIP** Returns "no lookups remaining" error (4020)
+- **ID1 CHOP** Returns "daily (or individual) lookup limit breached" error (4021)
 
 ## License
 MIT
