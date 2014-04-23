@@ -36,7 +36,19 @@ module.exports = function(grunt) {
       },
     },
     qunit: {
-      files: ['test/**/*.html']
+      all: {
+        options: {
+          urls: [
+            'http://localhost:<%= connect.server.options.port %>/test/jquery.postcodes.html?jquery=1.7.2',
+            'http://localhost:<%= connect.server.options.port %>/test/jquery.postcodes.html?jquery=1.8.3',
+            'http://localhost:<%= connect.server.options.port %>/test/jquery.postcodes.html?jquery=1.9.1',
+            'http://localhost:<%= connect.server.options.port %>/test/jquery.postcodes.html?jquery=1.10.2',
+            'http://localhost:<%= connect.server.options.port %>/test/jquery.postcodes.html?jquery=1.11.0',
+            'http://localhost:<%= connect.server.options.port %>/test/jquery.postcodes.html?jquery=2.0.3',
+            'http://localhost:<%= connect.server.options.port %>/test/jquery.postcodes.html?jquery=2.1.0'
+          ]
+        }
+      }
     },
     jshint: {
       gruntfile: {
@@ -72,6 +84,13 @@ module.exports = function(grunt) {
         tasks: ['jshint:test', 'qunit']
       },
     },
+    connect: {
+      server: {
+        options: {
+          port: 7890
+        }
+      }
+    },
   });
 
   // These plugins provide necessary tasks.
@@ -81,8 +100,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-connect');
 
   // Default task.
-  grunt.registerTask('default', ['jshint', 'qunit', 'clean', 'concat', 'uglify']);
+  grunt.registerTask('default', ['connect', 'jshint', 'qunit', 'clean', 'concat', 'uglify']);
+  grunt.registerTask('test', ['connect', 'jshint', 'qunit']);
 
 };
