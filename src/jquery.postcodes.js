@@ -212,7 +212,7 @@
   IdealPostcodes.prototype.removeAll = function () {
     this.$context = null;
 
-    [this.$input, this.$button, this.$dropdown, this.$error_message].forEach(function (element) {
+    $.each([this.$input, this.$button, this.$dropdown, this.$error_message], function (index, element) {
       if (element) {
         element.remove();
       }

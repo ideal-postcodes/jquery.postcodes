@@ -1,4 +1,4 @@
-/*! Ideal Postcodes jQuery Plugin - v1.2.0 - 2014-04-23
+/*! Ideal Postcodes jQuery Plugin - v1.2.1 - 2014-06-13
 * https://github.com/ideal-postcodes/jquery.postcodes
 * Copyright (c) 2014 Ideal Postcodes; Licensed MIT */
 (function($) {
@@ -204,7 +204,7 @@
   IdealPostcodes.prototype.removeAll = function () {
     this.$context = null;
 
-    [this.$input, this.$button, this.$dropdown, this.$error_message].forEach(function (element) {
+    $.each([this.$input, this.$button, this.$dropdown, this.$error_message], function (index, element) {
       if (element) {
         element.remove();
       }

@@ -76,6 +76,9 @@ MIT
 
 ## Changelog
 
+*v1.2.1*
+- Fixed removal of elements from DOM
+
 *v1.2.0*
 - Significant rewrite to allow for multiple lookups per page
 
