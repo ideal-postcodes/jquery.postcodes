@@ -65,6 +65,8 @@ grunt test
 
 This plugin has been tested against jQuery 1.7.x, 1.8.x, 1.9.x, 1.10.x, 1.11.x, 2.0.x and 2.1.x.
 
+We strongly recommend running with the latest versions of jQuery (either 1.11.x or 2.1.x depending on whether you want to support IE 6+)
+
 Our test postcodes are:
 - **ID1 1QD** Returns a successful postcode lookup response (2000)
 - **ID1 KFA** Returns "postcode not found" error (4040)
