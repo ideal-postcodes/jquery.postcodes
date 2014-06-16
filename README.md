@@ -63,9 +63,9 @@ Run automated tests with
 grunt test
 ```
 
-We recommend using jQuery 1.9.x and above for this plugin to work with Internet Explorer 7/8
+We recommend using jQuery 1.9.x or greater
 
-This plugin has been tested against jQuery 1.7.x, 1.8.x, 1.9.x, 1.10.x, 1.11.x, 2.0.x and 2.1.x. modern, up-to-date browsers.
+This plugin has been tested against jQuery 1.9.x, 1.10.x, 1.11.x, 2.0.x and 2.1.x.
 
 Our test postcodes are:
 - **ID1 1QD** Returns a successful postcode lookup response (2000)
