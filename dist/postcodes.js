@@ -1,4 +1,4 @@
-/*! Ideal Postcodes jQuery Plugin - v1.2.1 - 2014-06-13
+/*! Ideal Postcodes jQuery Plugin - v1.2.2 - 2014-06-16
 * https://github.com/ideal-postcodes/jquery.postcodes
 * Copyright (c) 2014 Ideal Postcodes; Licensed MIT */
 (function($) {
@@ -113,9 +113,9 @@
     this.$input = $('<input />', {
       type: "text",
       id: this.input_id,
-      value: this.input_label,
-      class: this.input_class
+      value: this.input_label
     })
+    .addClass(this.input_class)
     .val(this.input_label)
     .attr("style", this.input_muted_style)
     .focus(function () {
@@ -141,9 +141,9 @@
     this.$button = $('<button />', {
       html: this.button_label,
       id: this.button_id,
-      class: this.button_class
+      type: "button"
     })
-    .attr("type", "button")
+    .addClass(this.button_class)
     .attr("onclick", "return false;")
     .submit(function () {
       return false;
@@ -279,9 +279,9 @@
     }
 
     var dropDown = $('<select />', {
-      id: self.dropdown_id,
-      class: self.dropdown_class
-    });
+      id: self.dropdown_id
+    }).
+    addClass(self.dropdown_class);
 
     $('<option />', {
       value: "ideal",
@@ -332,9 +332,10 @@
     // Idpc.enable_lookup_button();
     this.$error_message = $('<p />', {
       html: message,
-      id: this.error_message_id,
-      class: this.error_message_class
-    }).appendTo(this.$context);
+      id: this.error_message_id
+    })
+    .addClass(this.error_message_class)
+    .appendTo(this.$context);
 
     return this.$error_message;
   };
