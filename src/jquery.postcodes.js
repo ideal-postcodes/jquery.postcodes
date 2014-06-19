@@ -114,10 +114,13 @@
 
 
   IdealPostcodes.prototype.setupPostcodeInput = function (context) {
-    var self = this;
     this.$context = context;
+    this.setupInputField();
+    this.setupLookupButton();
+  };
 
-    // Introduce user defined input
+  IdealPostcodes.prototype.setupInputField = function () {
+    var self = this;
     this.$input = $('<input />', {
       type: "text",
       id: this.input_id,
@@ -144,8 +147,10 @@
       }
     })
     .appendTo(this.$context);
+  };
 
-    //Introduce user defined submission
+  IdealPostcodes.prototype.setupLookupButton = function () {
+    var self = this;
     this.$button = $('<button />', {
       html: this.button_label,
       id: this.button_id,
