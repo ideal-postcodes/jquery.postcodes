@@ -28,6 +28,7 @@
   var inputId;
   var buttonId;
   var defaults = $.idealPostcodes.defaults;
+  var apiKey = "iddqd";
 
   var isPresent = function (elemName, elemId) {
     notEqual($("#" + elemId).length, 0, "has " + elemName);
@@ -78,19 +79,10 @@
     strictEqual($("#" + defaults.error_message_id).html(), defaults.error_message_invalid_postcode,"it has the correct error message");
   }); 
 
-  /*
-  *
-  *  Everything below this point requires an API key to work as it connects
-  *  with the Ideal Postcodes API
-  *
-  *  Requires a functioning api key. This will not consume any lookups
-  *
-  */
-
   module("Postcode lookups", { 
     setup: function () {
       $.idealPostcodes.setup({
-        api_key: "iddqd",
+        api_key: apiKey,
         disable_interval: 0,
         onLookupSuccess: function () {
           $.event.trigger("completedJsonp");
@@ -214,7 +206,7 @@
       })
       .appendTo($("#qunit-fixture"));
       $.idealPostcodes.setup({
-        api_key: "iddqd",
+        api_key: apiKey,
         input: "#" + inputId,
         disable_interval: 0,
         onLookupSuccess: function () {
@@ -307,7 +299,7 @@
       })
       .appendTo($("#qunit-fixture"));
       $.idealPostcodes.setup({
-        api_key: "iddqd",
+        api_key: apiKey,
         button: "#" + buttonId,
         disable_interval: 0,
         onLookupSuccess: function () {
@@ -384,7 +376,7 @@
   module("Callbacks to postcode lookup", { 
     setup: function () {
       $.idealPostcodes.setup({
-        api_key: "iddqd",
+        api_key: apiKey,
         disable_interval: 0,
         onLookupSuccess: function (data) {
           $.event.trigger("completedJsonp", [data]);
@@ -413,15 +405,14 @@
 
   module('$.lookupPostcode');
 
-  asyncTest('Successful postcode lookup', 4, function () {
-    var success = function (data, status, jqxhr) {
+  asyncTest('Successful postcode lookup', 3, function () {
+    var success = function (data) {
       start();
-      equal(jqxhr.status, 200);
       equal(data.code, 2000);
       notEqual(data.result.length, 0);
       notEqual(data.result[0].postcode, "ID11QD");
     };
-    $.idealPostcodes.lookupPostcode("ID11QD", "iddqd", success);
+    $.idealPostcodes.lookupPostcode("ID11QD", apiKey, success);
   });
 
 }(jQuery));
