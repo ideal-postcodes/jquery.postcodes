@@ -78,6 +78,9 @@ MIT
 
 ## Changelog
 
+*v1.3.0*
+- Added custom input and lookup button configuration parameters
+
 *v1.2.2*
 - Avoids use of object.class. For Safari 4.0 and 5.0
 - Avoid setting type. Fixes for earlier jQuery version in older browsers
