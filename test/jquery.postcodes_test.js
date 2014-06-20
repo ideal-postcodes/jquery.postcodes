@@ -192,6 +192,92 @@
     });
   });
 
+  module("Postcode lookups with custom input field", { 
+    setup: function () {
+      var inputId = "customInput";
+      $("<input />", {
+        id: inputId
+      })
+      .appendTo($("#qunit-fixture"));
+      $.idealPostcodes.setup({
+        api_key: "iddqd",
+        input: "#" + inputId,
+        disable_interval: 0,
+        onLookupSuccess: function () {
+          $.event.trigger("completedJsonp");
+        },
+        onLookupError: function () {
+          $.event.trigger("completedJsonp");
+        }
+      });
+      $('#postcode_lookup_field').setupPostcodeLookup();
+      $input_field = $("#"+inputId);
+      $lookup_button = $("#"+defaults.button_id);
+    } 
+  });
+
+  asyncTest('successful postcode lookup', 7, function () {
+    $input_field.val("ID11QD");
+    equal($("#" + defaults.button_id).prop("disabled"), false, "initial lookup button not disabled");
+    $lookup_button.trigger("click");
+    $(document).off("completedJsonp").on("completedJsonp", function () {
+      start();
+      equal($("#" + defaults.button_id).prop("disabled"), false, "lookup button not disabled after click");
+      $dropdown = $("#"+defaults.dropdown_id);
+      ok($dropdown.length, "it has a dropdown menu");
+      strictEqual($dropdown.children('option[value=ideal]').text(), defaults.dropdown_select_message, "it has the correct display text");
+      $dropdown.val("5").trigger("change"); // Select 3 lined output
+      [defaults.output_fields.line_1, defaults.output_fields.post_town, defaults.output_fields.postcode].forEach(function (elem) {
+        ok($(elem).val(), elem + " has content");
+      });
+    });
+  });
+  
+  asyncTest('Postcode not found result', 4, function () {
+    $input_field.val("ID11QE");
+    equal($("#" + defaults.button_id).prop("disabled"), false, "initial lookup button not disabled");
+    $lookup_button.trigger("click");
+    $(document).off("completedJsonp").on("completedJsonp", function () {
+      start();
+      equal($("#" + defaults.button_id).prop("disabled"), false, "lookup button not disabled after click");
+      ok($("#" + defaults.error_message_id).length, "it has an error message");
+      strictEqual($("#" + defaults.error_message_id).html(), defaults.error_message_not_found, "it has the correct error message");
+    });
+  });
+
+  test("Lookup with invalid postcode caught by regexp", 7, function () {
+    $input_field.val("asd");
+    equal($("#" + defaults.button_id).prop("disabled"), false, "initial lookup button not disabled");
+    $lookup_button.trigger("click");
+    notEqual($("#" + defaults.error_message_id).length, 0, "has error message");
+    notEqual($("#" + defaults.button_id).length, 0, "has button");
+    equal($("#" + defaults.button_id).prop("disabled"), false, "lookup button not disabled after click");
+    // Check button is enabled
+    $.idealPostcodes.clearAll();
+    equal($("#" + defaults.input_id).length, 0, "has no input box");
+    equal($("#" + defaults.error_message_id).length, 0, "has no error message");
+    equal($("#" + defaults.button_id).length, 0, "has no button");
+  });
+
+
+  asyncTest("Lookup with invalid postcode", 7, function () {
+    $input_field.val("ID11QE");
+    equal($("#" + defaults.button_id).prop("disabled"), false, "initial lookup button not disabled");
+    $lookup_button.trigger("click");
+    $(document).off("completedJsonp").on("completedJsonp", function () {
+      start();
+      notEqual($("#" + defaults.error_message_id).length, 0, "has error message");
+      notEqual($("#" + defaults.button_id).length, 0, "has button");
+      equal($("#" + defaults.button_id).prop("disabled"), false, "lookup button not disabled after click");
+      $.idealPostcodes.clearAll();
+      equal($("#" + defaults.input_id).length, 0, "has no input box");
+      equal($("#" + defaults.error_message_id).length, 0, "has no error message");
+      equal($("#" + defaults.button_id).length, 0, "has no button");
+    });
+  });
+
+  
+
   module("Callbacks to postcode lookup", { 
     setup: function () {
       $.idealPostcodes.setup({
