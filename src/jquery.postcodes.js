@@ -60,6 +60,7 @@
     input_id: "idpc_input",
 
     // Button configuration
+    button: undefined,
     $button: undefined,
     button_id: "idpc_button",
     button_label: "Find my Address",
@@ -172,17 +173,22 @@
 
   IdealPostcodes.prototype.setupLookupButton = function () {
     var self = this;
-    this.$button = $('<button />', {
-      html: this.button_label,
-      id: this.button_id,
-      type: "button"
-    })
-    .addClass(this.button_class)
-    .attr("onclick", "return false;")
-    .submit(function () {
-      return false;
-    })
-    .click(function () {
+    if ($(this.button).length) {
+      this.$button = $(this.button).first();
+    } else {
+      this.$button = $('<button />', {
+        html: this.button_label,
+        id: this.button_id,
+        type: "button"
+      })
+      .addClass(this.button_class)
+      .attr("onclick", "return false;")
+      .submit(function () {
+        return false;
+      })
+      .appendTo(this.$context);
+    }
+    this.$button.click(function () {
       var postcode = self.$input.val();
       if (self.last_lookup !== postcode) {
         self.last_lookup = postcode;
@@ -191,8 +197,8 @@
         self.lookupPostcode(postcode);
       }
       return false;
-    })
-    .appendTo(this.$context);
+    });
+    return this.$button;
   };
 
   /*
