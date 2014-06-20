@@ -52,6 +52,7 @@
     api_endpoint: "https://api.ideal-postcodes.co.uk/v1",
 
     // Input Field Configuration
+    input: undefined,
     $input: undefined,
     input_label: "Please enter your postcode",
     input_muted_style: "color:#CBCBCB;",
@@ -119,35 +120,55 @@
     this.setupLookupButton();
   };
 
+  /*
+   * Connects an input field to the plugin to collect postcodes
+   *
+   * If a selector (this.input) is specified, that input is used
+   * If no selector specified, a new input field is generated and added to context
+   *
+   */
+
   IdealPostcodes.prototype.setupInputField = function () {
     var self = this;
-    this.$input = $('<input />', {
-      type: "text",
-      id: this.input_id,
-      value: this.input_label
-    })
-    .addClass(this.input_class)
-    .val(this.input_label)
-    .attr("style", this.input_muted_style)
-    .focus(function () {
-      self.$input.removeAttr('style').val("");
-    })
-    .blur(function () {
-      if (!self.$input.val()) {
-        self.$input.val(self.input_label);
-        self.$input.attr('style', self.input_muted_style);
-      }
-    })
-    .submit(function () {
-      return false;
-    })
-    .keypress(function (event) {
-      if (event.which === 13) {
-        self.$button.trigger("click");
-      }
-    })
-    .appendTo(this.$context);
+    if ($(this.input).length) {
+      // Use custom input
+      this.$input = $(this.input).first();
+    } else {
+      // Create input field and add to DOM
+      this.$input = $('<input />', {
+        type: "text",
+        id: this.input_id,
+        value: this.input_label
+      })
+      .addClass(this.input_class)
+      .val(this.input_label)
+      .attr("style", this.input_muted_style)
+      .focus(function () {
+        self.$input.removeAttr('style').val("");
+      })
+      .blur(function () {
+        if (!self.$input.val()) {
+          self.$input.val(self.input_label);
+          self.$input.attr('style', self.input_muted_style);
+        }
+      })
+      .submit(function () {
+        return false;
+      })
+      .keypress(function (event) {
+        if (event.which === 13) {
+          self.$button.trigger("click");
+        }
+      })
+      .appendTo(this.$context);
+    }
+    return this.$input;
   };
+
+  /*
+   * Connects clickable element to the plugin to trigger
+   *
+   */
 
   IdealPostcodes.prototype.setupLookupButton = function () {
     var self = this;
