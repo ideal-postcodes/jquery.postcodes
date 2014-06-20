@@ -22,8 +22,20 @@
       throws(block, [expected], [message])
   */
 
-  var $input_field, $lookup_button, $dropdown,
-      defaults = $.idealPostcodes.defaults;
+  var $input_field;
+  var $lookup_button;
+  var $dropdown;
+  var inputId;
+  var buttonId;
+  var defaults = $.idealPostcodes.defaults;
+
+  var isPresent = function (elemName, elemId) {
+    notEqual($("#" + elemId).length, 0, "has " + elemName);
+  };
+
+  var isNotPresent = function (elemName, elemId) {
+    equal($("#" + elemId).length, 0, "has no " + elemName);
+  };
 
   module('idealPostcodes.validatePostcodeFormat');
 
@@ -116,14 +128,14 @@
     $lookup_button.trigger("click");
     $(document).off("completedJsonp").on("completedJsonp", function () {
       start();
-      notEqual($("#" + defaults.input_id).length, 0, "input box present");
-      notEqual($("#" + defaults.dropdown_id).length, 0, "dropdown menu present");
-      notEqual($("#" + defaults.button_id).length, 0, "button present");
+      isPresent("default input box", defaults.input_id);
+      isPresent("dropdown menu", defaults.dropdown_id);
+      isPresent("default lookup button", defaults.button_id);
       equal($("#" + defaults.button_id).prop("disabled"), false, "lookup button not disabled after click");
       $.idealPostcodes.clearAll();
-      equal($("#" + defaults.input_id).length, 0, "input box not present");
-      equal($("#" + defaults.dropdown_id).length, 0, "dropdown menu not present");
-      equal($("#" + defaults.button_id).length, 0, "button not present");
+      isNotPresent("default input box", defaults.input_id);
+      isNotPresent("dropdown menu", defaults.dropdown_id);
+      isNotPresent("default lookup button", defaults.button_id);
     });
   });
   
@@ -148,53 +160,55 @@
 
     $(document).off("completedJsonp").on("completedJsonp", function () {
       start();
-      notEqual($("#" + defaults.input_id).length, 0, "has input box");
-      notEqual($("#" + defaults.dropdown_id).length, 0, "has dropdown box");
-      notEqual($("#" + defaults.button_id).length, 0, "has button");
+      isPresent("default input box", defaults.input_id);
+      isPresent("dropdown menu", defaults.dropdown_id);
+      isPresent("default lookup button", defaults.button_id);
       equal($("#" + defaults.button_id).prop("disabled"), false, "lookup button not disabled after click");
       $.idealPostcodes.clearAll();
-      equal($("#" + defaults.input_id).length, 0, "has no input box");
-      equal($("#" + defaults.dropdown_id).length, 0, "has no dropdown");
-      equal($("#" + defaults.button_id).length, 0, "has no button");
+      isNotPresent("default input box", defaults.input_id);
+      isNotPresent("dropdown menu", defaults.dropdown_id);
+      isNotPresent("default lookup button", defaults.button_id);
     });
   });
 
-  test("Lookup with invalid postcode caught by regexp", 8, function () {
+  test("Lookup with invalid postcode caught by regexp", 9, function () {
     $input_field.val("asd");
     equal($("#" + defaults.button_id).prop("disabled"), false, "initial lookup button not disabled");
     $lookup_button.trigger("click");
-    notEqual($("#" + defaults.input_id).length, 0, "has input box");
-    notEqual($("#" + defaults.error_message_id).length, 0, "has error message");
-    notEqual($("#" + defaults.button_id).length, 0, "has button");
+    isPresent("default input box", defaults.input_id);
+    isPresent("default lookup button", defaults.button_id);
+    isPresent("error message", defaults.error_message_id);
     equal($("#" + defaults.button_id).prop("disabled"), false, "lookup button not disabled after click");
     // Check button is enabled
     $.idealPostcodes.clearAll();
-    equal($("#" + defaults.input_id).length, 0, "has no input box");
-    equal($("#" + defaults.error_message_id).length, 0, "has no error message");
-    equal($("#" + defaults.button_id).length, 0, "has no button");
+    isNotPresent("default input box", defaults.input_id);
+    isNotPresent("dropdown menu", defaults.dropdown_id);
+    isNotPresent("default lookup button", defaults.button_id);
+    isNotPresent("error message", defaults.error_message_id);
   });
 
 
-  asyncTest("Lookup with invalid postcode", 8, function () {
+  asyncTest("Lookup with invalid postcode", 9, function () {
     $input_field.val("ID11QE");
     equal($("#" + defaults.button_id).prop("disabled"), false, "initial lookup button not disabled");
     $lookup_button.trigger("click");
     $(document).off("completedJsonp").on("completedJsonp", function () {
       start();
-      notEqual($("#" + defaults.input_id).length, 0, "has input box");
-      notEqual($("#" + defaults.error_message_id).length, 0, "has error message");
-      notEqual($("#" + defaults.button_id).length, 0, "has button");
+      isPresent("default input box", defaults.input_id);
+      isPresent("default lookup button", defaults.button_id);
+      isPresent("error message", defaults.error_message_id);
       equal($("#" + defaults.button_id).prop("disabled"), false, "lookup button not disabled after click");
       $.idealPostcodes.clearAll();
-      equal($("#" + defaults.input_id).length, 0, "has no input box");
-      equal($("#" + defaults.error_message_id).length, 0, "has no error message");
-      equal($("#" + defaults.button_id).length, 0, "has no button");
+      isNotPresent("default input box", defaults.input_id);
+      isNotPresent("dropdown menu", defaults.dropdown_id);
+      isNotPresent("default lookup button", defaults.button_id);
+      isNotPresent("error message", defaults.error_message_id);
     });
   });
 
   module("Postcode lookups with custom input field", { 
     setup: function () {
-      var inputId = "customInput";
+      inputId = "customInput";
       $("<input />", {
         id: inputId
       })
@@ -216,9 +230,10 @@
     } 
   });
 
-  asyncTest('successful postcode lookup', 7, function () {
+  asyncTest('successful postcode lookup', 8, function () {
     $input_field.val("ID11QD");
     equal($("#" + defaults.button_id).prop("disabled"), false, "initial lookup button not disabled");
+    equal($("#" + defaults.input_id).length, 0, "has no default input box");
     $lookup_button.trigger("click");
     $(document).off("completedJsonp").on("completedJsonp", function () {
       start();
@@ -245,38 +260,126 @@
     });
   });
 
-  test("Lookup with invalid postcode caught by regexp", 7, function () {
+  test("Lookup with invalid postcode caught by regexp", 11, function () {
     $input_field.val("asd");
     equal($("#" + defaults.button_id).prop("disabled"), false, "initial lookup button not disabled");
     $lookup_button.trigger("click");
-    notEqual($("#" + defaults.error_message_id).length, 0, "has error message");
-    notEqual($("#" + defaults.button_id).length, 0, "has button");
+    isNotPresent("default input box", defaults.input_id);
+    isPresent("custom input box", inputId);
+    isPresent("default lookup button", defaults.button_id);
+    isPresent("error message", defaults.error_message_id);
     equal($("#" + defaults.button_id).prop("disabled"), false, "lookup button not disabled after click");
-    // Check button is enabled
     $.idealPostcodes.clearAll();
-    equal($("#" + defaults.input_id).length, 0, "has no input box");
-    equal($("#" + defaults.error_message_id).length, 0, "has no error message");
-    equal($("#" + defaults.button_id).length, 0, "has no button");
+    isNotPresent("default input box", defaults.input_id);
+    isNotPresent("custom input box", inputId);
+    isNotPresent("dropdown menu", defaults.dropdown_id);
+    isNotPresent("default lookup button", defaults.button_id);
+    isNotPresent("error message", defaults.error_message_id);
   });
 
 
-  asyncTest("Lookup with invalid postcode", 7, function () {
+  asyncTest("Lookup with invalid postcode", 11, function () {
     $input_field.val("ID11QE");
     equal($("#" + defaults.button_id).prop("disabled"), false, "initial lookup button not disabled");
     $lookup_button.trigger("click");
     $(document).off("completedJsonp").on("completedJsonp", function () {
       start();
-      notEqual($("#" + defaults.error_message_id).length, 0, "has error message");
-      notEqual($("#" + defaults.button_id).length, 0, "has button");
+      isNotPresent("default input box", defaults.input_id);
+      isPresent("custom input box", inputId);
+      isPresent("default lookup button", defaults.button_id);
+      isPresent("error message", defaults.error_message_id);
       equal($("#" + defaults.button_id).prop("disabled"), false, "lookup button not disabled after click");
       $.idealPostcodes.clearAll();
-      equal($("#" + defaults.input_id).length, 0, "has no input box");
-      equal($("#" + defaults.error_message_id).length, 0, "has no error message");
-      equal($("#" + defaults.button_id).length, 0, "has no button");
+      isNotPresent("default input box", defaults.input_id);
+      isNotPresent("custom input box", inputId);
+      isNotPresent("dropdown menu", defaults.dropdown_id);
+      isNotPresent("default lookup button", defaults.button_id);
+      isNotPresent("error message", defaults.error_message_id);
     });
   });
 
+  module("Postcode lookups with custom button", { 
+    setup: function () {
+      buttonId = "customInput";
+      $('<a />', {
+        id: buttonId,
+        href: ""
+      })
+      .appendTo($("#qunit-fixture"));
+      $.idealPostcodes.setup({
+        api_key: "iddqd",
+        button: "#" + buttonId,
+        disable_interval: 0,
+        onLookupSuccess: function () {
+          $.event.trigger("completedJsonp");
+        },
+        onLookupError: function () {
+          $.event.trigger("completedJsonp");
+        }
+      });
+      $('#postcode_lookup_field').setupPostcodeLookup();
+      $input_field = $("#"+defaults.input_id);
+      $lookup_button = $("#"+buttonId);
+    } 
+  });
+
+  asyncTest('successful postcode lookup', 5, function () {
+    $input_field.val("ID11QD");
+    $lookup_button.trigger("click");
+    $(document).off("completedJsonp").on("completedJsonp", function () {
+      start();
+      $dropdown = $("#"+defaults.dropdown_id);
+      ok($dropdown.length, "it has a dropdown menu");
+      strictEqual($dropdown.children('option[value=ideal]').text(), defaults.dropdown_select_message, "it has the correct display text");
+      $dropdown.val("5").trigger("change"); // Select 3 lined output
+      [defaults.output_fields.line_1, defaults.output_fields.post_town, defaults.output_fields.postcode].forEach(function (elem) {
+        ok($(elem).val(), elem + " has content");
+      });
+    });
+  });
   
+  asyncTest('Postcode not found result', 2, function () {
+    $input_field.val("ID11QE");
+    $lookup_button.trigger("click");
+    $(document).off("completedJsonp").on("completedJsonp", function () {
+      start();
+      ok($("#" + defaults.error_message_id).length, "it has an error message");
+      strictEqual($("#" + defaults.error_message_id).html(), defaults.error_message_not_found, "it has the correct error message");
+    });
+  });
+
+  test("Lookup with invalid postcode caught by regexp", 8, function () {
+    $input_field.val("asd");
+    $lookup_button.trigger("click");
+    isPresent("default input box", defaults.input_id);
+    isNotPresent("default lookup button", defaults.button_id);
+    isPresent("custom lookup button", buttonId);
+    isPresent("error message", defaults.error_message_id);
+    // Check button is enabled
+    $.idealPostcodes.clearAll();
+    isNotPresent("default input box", defaults.input_id);
+    isNotPresent("default lookup button", defaults.button_id);
+    isNotPresent("custom lookup button", buttonId);
+    isNotPresent("error message", defaults.error_message_id);
+  });
+
+
+  asyncTest("Lookup with invalid postcode", 8, function () {
+    $input_field.val("ID11QE");
+    $lookup_button.trigger("click");
+    $(document).off("completedJsonp").on("completedJsonp", function () {
+      start();
+      isPresent("default input box", defaults.input_id);
+      isNotPresent("default lookup button", defaults.button_id);
+      isPresent("custom lookup button", buttonId);
+      isPresent("error message", defaults.error_message_id);
+      $.idealPostcodes.clearAll();
+      isNotPresent("default input box", defaults.input_id);
+      isNotPresent("default lookup button", defaults.button_id);
+      isNotPresent("custom lookup button", buttonId);
+      isNotPresent("error message", defaults.error_message_id);
+    });
+  });
 
   module("Callbacks to postcode lookup", { 
     setup: function () {
