@@ -91,7 +91,8 @@
     // Register callbacks at specific stages
     onLookupSuccess: undefined,
     onLookupError: undefined,
-    onAddressSelected: undefined
+    onAddressSelected: undefined,
+
   };
 
   function IdealPostcodes (options) {
@@ -394,11 +395,9 @@
     }
   };
 
-  
-
   $.idealPostcodes = {
 
-    // Expost defaults for testing
+    // Expose defaults for testing
     defaults: function () {
       return defaults;
     },
@@ -441,6 +440,7 @@
         idealInstances[i].removeAll();
       }
     }
+
   };
 
   // Creates Postcode lookup field and button when called on <div>
