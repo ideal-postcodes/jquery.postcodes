@@ -1,4 +1,4 @@
-/*! Ideal Postcodes jQuery Plugin - v1.3.0 - 2014-06-23
+/*! Ideal Postcodes jQuery Plugin - v1.3.1 - 2014-06-23
 * https://github.com/ideal-postcodes/jquery.postcodes
 * Copyright (c) 2014 Ideal Postcodes; Licensed MIT */
 (function($) {
@@ -83,7 +83,7 @@
     // Register callbacks at specific stages
     onLookupSuccess: undefined,
     onLookupError: undefined,
-    onAddressSelected: undefined,
+    onAddressSelected: undefined
 
   };
 
