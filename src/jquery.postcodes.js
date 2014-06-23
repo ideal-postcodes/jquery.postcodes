@@ -91,7 +91,7 @@
     // Register callbacks at specific stages
     onLookupSuccess: undefined,
     onLookupError: undefined,
-    onAddressSelected: undefined,
+    onAddressSelected: undefined
 
   };
 

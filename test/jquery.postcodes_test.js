@@ -139,9 +139,10 @@ QUnit.testStart(function(testDetails){
       ok($dropdown.length, "it has a dropdown menu");
       strictEqual($dropdown.children('option[value=ideal]').text(), defaults.dropdown_select_message, "it has the correct display text");
       $dropdown.val("5").trigger("change"); // Select 3 lined output
-      [defaults.output_fields.line_1, defaults.output_fields.post_town, defaults.output_fields.postcode].forEach(function (elem) {
-        ok($(elem).val(), elem + " has content");
-      });
+      var addressLines = [defaults.output_fields.line_1, defaults.output_fields.post_town, defaults.output_fields.postcode];
+      for (var i = 0; i < addressLines.length; i++) {
+        ok($(addressLines[i]).val(), addressLines[i] + " has content");
+      }
     });
   });
   
@@ -265,9 +266,10 @@ QUnit.testStart(function(testDetails){
       ok($dropdown.length, "it has a dropdown menu");
       strictEqual($dropdown.children('option[value=ideal]').text(), defaults.dropdown_select_message, "it has the correct display text");
       $dropdown.val("5").trigger("change"); // Select 3 lined output
-      [defaults.output_fields.line_1, defaults.output_fields.post_town, defaults.output_fields.postcode].forEach(function (elem) {
-        ok($(elem).val(), elem + " has content");
-      });
+      var addressLines = [defaults.output_fields.line_1, defaults.output_fields.post_town, defaults.output_fields.postcode];
+      for (var i = 0; i < addressLines.length; i++) {
+        ok($(addressLines[i]).val(), addressLines[i] + " has content");
+      }
     });
   });
   
@@ -355,9 +357,10 @@ QUnit.testStart(function(testDetails){
       ok($dropdown.length, "it has a dropdown menu");
       strictEqual($dropdown.children('option[value=ideal]').text(), defaults.dropdown_select_message, "it has the correct display text");
       $dropdown.val("5").trigger("change"); // Select 3 lined output
-      [defaults.output_fields.line_1, defaults.output_fields.post_town, defaults.output_fields.postcode].forEach(function (elem) {
-        ok($(elem).val(), elem + " has content");
-      });
+      var addressLines = [defaults.output_fields.line_1, defaults.output_fields.post_town, defaults.output_fields.postcode];
+      for (var i = 0; i < addressLines.length; i++) {
+        ok($(addressLines[i]).val(), addressLines[i] + " has content");
+      }
     });
   });
   

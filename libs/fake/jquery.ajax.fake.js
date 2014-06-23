@@ -7,7 +7,7 @@
   var fakeWebServices = {}
   var defaults = {
     fake: true,  // is it fake ?
-    wait: 0,  // how long should wait before return ajax response 
+    wait: 0  // how long should wait before return ajax response 
   };
   
   var ajaxFake = function(options) {

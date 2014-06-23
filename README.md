@@ -81,6 +81,9 @@ MIT
 
 ## Changelog
 
+*v1.3.1*
+- Bug fix for IE7
+
 *v1.3.0*
 - Added custom input and lookup button configuration parameters
 

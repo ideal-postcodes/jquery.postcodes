@@ -28,10 +28,6 @@ module.exports = function(grunt) {
       platform: "WIN7"
     }, 
     {
-      browserName: "safari",
-      platform: "WIN7"
-    }, 
-    {
       browserName: "internet explorer",
       platform: "WIN8.1",
       version: "11"
@@ -55,17 +51,9 @@ module.exports = function(grunt) {
       browserName: "internet explorer",
       platform: "XP",
       version: "7"
-    }, 
-    {
-      browserName: "chrome",
-      platform: "OS X 10.9"
-    }, 
+    },
     {
       browserName: "safari",
-      platform: "OS X 10.9"
-    }, 
-    {
-      browserName: "firefox",
       platform: "OS X 10.9"
     }
   ];
@@ -173,7 +161,8 @@ module.exports = function(grunt) {
     connect: {
       server: {
         options: {
-          port: port
+          port: port,
+          keepalive: false
         }
       }
     },
