@@ -142,18 +142,10 @@
         id: this.input_id,
         value: this.input_label
       })
+      .appendTo(this.$context)
       .addClass(this.input_class)
       .val(this.input_label)
       .attr("style", this.input_muted_style)
-      .focus(function () {
-        self.$input.removeAttr('style').val("");
-      })
-      .blur(function () {
-        if (!self.$input.val()) {
-          self.$input.val(self.input_label);
-          self.$input.attr('style', self.input_muted_style);
-        }
-      })
       .submit(function () {
         return false;
       })
@@ -162,7 +154,15 @@
           self.$button.trigger("click");
         }
       })
-      .appendTo(this.$context);
+      .focus(function () {
+        self.$input.removeAttr('style').val("");
+      })
+      .blur(function () {
+        if (!self.$input.val()) {
+          self.$input.val(self.input_label);
+          self.$input.attr('style', self.input_muted_style);
+        }
+      });
     }
     return this.$input;
   };
@@ -182,12 +182,12 @@
         id: this.button_id,
         type: "button"
       })
+      .appendTo(this.$context)
       .addClass(this.button_class)
       .attr("onclick", "return false;")
       .submit(function () {
         return false;
-      })
-      .appendTo(this.$context);
+      });
     }
     this.$button.click(function () {
       var postcode = self.$input.val();

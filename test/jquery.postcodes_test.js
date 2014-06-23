@@ -1,3 +1,31 @@
+var log = [];
+// var testName = "jquery.postcodes test";
+
+QUnit.done(function (test_results) {
+  var tests = [];
+  for(var i = 0, len = log.length; i < len; i++) {
+    var details = log[i];
+    tests.push({
+      name: details.name,
+      result: details.result,
+      expected: details.expected,
+      actual: details.actual,
+      source: details.source
+    });
+  }
+  test_results.tests = tests;
+
+  window.global_test_results = test_results;
+});
+QUnit.testStart(function(testDetails){
+  QUnit.log = function(details){
+    if (!details.result) {
+      details.name = testDetails.name;
+      log.push(details);
+    }
+  };
+});
+
 (function($) {
   "use strict";
 
@@ -61,15 +89,18 @@
     } 
   });
 
-  test('has postcode input box', 6, function () {
+  asyncTest('has postcode input box', 6, function () {
+    start();
     ok($input_field.length, "there appears to be an input");
     ok($lookup_button.length, "there appears to be button");
     strictEqual($lookup_button.html(), defaults.button_label,"button has correct labeling");
     strictEqual($input_field.val(), defaults.input_label,"input has correct labeling");
-    $input_field.trigger("focus");
-    strictEqual($input_field.val(), "","input responds correctly when clicked on");
-    $input_field.trigger("blur");
-    strictEqual($input_field.val(), defaults.input_label, "input responds correctly when defocused with no input");
+    $.when($input_field.triggerHandler("focus")).done(function () {
+      strictEqual($input_field.val(), "","input responds correctly when clicked on");
+      $.when($input_field.triggerHandler("blur")).done(function () {
+        strictEqual($input_field.val(), defaults.input_label, "input responds correctly when defocused with no input");
+      });
+    });
   });
 
   test('postcode validation', 2, function () {

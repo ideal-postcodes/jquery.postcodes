@@ -1,11 +1,105 @@
 "use strict";
 
 module.exports = function(grunt) {
+  var browsers = [
+    {
+      "browserName": "safari",
+      "platform": "OS X 10.9",
+      "deviceName": "iPhone",
+      "device-orientation": "portrait"
+    },
+    {
+      "browserName" : "android",
+      "version": "4.3",
+      "platform": "Linux",
+      "deviceName": "Android",
+      "device-orientation": "portrait"
+    },
+    {
+      browserName: "chrome",
+      platform: "WIN8"
+    }, 
+    {
+      browserName: "firefox",
+      platform: "WIN8"
+    }, 
+    {
+      browserName: "opera",
+      platform: "WIN7"
+    }, 
+    {
+      browserName: "safari",
+      platform: "WIN7"
+    }, 
+    {
+      browserName: "internet explorer",
+      platform: "WIN8.1",
+      version: "11"
+    }, 
+    {
+      browserName: "internet explorer",
+      platform: "WIN8",
+      version: "10"
+    }, 
+    {
+      browserName: "internet explorer",
+      platform: "WIN7",
+      version: "9"
+    }, 
+    {
+      browserName: "internet explorer",
+      platform: "WIN7",
+      version: "8"
+    }, 
+    {
+      browserName: "internet explorer",
+      platform: "XP",
+      version: "7"
+    }, 
+    {
+      browserName: "chrome",
+      platform: "OS X 10.9"
+    }, 
+    {
+      browserName: "safari",
+      platform: "OS X 10.9"
+    }, 
+    {
+      browserName: "firefox",
+      platform: "OS X 10.9"
+    }
+  ];
+  var pkg = grunt.file.readJSON('postcodes.jquery.json');
+  var port = 9999;
+  var buildNumber = process.env.TRAVIS_JOB_ID || Math.floor(Math.random() * 1000);
+  var testUrls = [
+    'http://localhost:' + port + '/test/jquery.postcodes.html?jquery=1.9.1',
+    'http://localhost:' + port + '/test/jquery.postcodes.html?jquery=1.10.2',
+    'http://localhost:' + port + '/test/jquery.postcodes.html?jquery=1.11.1',
+    'http://localhost:' + port + '/test/jquery.postcodes.html?jquery=2.0.3',
+    'http://localhost:' + port + '/test/jquery.postcodes.html?jquery=2.1.1'
+  ];
 
   // Project configuration.
   grunt.initConfig({
     // Metadata.
-    pkg: grunt.file.readJSON('postcodes.jquery.json'),
+    pkg: pkg,
+    "saucelabs-qunit": {
+      all: {
+        options: {
+          urls: testUrls,
+          tunnelTimeout: 5,
+          build: buildNumber,
+          concurrency: 3,
+          browsers: browsers,
+          testname: "jquery.postcodes",
+          tags: ["master"],
+          sauceConfig: {
+            "record-video": false
+          }
+        }
+      }
+    },
     banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
       '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
       '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
@@ -38,15 +132,7 @@ module.exports = function(grunt) {
     qunit: {
       all: {
         options: {
-          urls: [
-            'http://localhost:<%= connect.server.options.port %>/test/jquery.postcodes.html?jquery=1.7.2',
-            'http://localhost:<%= connect.server.options.port %>/test/jquery.postcodes.html?jquery=1.8.3',
-            'http://localhost:<%= connect.server.options.port %>/test/jquery.postcodes.html?jquery=1.9.1',
-            'http://localhost:<%= connect.server.options.port %>/test/jquery.postcodes.html?jquery=1.10.2',
-            'http://localhost:<%= connect.server.options.port %>/test/jquery.postcodes.html?jquery=1.11.0',
-            'http://localhost:<%= connect.server.options.port %>/test/jquery.postcodes.html?jquery=2.0.3',
-            'http://localhost:<%= connect.server.options.port %>/test/jquery.postcodes.html?jquery=2.1.0'
-          ]
+          urls: testUrls
         }
       }
     },
@@ -87,7 +173,7 @@ module.exports = function(grunt) {
     connect: {
       server: {
         options: {
-          port: 7890
+          port: port
         }
       }
     },
@@ -101,9 +187,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-saucelabs');
 
   // Default task.
   grunt.registerTask('default', ['connect', 'jshint', 'qunit', 'clean', 'concat', 'uglify']);
   grunt.registerTask('test', ['connect', 'jshint', 'qunit']);
+  grunt.registerTask('sauce', ['connect', 'jshint', 'saucelabs-qunit']);
 
 };
