@@ -1,7 +1,6 @@
+![Dependency Status](https://david-dm.org/ideal-postcodes/jquery.postcodes.png)
 [![Build Status](https://travis-ci.org/ideal-postcodes/jquery.postcodes.png)](https://travis-ci.org/ideal-postcodes/jquery.postcodes) 
 [![Sauce Test Status](https://saucelabs.com/buildstatus/cablanchard)](https://saucelabs.com/u/cablanchard)
-![Dependency Status](https://david-dm.org/ideal-postcodes/jquery.postcodes.png)
-
 [![Sauce Test Status](https://saucelabs.com/browser-matrix/cablanchard.svg)](https://saucelabs.com/u/cablanchard)
 
 # UK Postcode Lookup jQuery Plugin
