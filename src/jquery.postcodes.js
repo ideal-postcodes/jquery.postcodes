@@ -12,7 +12,6 @@
 (function($) {
   "use strict";
   var idealInstances = [];
-  var globalInstance;
   var defaults = {
     // Please Enter your API Key
     api_key: "",
@@ -404,12 +403,6 @@
       return defaults;
     },
 
-    // Call to register key, configure misc options
-    setup: function (options) {
-      globalInstance = new IdealPostcodes(options);
-      idealInstances.push(globalInstance);
-    },
-
     validatePostcodeFormat: function (postcode) {
       return !!postcode.match(/^[a-zA-Z0-9]{1,4}\s?\d[a-zA-Z]{2}$/) || !!postcode.match(/^id1/i);
     },
@@ -465,15 +458,10 @@
 
   // Creates Postcode lookup field and button when called on <div>
   $.fn.setupPostcodeLookup = function (options) {
-    if (options) {
-      // Create new postcode lookup instance
-      var postcodeLookup = new IdealPostcodes(options);
-      idealInstances.push(postcodeLookup);
-      postcodeLookup.setupPostcodeInput($(this));
-    } else {
-      // Use global postcode lookup instance (created by .setup)
-      globalInstance.setupPostcodeInput($(this));
-    }
+    // Create new postcode lookup instance
+    var postcodeLookup = new IdealPostcodes(options);
+    idealInstances.push(postcodeLookup);
+    postcodeLookup.setupPostcodeInput($(this));
     return this;
   };
 
