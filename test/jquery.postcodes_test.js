@@ -78,18 +78,17 @@ QUnit.testStart(function(testDetails){
 
   module('jQuery#setupPostcodeLookup', { 
     setup: function () {
-      $.idealPostcodes.setup({
+      $('#postcode_lookup_field').setupPostcodeLookup({
         api_key: 'api_key',
         disable_interval: 0
       });
-      $('#postcode_lookup_field').setupPostcodeLookup();
       defaults = $.idealPostcodes.defaults();
       $input_field = $("#"+defaults.input_id);
       $lookup_button = $("#"+defaults.button_id);
     } 
   });
 
-  asyncTest('has postcode input box', 6, function () {
+  asyncTest('has postcode lookup tools setup', 6, function () {
     start();
     ok($input_field.length, "there appears to be an input");
     ok($lookup_button.length, "there appears to be button");
@@ -110,9 +109,42 @@ QUnit.testStart(function(testDetails){
     strictEqual($("#" + defaults.error_message_id).html(), defaults.error_message_invalid_postcode,"it has the correct error message");
   }); 
 
+  module("jQuery#setupPostcodeLookup using pre-initialisation checks", { 
+    setup: function () {
+      $('#postcode_lookup_field').setupPostcodeLookup({
+        // Test key which will return true
+        api_key: "iddqd",
+        checkKey: true,
+        disable_interval: 0,
+        onLookupSuccess: function () {
+          $.event.trigger("completedJsonp");
+        },
+        onLookupError: function () {
+          $.event.trigger("completedJsonp");
+        }
+      });
+      $input_field = $("#"+defaults.input_id);
+      $lookup_button = $("#"+defaults.button_id);
+    } 
+  });
+
+  asyncTest('has postcode lookup tools setup', 6, function () {
+    start();
+    ok($input_field.length, "there appears to be an input");
+    ok($lookup_button.length, "there appears to be button");
+    strictEqual($lookup_button.html(), defaults.button_label,"button has correct labeling");
+    strictEqual($input_field.val(), defaults.input_label,"input has correct labeling");
+    $.when($input_field.triggerHandler("focus")).done(function () {
+      strictEqual($input_field.val(), "","input responds correctly when clicked on");
+      $.when($input_field.triggerHandler("blur")).done(function () {
+        strictEqual($input_field.val(), defaults.input_label, "input responds correctly when defocused with no input");
+      });
+    });
+  });
+
   module("Postcode lookups", { 
     setup: function () {
-      $.idealPostcodes.setup({
+      $('#postcode_lookup_field').setupPostcodeLookup({
         api_key: apiKey,
         disable_interval: 0,
         onLookupSuccess: function () {
@@ -122,7 +154,6 @@ QUnit.testStart(function(testDetails){
           $.event.trigger("completedJsonp");
         }
       });
-      $('#postcode_lookup_field').setupPostcodeLookup();
       $input_field = $("#"+defaults.input_id);
       $lookup_button = $("#"+defaults.button_id);
     } 
@@ -237,7 +268,7 @@ QUnit.testStart(function(testDetails){
         id: inputId
       })
       .appendTo($("#qunit-fixture"));
-      $.idealPostcodes.setup({
+      $('#postcode_lookup_field').setupPostcodeLookup({
         api_key: apiKey,
         input: "#" + inputId,
         disable_interval: 0,
@@ -248,7 +279,6 @@ QUnit.testStart(function(testDetails){
           $.event.trigger("completedJsonp");
         }
       });
-      $('#postcode_lookup_field').setupPostcodeLookup();
       $input_field = $("#"+inputId);
       $lookup_button = $("#"+defaults.button_id);
     } 
@@ -331,7 +361,7 @@ QUnit.testStart(function(testDetails){
         href: ""
       })
       .appendTo($("#qunit-fixture"));
-      $.idealPostcodes.setup({
+      $('#postcode_lookup_field').setupPostcodeLookup({
         api_key: apiKey,
         button: "#" + buttonId,
         disable_interval: 0,
@@ -342,7 +372,6 @@ QUnit.testStart(function(testDetails){
           $.event.trigger("completedJsonp");
         }
       });
-      $('#postcode_lookup_field').setupPostcodeLookup();
       $input_field = $("#"+defaults.input_id);
       $lookup_button = $("#"+buttonId);
     } 
@@ -409,7 +438,7 @@ QUnit.testStart(function(testDetails){
 
   module("Callbacks to postcode lookup", { 
     setup: function () {
-      $.idealPostcodes.setup({
+      $('#postcode_lookup_field').setupPostcodeLookup({
         api_key: apiKey,
         disable_interval: 0,
         onLookupSuccess: function (data) {
@@ -419,7 +448,6 @@ QUnit.testStart(function(testDetails){
           $.event.trigger("addressSelected", [selectedData]);
         }
       });
-      $('#postcode_lookup_field').setupPostcodeLookup();
       $input_field = $("#"+defaults.input_id);
       $lookup_button = $("#"+defaults.button_id);
     } 
