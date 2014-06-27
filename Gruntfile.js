@@ -1,82 +1,20 @@
 "use strict";
 
-
-
-
 module.exports = function(grunt) {
-  var browsers = [
-    {
-      "browserName": "safari",
-      "platform": "OS X 10.9",
-      "deviceName": "iPhone",
-      "device-orientation": "portrait"
-    },
-    {
-      "browserName" : "android",
-      "version": "4.3",
-      "platform": "Linux",
-      "deviceName": "Android",
-      "device-orientation": "portrait"
-    },
-    {
-      browserName: "chrome",
-      platform: "WIN8"
-    }, 
-    {
-      browserName: "firefox",
-      platform: "WIN8"
-    }, 
-    {
-      browserName: "opera",
-      platform: "WIN7"
-    }, 
-    {
-      browserName: "internet explorer",
-      platform: "WIN8.1",
-      version: "11"
-    }, 
-    {
-      browserName: "internet explorer",
-      platform: "WIN8",
-      version: "10"
-    }, 
-    {
-      browserName: "internet explorer",
-      platform: "WIN7",
-      version: "9"
-    }, 
-    {
-      browserName: "internet explorer",
-      platform: "WIN7",
-      version: "8"
-    }, 
-    {
-      browserName: "internet explorer",
-      platform: "XP",
-      version: "7"
-    },
-    {
-      browserName: "safari",
-      platform: "OS X 10.9"
-    }
-  ];
-  var pkg = grunt.file.readJSON('postcodes.jquery.json');
   var port = 9999;
-  var buildNumber = process.env.TRAVIS_JOB_ID || Math.floor(Math.random() * 1000);
-  var testUrls = [
-    'http://localhost:' + port + '/test/jquery.postcodes.html?jquery=1.9.1',
-    'http://localhost:' + port + '/test/jquery.postcodes.html?jquery=1.10.2',
-    'http://localhost:' + port + '/test/jquery.postcodes.html?jquery=1.11.1',
-    'http://localhost:' + port + '/test/jquery.postcodes.html?jquery=2.0.3',
-    'http://localhost:' + port + '/test/jquery.postcodes.html?jquery=2.1.1'
-  ];
   var live = process.env.LIVE_API;
-  if (live) {
-    for (var i = 0; i < testUrls.length; i++) {
+  var buildNumber = process.env.TRAVIS_JOB_ID || Math.floor(Math.random() * 1000);
+  var pkg = grunt.file.readJSON('postcodes.jquery.json');
+  var testConfig = grunt.file.readJSON('test/config.json');
+  var browsers = testConfig.testBrowsers;
+  var jqueryBuilds = testConfig.jqueryBuilds;
+  var testUrls = [];
+  for (var i = 0; i < jqueryBuilds.length; i++) {
+    testUrls.push('http://localhost:' + port + '/test/jquery.postcodes.html?jquery=' + jqueryBuilds[i]);
+    if (live) {
       testUrls[i] += "&live=true";
     }
   }
-  
 
   // Project configuration.
   grunt.initConfig({
