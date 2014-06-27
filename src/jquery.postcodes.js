@@ -88,11 +88,13 @@
     // Debug - Set to true to pipe API error messages to client
     debug_mode: false,
 
+    // Check if key is usable - will not initialise if set to true and key not usable
+    check_key: false,
+
     // Register callbacks at specific stages
     onLookupSuccess: undefined,
     onLookupError: undefined,
     onAddressSelected: undefined
-
   };
 
   function IdealPostcodes (options) {
@@ -422,6 +424,24 @@
             data: {
               api_key: api_key
             },
+            dataType: 'jsonp',
+            timeout: 5000,
+            success: success
+          };
+
+      if (error) {
+        options.error = error;
+      }
+
+      $.ajax(options);
+    },
+
+    checkKey: function (api_key, success, error) {
+      var endpoint = defaults.api_endpoint,
+          resource = "keys",
+          url = [endpoint, resource, api_key].join('/'),
+          options = {
+            url: url,
             dataType: 'jsonp',
             timeout: 5000,
             success: success

@@ -197,6 +197,26 @@
       message: "Postcode Not Found"
     }
   });
+
+  fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/keys/iddqd', function(data) {
+    return {
+      "result": {
+        "available": true
+      },
+      "code":2000,
+      "message":"Success"
+    };
+  });
+
+  fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/keys/idkfa', function(data) {
+    return {
+      "result": {
+        "available": false
+      },
+      "code":2000,
+      "message":"Success"
+    };
+  });
   
 })(jQuery);
 

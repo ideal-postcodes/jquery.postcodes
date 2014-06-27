@@ -1,5 +1,8 @@
 "use strict";
 
+
+
+
 module.exports = function(grunt) {
   var browsers = [
     {
@@ -67,6 +70,13 @@ module.exports = function(grunt) {
     'http://localhost:' + port + '/test/jquery.postcodes.html?jquery=2.0.3',
     'http://localhost:' + port + '/test/jquery.postcodes.html?jquery=2.1.1'
   ];
+  var live = process.env.LIVE_API;
+  if (live) {
+    for (var i = 0; i < testUrls.length; i++) {
+      testUrls[i] += "&live=true";
+    }
+  }
+  
 
   // Project configuration.
   grunt.initConfig({

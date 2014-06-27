@@ -444,9 +444,29 @@ QUnit.testStart(function(testDetails){
       start();
       equal(data.code, 2000);
       notEqual(data.result.length, 0);
-      notEqual(data.result[0].postcode, "ID11QD");
+      equal(data.result[0].postcode, "ID1 1QD");
     };
     $.idealPostcodes.lookupPostcode("ID11QD", apiKey, success);
+  });
+
+  module('$.checkKey');
+
+  asyncTest('Checking a usable key', 2, function () {
+    var success = function (data) {
+      start();
+      equal(data.code, 2000);
+      equal(data.result.available, true);
+    };
+    $.idealPostcodes.checkKey("iddqd", success);
+  });
+
+  asyncTest('Checking a unusable key', 2, function () {
+    var success = function (data) {
+      start();
+      equal(data.code, 2000);
+      equal(data.result.available, false);
+    };
+    $.idealPostcodes.checkKey("idkfa", success);
   });
 
 }(jQuery));
