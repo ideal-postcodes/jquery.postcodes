@@ -210,6 +210,10 @@
    */
 
   IdealPostcodes.prototype.disableLookup = function (message) {
+    // Cancel if custom button
+    if (this.button) {
+      return;
+    }
     message = message || this.button_disabled_message;
     this.$button.prop('disabled', true).html(message);
   };
@@ -219,6 +223,10 @@
    */
 
   IdealPostcodes.prototype.enableLookup = function () {
+    // Cancel if custom button
+    if (this.button) {
+      return;
+    }
     var self = this;
     if (self.disable_interval === 0) {
       self.$button.prop('disabled', false).html(self.button_label);
