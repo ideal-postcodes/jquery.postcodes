@@ -91,6 +91,8 @@
     check_key: false,
 
     // Register callbacks at specific stages
+    onLoaded: undefined,
+    onFailedCheck: undefined,
     onLookupSuccess: undefined,
     onLookupError: undefined,
     onAddressSelected: undefined
@@ -403,11 +405,18 @@
       return defaults;
     },
 
+    // Simple validation for postcode. Excludes test postcodes starting with ID1
     validatePostcodeFormat: function (postcode) {
       return !!postcode.match(/^[a-zA-Z0-9]{1,4}\s?\d[a-zA-Z]{2}$/) || !!postcode.match(/^id1/i);
     },
 
-    // Lookup postcode on API
+    /*
+     * Perform a Postcode Lookup
+     * - postcode: (string) Postcode to lookup, case and space insensitive
+     * - api_key: (string) API Key required
+     * - success: (function) Callback invoked upon successful request
+     * - error: (function) Optional callback invoked upon failed HTTP request
+     */
     lookupPostcode: function (postcode, api_key, success, error) {
       var endpoint = defaults.api_endpoint,
           resource = "postcodes",
@@ -429,6 +438,12 @@
       $.ajax(options);
     },
 
+    /*
+     * Checks whether key can be used
+     * - api_key: (string) API Key to test
+     * - success: (function) Callback invoked when key is available
+     * - error: (function) Optional callback invoked when key is not available or HTTP request failed
+     */
     checkKey: function (api_key, success, error) {
       var endpoint = defaults.api_endpoint,
           resource = "keys",
@@ -437,7 +452,15 @@
             url: url,
             dataType: 'jsonp',
             timeout: 5000,
-            success: success
+            success: function (data) {
+              if (data.result.available) {
+                success();
+              } else {
+                if (error) {
+                  error();
+                }
+              }
+            }
           };
 
       if (error) {
@@ -453,16 +476,32 @@
         idealInstances[i].removeAll();
       }
     }
-
   };
 
   // Creates Postcode lookup field and button when called on <div>
   $.fn.setupPostcodeLookup = function (options) {
-    // Create new postcode lookup instance
-    var postcodeLookup = new IdealPostcodes(options);
-    idealInstances.push(postcodeLookup);
-    postcodeLookup.setupPostcodeInput($(this));
-    return this;
+    var self = this;
+    var initPlugin = function () {
+      var postcodeLookup = new IdealPostcodes(options);
+      idealInstances.push(postcodeLookup);
+      postcodeLookup.setupPostcodeInput($(self));
+      if ($.isFunction(options.onLoaded)) {
+        options.onLoaded.call(self);
+      }
+    };
+
+    if (options.check_key) {
+      $.idealPostcodes.checkKey(options.api_key, initPlugin,
+        function () {
+          if ($.isFunction(options.onFailedCheck)) {
+            options.onFailedCheck.call(self);
+          }
+        }
+      );
+    } else {
+      initPlugin();
+    }
+    return self;
   };
 
 }(jQuery));
