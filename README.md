@@ -80,6 +80,11 @@ MIT
 
 ## Changelog
 
+*v2.0.0*
+- Deprecated old configuration method of .setup() followed by $.fn.setupPostcodeLookup
+- Added pre-initialisation checks
+- Added callbacks: onLoaded, onCheckFailed
+
 *v1.3.1*
 - Bug fix for IE7
 
