@@ -198,6 +198,13 @@
     }
   });
 
+  fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/postcodes/ID1KFA', function(data) {
+    return {
+      code: 4040,
+      message: "Postcode Not Found"
+    }
+  });
+
   fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/keys/iddqd', function(data) {
     return {
       "result": {
