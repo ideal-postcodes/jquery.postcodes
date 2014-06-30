@@ -16,7 +16,7 @@
     "grunt-contrib-clean": "~0.4.0",
     "grunt": "~0.4.1",
     "grunt-contrib-connect": "~0.8.0",
-    "grunt-saucelabs": "~8.0.2"
+    "grunt-saucelabs": "~8.1.0"
   },
   "readmeFilename": "README.md",
   "description": "Add UK address lookups with a simple postcode input field on any web form with the Ideal-Postcodes.co.uk API. Ideal Postcodes uses Royal Mail's addressing database, the Postcode Address File (PAF).",
