@@ -24,7 +24,6 @@ module.exports = function(grunt) {
       all: {
         options: {
           urls: testUrls,
-          tunnelTimeout: 5,
           build: buildNumber,
           concurrency: 3,
           browsers: browsers,
