@@ -34,7 +34,7 @@ The plugin provides addresses according to [Royal Mail's Addressing Guidelines](
 <script>
 $('#postcode_lookup_field').setupPostcodeLookup({
 	// Set your API key
-	api_key: 'ak_Iddqd8Idkfa7Idchoppers8',
+	api_key: 'iddqd',
 	// Pass in CSS selectors pointing to your input fields to pipe the results
 	output_fields: {
 		line_1: '#first_line',
@@ -77,6 +77,9 @@ Our test postcodes are:
 MIT
 
 ## Changelog
+
+*v2.1.0*
+- Added option to strip organisation name from address lines
 
 *v2.0.0*
 - Deprecated old configuration method of .setup() followed by $.fn.setupPostcodeLookup

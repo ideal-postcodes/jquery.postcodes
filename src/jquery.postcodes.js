@@ -11,7 +11,7 @@
 
 (function($) {
   "use strict";
-  var idealInstances = [];
+  var pluginInstances = [];
   var defaults = {
     // Please Enter your API Key
     api_key: "",
@@ -89,6 +89,9 @@
 
     // Check if key is usable - will not initialise if set to true and key not usable
     check_key: false,
+
+    // Removes Organisation name from address lines
+    removeOrganisation: false,
 
     // Register callbacks at specific stages
     onLoaded: undefined,
@@ -296,7 +299,7 @@
           } 
         }
         if (self.onLookupSuccess) {
-          self.onLookupSuccess(data);
+          self.onLookupSuccess.call(self, data);
         }
       }, 
       // Unsuccessful result
@@ -304,7 +307,7 @@
         self.setErrorMessage("Unable to connect to server");
         self.enableLookup();
         if (self.onLookupError) {
-          self.onLookupError();
+          self.onLookupError.call(self);
         }
       }
     );
@@ -319,13 +322,11 @@
   IdealPostcodes.prototype.setDropDown = function (data) {
     var self = this;
 
-    // Remove dropdown menu
     if (this.$dropdown && this.$dropdown.length) {
       this.$dropdown.remove();
       delete this.$dropdown;
     }
 
-    // Return if data undefined
     if (!data) {
       return;
     }
@@ -350,11 +351,17 @@
 
     dropDown.appendTo(self.$context)
     .change(function () {
+      var address;
       var index = $(this).val();
       if (index >= 0) {
-        self.setAddressFields(data[index]);
+        if (self.removeOrganisation) {
+          address = removeOrganisation(data[index]);
+        } else {
+          address = data[index];
+        }
+        self.setAddressFields(address);
         if (self.onAddressSelected) {
-          self.onAddressSelected.call(this, data[index]);
+          self.onAddressSelected.call(self, address);
         }
       }
     });
@@ -404,6 +411,23 @@
     for (var key in this.$output_fields) {
       this.$output_fields[key].val(data[key] || "");
     }
+  };
+
+  /* 
+   * Utility method to remove organisation from Address result
+   *
+   * All organisations will have their name as first line
+   */
+
+  var removeOrganisation = function (address) {
+    if (address.organisation_name.length !== 0 &&
+        (address.line_1 === address.organisation_name)) {
+      // Shift addresses up
+      address.line_1 = address.line_2;
+      address.line_2 = address.line_3;
+      address.line_3 = "";
+    }
+    return address;
   };
 
   $.idealPostcodes = {
@@ -479,9 +503,9 @@
     },
 
     clearAll: function () {
-      var length = idealInstances.length;
+      var length = pluginInstances.length;
       for (var i = 0; i < length; i += 1) {
-        idealInstances[i].removeAll();
+        pluginInstances[i].removeAll();
       }
     }
   };
@@ -491,7 +515,7 @@
     var self = this;
     var initPlugin = function () {
       var postcodeLookup = new IdealPostcodes(options);
-      idealInstances.push(postcodeLookup);
+      pluginInstances.push(postcodeLookup);
       postcodeLookup.setupPostcodeInput($(self));
       if ($.isFunction(options.onLoaded)) {
         options.onLoaded.call(self);

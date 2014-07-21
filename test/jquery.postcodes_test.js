@@ -1,3 +1,24 @@
+/*
+  ======== A Handy Little QUnit Reference ========
+  http://api.qunitjs.com/
+
+  Test methods:
+    module(name, {[setup][ ,teardown]})
+    test(name, callback)
+    expect(numberOfAssertions)
+    stop(increment)
+    start(decrement)
+  Test assertions:
+    ok(value, [message])
+    equal(actual, expected, [message])
+    notEqual(actual, expected, [message])
+    deepEqual(actual, expected, [message])
+    notDeepEqual(actual, expected, [message])
+    strictEqual(actual, expected, [message])
+    notStrictEqual(actual, expected, [message])
+    throws(block, [expected], [message])
+*/
+
 var log = [];
 // var testName = "jquery.postcodes test";
 
@@ -28,27 +49,6 @@ QUnit.testStart(function(testDetails){
 
 (function($) {
   "use strict";
-
-  /*
-    ======== A Handy Little QUnit Reference ========
-    http://api.qunitjs.com/
-
-    Test methods:
-      module(name, {[setup][ ,teardown]})
-      test(name, callback)
-      expect(numberOfAssertions)
-      stop(increment)
-      start(decrement)
-    Test assertions:
-      ok(value, [message])
-      equal(actual, expected, [message])
-      notEqual(actual, expected, [message])
-      deepEqual(actual, expected, [message])
-      notDeepEqual(actual, expected, [message])
-      strictEqual(actual, expected, [message])
-      notStrictEqual(actual, expected, [message])
-      throws(block, [expected], [message])
-  */
 
   var $input_field;
   var $lookup_button;
@@ -469,7 +469,7 @@ QUnit.testStart(function(testDetails){
     } 
   });
 
-  test("onLoaded callback should work", 2, function () {
+  test("onLoaded callback should be invoked when plugin loaded", 2, function () {
     var $widget = $(".myNewRandomClass");
     equal($widget.length, 1);
     equal($widget[0].id, "postcode_lookup_field");
@@ -489,18 +489,69 @@ QUnit.testStart(function(testDetails){
       });
       $input_field = $("#"+defaults.input_id);
       $lookup_button = $("#"+defaults.button_id);
-    } 
+    },
+    teardown: function () {
+      $(document).off("completedJsonp").off("addressSelected");
+    }
   });
 
   asyncTest("onLookupSuccess and onAddressSelected triggered by postcode lookup callback and clicking on an address respectively", 1, function () {
+    var addresses;
     $input_field.val("ID11QD");
     $lookup_button.trigger("click");
     $(document).off("completedJsonp").on("completedJsonp", function (e, data) {
-      $(document).off("addressSelected").on("addressSelected", function (e, selectedData) {
-        start();
-        deepEqual(data.result[2], selectedData);
-      });
+      addresses = data;
       $("#idpc_dropdown").val(2).trigger("change");
+    });
+    $(document).off("addressSelected").on("addressSelected", function (e, selectedData) {
+      start();
+      deepEqual(addresses.result[2], selectedData);
+    });
+  });
+
+  module("Remove Organisation from address lines", {
+    setup: function () {
+      $("#postcode_lookup_field").setupPostcodeLookup({
+        api_key: apiKey,
+        disable_interval: 0,
+        removeOrganisation: true,
+        onLookupSuccess: function (data) {
+          $.event.trigger("completedJsonp", [data]);
+        },
+        onAddressSelected: function (selectedData) {
+          $.event.trigger("addressSelected", [selectedData]);
+        }
+      });
+      $input_field = $("#"+defaults.input_id);
+      $lookup_button = $("#"+defaults.button_id);
+    } 
+  });
+
+  asyncTest("strips Organisation name from address lines", 5, function () {
+    $input_field.val("ID11QD");
+    $lookup_button.trigger("click");
+    $(document).off("completedJsonp").on("completedJsonp", function (event, response) {
+      start();
+      var organisationAddress, organisationIndex;
+      $dropdown = $("#"+defaults.dropdown_id);
+      ok($dropdown.length, "it has a dropdown menu");
+
+      $.each(response.result, function (index, address) {
+        if (address.organisation_name.length !== 0) {
+          organisationAddress = address;
+          organisationIndex = index;
+        }
+      });
+
+      ok(organisationAddress);
+      
+      // Test that organisation address should not be in address lines
+
+      $dropdown.val(organisationIndex.toString()).trigger("change"); // Select organisation address
+      var addressLines = [defaults.output_fields.line_1, defaults.output_fields.line_2, defaults.output_fields.line_3];
+      $.each(addressLines, function (index, line) {
+        notEqual($(line).val(), organisationAddress.organisation_name, "does not contain organisation name");
+      });
     });
   });
   
