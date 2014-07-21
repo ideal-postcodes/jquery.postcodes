@@ -35,6 +35,6 @@
   "author": "Ideal Postcodes",
   "license": "MIT",
   "dependencies": {
-    "request": "~2.36.0"
+    "request": "~2.37.0"
   }
 }
