@@ -514,7 +514,7 @@ QUnit.testStart(function(testDetails){
       $("#postcode_lookup_field").setupPostcodeLookup({
         api_key: apiKey,
         disable_interval: 0,
-        removeOrganisation: true,
+        remove_organisation: true,
         onLookupSuccess: function (data) {
           $.event.trigger("completedJsonp", [data]);
         },

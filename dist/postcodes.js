@@ -83,7 +83,7 @@
     check_key: false,
 
     // Removes Organisation name from address lines
-    removeOrganisation: false,
+    remove_organisation: false,
 
     // Register callbacks at specific stages
     onLoaded: undefined,
@@ -346,7 +346,7 @@
       var address;
       var index = $(this).val();
       if (index >= 0) {
-        if (self.removeOrganisation) {
+        if (self.remove_organisation) {
           address = removeOrganisation(data[index]);
         } else {
           address = data[index];
