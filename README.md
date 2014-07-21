@@ -1,11 +1,11 @@
-![Dependency Status](https://david-dm.org/ideal-postcodes/jquery.postcodes.png)
-[![Build Status](https://travis-ci.org/ideal-postcodes/jquery.postcodes.png)](https://travis-ci.org/ideal-postcodes/jquery.postcodes) 
-[![Sauce Test Status](https://saucelabs.com/buildstatus/cablanchard)](https://saucelabs.com/u/cablanchard)
-[![Sauce Test Status](https://saucelabs.com/browser-matrix/cablanchard.svg)](https://saucelabs.com/u/cablanchard)
-
 # UK Postcode Lookup jQuery Plugin
 
 Add UK address lookups with a simple postcode input field on any web form with the Ideal-Postcodes.co.uk API. Ideal Postcodes uses Royal Mail's addressing database, the Postcode Address File (PAF).
+
+![Dependency Status](https://david-dm.org/ideal-postcodes/jquery.postcodes.png) 
+[![Build Status](https://travis-ci.org/ideal-postcodes/jquery.postcodes.png)](https://travis-ci.org/ideal-postcodes/jquery.postcodes) 
+[![Sauce Test Status](https://saucelabs.com/buildstatus/cablanchard)](https://saucelabs.com/u/cablanchard)
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/cablanchard.svg)](https://saucelabs.com/u/cablanchard)
 
 PAF is licensed from the Royal Mail and incurs a license fee per lookup. We make PAF available to the public at **2p** per [external](https://ideal-postcodes.co.uk/termsandconditions#external) lookup.
 
@@ -47,15 +47,15 @@ $('#postcode_lookup_field').setupPostcodeLookup({
 </script>
 ```
 
-## Additional Configuration
+## Documentation & Configuration
 
-You can extract more information on each address by passing additional properties into the output_fields object. The complete list of available data fields can be found [here](https://ideal-postcodes.co.uk/documentation/paf-data).
+[Latest documentation can be found at ideal-postcodes.co.uk](https://ideal-postcodes.co.uk/documentation/jquery-plugin)
 
-You can also configure the css classes of the generated lookup elements for custom styling. [Read our documentation](https://ideal-postcodes.co.uk/documentation/jquery-plugin) to find out more. [Or play with a jsFiddle](http://jsfiddle.net/ideal_postcodes/GrScV/) to familiarise yourself.
+This plugin also allows you to draw additional addressing information. The complete list of available data fields can be found [here](https://ideal-postcodes.co.uk/documentation/paf-data).
 
-## Documentation
+There are a lot of ways to configure the plugin to create an address lookup feature that suits most use cases. The documentation will guide you through how to use additional configuration options like customised styling, customised inputs & triggers, useful callbacks, key checking, etc.
 
-[More documentation can be found at ideal-postcodes.co.uk](https://ideal-postcodes.co.uk/documentation/jquery-plugin)
+For examples of the more advanced ways you can configure the plugin take a look at [ideal-postcodes.co.uk/jquery](https://ideal-postcodes.co.uk/jquery).
 
 ## Testing
 
@@ -65,9 +65,7 @@ Run automated tests with
 grunt test
 ```
 
-We recommend using jQuery 1.9.x or greater
-
-This plugin has been tested against jQuery 1.9.x, 1.10.x, 1.11.x, 2.0.x and 2.1.x.
+Please use jQuery 1.9.x or higher. This plugin has been tested against jQuery 1.9.x, 1.10.x, 1.11.x, 2.0.x and 2.1.x.
 
 Our test postcodes are:
 - **ID1 1QD** Returns a successful postcode lookup response (2000)
