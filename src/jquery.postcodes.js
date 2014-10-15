@@ -200,7 +200,6 @@
       if (self.last_lookup !== postcode) {
         self.last_lookup = postcode;
         self.disableLookup();
-        self.clearAll();
         self.lookupPostcode(postcode);
       }
       return false;
@@ -288,6 +287,7 @@
 
         if (self.response_code === 2000) {
           self.last_lookup = postcode;
+          self.clearAll();
           self.setDropDown(self.result);
         } else if (self.response_code === 4040) {
           self.setErrorMessage(self.error_message_not_found); 
