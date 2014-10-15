@@ -199,6 +199,7 @@
       var postcode = self.$input.val();
       if (self.last_lookup !== postcode) {
         self.last_lookup = postcode;
+        self.clearAll();
         self.disableLookup();
         self.lookupPostcode(postcode);
       }
@@ -247,7 +248,6 @@
   IdealPostcodes.prototype.clearAll = function () {
     this.setDropDown();
     this.setErrorMessage();
-    this.setAddressFields();
   };
 
   /*
@@ -287,7 +287,6 @@
 
         if (self.response_code === 2000) {
           self.last_lookup = postcode;
-          self.clearAll();
           self.setDropDown(self.result);
         } else if (self.response_code === 4040) {
           self.setErrorMessage(self.error_message_not_found); 
