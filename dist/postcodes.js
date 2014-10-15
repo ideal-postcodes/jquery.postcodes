@@ -1,4 +1,4 @@
-/*! Ideal Postcodes jQuery Plugin - v2.1.0 - 2014-07-21
+/*! Ideal Postcodes jQuery Plugin - v2.1.1 - 2014-10-15
 * https://github.com/ideal-postcodes/jquery.postcodes
 * Copyright (c) 2014 Ideal Postcodes; Licensed MIT */
 (function($) {
@@ -191,8 +191,8 @@
       var postcode = self.$input.val();
       if (self.last_lookup !== postcode) {
         self.last_lookup = postcode;
-        self.disableLookup();
         self.clearAll();
+        self.disableLookup();
         self.lookupPostcode(postcode);
       }
       return false;
@@ -240,7 +240,6 @@
   IdealPostcodes.prototype.clearAll = function () {
     this.setDropDown();
     this.setErrorMessage();
-    this.setAddressFields();
   };
 
   /*
