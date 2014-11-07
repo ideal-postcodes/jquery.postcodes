@@ -512,26 +512,32 @@
   // Creates Postcode lookup field and button when called on <div>
   $.fn.setupPostcodeLookup = function (options) {
     var self = this;
+
+    // Initialise plugin on all DOM elements
     var initPlugin = function () {
-      var postcodeLookup = new IdealPostcodes(options);
-      pluginInstances.push(postcodeLookup);
-      postcodeLookup.setupPostcodeInput($(self));
-      if ($.isFunction(options.onLoaded)) {
-        options.onLoaded.call(self);
+      $.each(self, function (index, context) {
+        var postcodeLookup = new IdealPostcodes(options);
+        pluginInstances.push(postcodeLookup);
+        postcodeLookup.setupPostcodeInput($(context));
+        if ($.isFunction(options.onLoaded)) {
+          options.onLoaded.call(self);
+        }
+      });
+    };
+
+    var failedKeyCheck = function () {
+      if ($.isFunction(options.onFailedCheck)) {
+        options.onFailedCheck.call(self);
       }
     };
 
-    if (options.check_key) {
-      $.idealPostcodes.checkKey(options.api_key, initPlugin,
-        function () {
-          if ($.isFunction(options.onFailedCheck)) {
-            options.onFailedCheck.call(self);
-          }
-        }
-      );
+    // Check if key is usable if necessary
+    if (options.check_key && self.length !== 0) {
+      $.idealPostcodes.checkKey(options.api_key, initPlugin, failedKeyCheck);
     } else {
       initPlugin();
     }
+
     return self;
   };
 
