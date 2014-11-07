@@ -12,6 +12,7 @@
 (function($) {
   "use strict";
   var pluginInstances = [];
+  var keyCheckCache = {};
   var defaults = {
     // Please Enter your API Key
     api_key: "",
@@ -436,6 +437,9 @@
       return defaults;
     },
 
+    // Expose key check cache
+    keyCheckCache: keyCheckCache,
+
     // Simple validation for postcode. Excludes test postcodes starting with ID1
     validatePostcodeFormat: function (postcode) {
       return !!postcode.match(/^[a-zA-Z0-9]{1,4}\s?\d[a-zA-Z]{2}$/) || !!postcode.match(/^id1/i);
@@ -475,28 +479,69 @@
      * - success: (function) Callback invoked when key is available
      * - error: (function) Optional callback invoked when key is not available or HTTP request failed
      */
-    checkKey: function (api_key, success, error) {
-      var endpoint = defaults.api_endpoint,
-          resource = "keys",
-          url = [endpoint, resource, api_key].join('/'),
-          options = {
-            url: url,
-            dataType: 'jsonp',
-            timeout: 5000,
-            success: function (data) {
-              if (data.result.available) {
-                success();
-              } else {
-                if (error) {
-                  error();
-                }
-              }
-            }
-          };
 
-      if (error) {
-        options.error = error;
+    // Changes - need to cache
+    // If no cache - register callbacks and init ajax
+
+    checkKey: function (api_key, success, error) {
+      error = error || function () {};
+
+      var cache = keyCheckCache[api_key];
+
+      if (typeof cache === 'boolean') {
+        // Result is cached
+        if (cache) {
+          return success();
+        } else {
+          return error();
+        }
+      } else if (typeof cache === 'object') {
+        // Push callbacks onto cache
+        keyCheckCache[api_key]["success"].push(success);
+        keyCheckCache[api_key]["error"].push(error);
+        return;
+      } else {
+        // Cache callbacks
+        keyCheckCache[api_key] = {
+          "success": [success],
+          "error": [error]
+        };
       }
+
+      var endpoint = defaults.api_endpoint;
+      var resource = "keys";
+      var url = [endpoint, resource, api_key].join('/');
+      var options = {
+        url: url,
+        dataType: 'jsonp',
+        timeout: 5000
+      };
+
+      // Save to cache and invoke all callbacks
+      options.success = function (data) {
+        if (data && data.result && data.result.available) {
+          var successStack = keyCheckCache[api_key]["success"];
+          keyCheckCache[api_key] = true;
+          $.each(successStack, function (index, callback) {
+            callback.call(null, data);
+          });
+        } else {
+          var errorStack = keyCheckCache[api_key]["error"];
+          keyCheckCache[api_key] = false;
+          $.each(errorStack, function (index, callback) {
+            callback.call();
+          });
+        }
+      };
+
+      // Invoke error callbacks
+      options.error = function () {
+        var errorStack = keyCheckCache[api_key]["error"];
+        delete keyCheckCache[api_key];
+        $.each(errorStack, function (index, callback) {
+          callback.call();
+        });
+      };
 
       $.ajax(options);
     },

@@ -252,6 +252,13 @@
     };
   });
 
+  fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/keys/idd', function(data) {
+    return {
+        code: 4010,
+        message: "Invalid Key. For more information see http://ideal-postcodes.co.uk/documentation/response-codes#4010"
+    }
+  });
+
   fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/keys/idkfa', function(data) {
     return {
       "result": {
