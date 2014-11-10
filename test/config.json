@@ -1,17 +1,6 @@
 {
-  "jqueryBuilds": ["1.9.1", "1.10.2", "1.11.1", "2.0.3", "2.1.1"],
+  "jqueryBuilds": ["1.9.1", "1.10.2", "1.11.1","2.0.3", "2.1.1"],
   "testBrowsers" : [{
-    "browserName": "safari",
-    "platform": "OS X 10.9",
-    "deviceName": "iPhone",
-    "device-orientation": "portrait"
-  }, {
-    "browserName" : "android",
-    "version": "4.3",
-    "platform": "Linux",
-    "deviceName": "Android",
-    "device-orientation": "portrait"
-  }, {
     "browserName": "chrome",
     "platform": "WIN8"
   }, {
