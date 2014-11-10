@@ -1,9 +1,15 @@
-/*! Ideal Postcodes jQuery Plugin - v2.1.1 - 2014-10-15
+/*! Ideal Postcodes jQuery Plugin - v2.1.2 - 2014-11-10
 * https://github.com/ideal-postcodes/jquery.postcodes
 * Copyright (c) 2014 Ideal Postcodes; Licensed MIT */
 (function($) {
   "use strict";
+  // Cache for all new instances of the plugin
   var pluginInstances = [];
+
+  // Caches calls to the /v1/keys API
+  var keyCheckCache = {};
+
+  // Default settings
   var defaults = {
     // Please Enter your API Key
     api_key: "",
@@ -86,11 +92,11 @@
     remove_organisation: false,
 
     // Register callbacks at specific stages
-    onLoaded: undefined,
-    onFailedCheck: undefined,
-    onLookupSuccess: undefined,
-    onLookupError: undefined,
-    onAddressSelected: undefined
+    onLoaded: undefined,          // When plugin is initialised
+    onFailedCheck: undefined,     // When key check fails (requires check_key: true)
+    onLookupSuccess: undefined,   // When a lookup succeeds, E.g. Server responds that Postcode is found or doesn't exist
+    onLookupError: undefined,     // When a lookup fails, can be a connection issue or bad request   
+    onAddressSelected: undefined  // User has clicked an address in dropdown
   };
 
   function IdealPostcodes (options) {
@@ -428,6 +434,9 @@
       return defaults;
     },
 
+    // Expose key check cache for testing
+    keyCheckCache: keyCheckCache,
+
     // Simple validation for postcode. Excludes test postcodes starting with ID1
     validatePostcodeFormat: function (postcode) {
       return !!postcode.match(/^[a-zA-Z0-9]{1,4}\s?\d[a-zA-Z]{2}$/) || !!postcode.match(/^id1/i);
@@ -467,28 +476,69 @@
      * - success: (function) Callback invoked when key is available
      * - error: (function) Optional callback invoked when key is not available or HTTP request failed
      */
-    checkKey: function (api_key, success, error) {
-      var endpoint = defaults.api_endpoint,
-          resource = "keys",
-          url = [endpoint, resource, api_key].join('/'),
-          options = {
-            url: url,
-            dataType: 'jsonp',
-            timeout: 5000,
-            success: function (data) {
-              if (data.result.available) {
-                success();
-              } else {
-                if (error) {
-                  error();
-                }
-              }
-            }
-          };
 
-      if (error) {
-        options.error = error;
+    // Changes - need to cache
+    // If no cache - register callbacks and init ajax
+
+    checkKey: function (api_key, success, error) {
+      error = error || function () {};
+
+      var cache = keyCheckCache[api_key];
+
+      if (typeof cache === 'boolean') {
+        // Invoke relevant callback if result cached
+        if (cache) {
+          return success();
+        } else {
+          return error();
+        }
+      } else if (typeof cache === 'object') {
+        // Push callbacks onto cache and exit
+        keyCheckCache[api_key]["success"].push(success);
+        keyCheckCache[api_key]["error"].push(error);
+        return;
+      } else {
+        // Create cache for callbacks and proceed to AJAX request
+        keyCheckCache[api_key] = {
+          "success": [success],
+          "error": [error]
+        };
       }
+
+      var endpoint = defaults.api_endpoint;
+      var resource = "keys";
+      var url = [endpoint, resource, api_key].join('/');
+      var options = {
+        url: url,
+        dataType: 'jsonp',
+        timeout: 5000
+      };
+
+      // Save to cache and invoke all callbacks
+      options.success = function (data) {
+        if (data && data.result && data.result.available) {
+          var successStack = keyCheckCache[api_key]["success"];
+          keyCheckCache[api_key] = true;
+          $.each(successStack, function (index, callback) {
+            callback.call(null, data);
+          });
+        } else {
+          var errorStack = keyCheckCache[api_key]["error"];
+          keyCheckCache[api_key] = false;
+          $.each(errorStack, function (index, callback) {
+            callback.call();
+          });
+        }
+      };
+
+      // Invoke error callbacks
+      options.error = function () {
+        var errorStack = keyCheckCache[api_key]["error"];
+        delete keyCheckCache[api_key];
+        $.each(errorStack, function (index, callback) {
+          callback.call();
+        });
+      };
 
       $.ajax(options);
     },
@@ -504,26 +554,38 @@
   // Creates Postcode lookup field and button when called on <div>
   $.fn.setupPostcodeLookup = function (options) {
     var self = this;
+
+    if (self.length === 0) {
+      return self;
+    }
+
     var initPlugin = function () {
-      var postcodeLookup = new IdealPostcodes(options);
-      pluginInstances.push(postcodeLookup);
-      postcodeLookup.setupPostcodeInput($(self));
+      // Initialise plugin on all DOM elements
+      $.each(self, function (index, context) {
+        var postcodeLookup = new IdealPostcodes(options);
+        pluginInstances.push(postcodeLookup);
+        postcodeLookup.setupPostcodeInput($(context));
+      });
+
+      // Invoke onLoaded callback
       if ($.isFunction(options.onLoaded)) {
         options.onLoaded.call(self);
       }
     };
 
+    var failedKeyCheck = function () {
+      if ($.isFunction(options.onFailedCheck)) {
+        options.onFailedCheck.call(self);
+      }
+    };
+
+    // Check if key is usable if necessary
     if (options.check_key) {
-      $.idealPostcodes.checkKey(options.api_key, initPlugin,
-        function () {
-          if ($.isFunction(options.onFailedCheck)) {
-            options.onFailedCheck.call(self);
-          }
-        }
-      );
+      $.idealPostcodes.checkKey(options.api_key, initPlugin, failedKeyCheck);
     } else {
       initPlugin();
     }
+
     return self;
   };
 
