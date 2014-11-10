@@ -78,6 +78,13 @@ MIT
 
 ## Changelog
 
+*v2.1.2*
+- Key checks are only performed against the API if the plugin is invoked in the DOM and not upon initialisation
+- Results from a key check are now cached and multiple calls to the same key are merged into the same request
+
+*v2.1.1*
+- Changed lookup behaviour. Looking up a new postcode no longer clears existing results
+
 *v2.1.0*
 - Added option to strip organisation name from address lines
 
