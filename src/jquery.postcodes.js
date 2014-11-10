@@ -11,8 +11,13 @@
 
 (function($) {
   "use strict";
+  // Cache for all new instances of the plugin
   var pluginInstances = [];
+
+  // Caches calls to the /v1/keys API
   var keyCheckCache = {};
+
+  // Default settings
   var defaults = {
     // Please Enter your API Key
     api_key: "",
@@ -95,11 +100,11 @@
     remove_organisation: false,
 
     // Register callbacks at specific stages
-    onLoaded: undefined,
-    onFailedCheck: undefined,
-    onLookupSuccess: undefined,
-    onLookupError: undefined,
-    onAddressSelected: undefined
+    onLoaded: undefined,          // When plugin is initialised
+    onFailedCheck: undefined,     // When key check fails (requires check_key: true)
+    onLookupSuccess: undefined,   // When a lookup succeeds, E.g. Server responds that Postcode is found or doesn't exist
+    onLookupError: undefined,     // When a lookup fails, can be a connection issue or bad request   
+    onAddressSelected: undefined  // User has clicked an address in dropdown
   };
 
   function IdealPostcodes (options) {
@@ -437,7 +442,7 @@
       return defaults;
     },
 
-    // Expose key check cache
+    // Expose key check cache for testing
     keyCheckCache: keyCheckCache,
 
     // Simple validation for postcode. Excludes test postcodes starting with ID1
@@ -489,19 +494,19 @@
       var cache = keyCheckCache[api_key];
 
       if (typeof cache === 'boolean') {
-        // Result is cached
+        // Invoke relevant callback if result cached
         if (cache) {
           return success();
         } else {
           return error();
         }
       } else if (typeof cache === 'object') {
-        // Push callbacks onto cache
+        // Push callbacks onto cache and exit
         keyCheckCache[api_key]["success"].push(success);
         keyCheckCache[api_key]["error"].push(error);
         return;
       } else {
-        // Cache callbacks
+        // Create cache for callbacks and proceed to AJAX request
         keyCheckCache[api_key] = {
           "success": [success],
           "error": [error]
@@ -558,16 +563,22 @@
   $.fn.setupPostcodeLookup = function (options) {
     var self = this;
 
-    // Initialise plugin on all DOM elements
+    if (self.length === 0) {
+      return self;
+    }
+
     var initPlugin = function () {
+      // Initialise plugin on all DOM elements
       $.each(self, function (index, context) {
         var postcodeLookup = new IdealPostcodes(options);
         pluginInstances.push(postcodeLookup);
         postcodeLookup.setupPostcodeInput($(context));
-        if ($.isFunction(options.onLoaded)) {
-          options.onLoaded.call(self);
-        }
       });
+
+      // Invoke onLoaded callback
+      if ($.isFunction(options.onLoaded)) {
+        options.onLoaded.call(self);
+      }
     };
 
     var failedKeyCheck = function () {
@@ -577,7 +588,7 @@
     };
 
     // Check if key is usable if necessary
-    if (options.check_key && self.length !== 0) {
+    if (options.check_key) {
       $.idealPostcodes.checkKey(options.api_key, initPlugin, failedKeyCheck);
     } else {
       initPlugin();
