@@ -73,7 +73,8 @@ QUnit.testStart(function(testDetails){
 
   module("Class Methods");
 
-  test("$.idealPostcodes.validatePostcodeFormat", 5, function () {
+  test("$.idealPostcodes.validatePostcodeFormat", 6, function () {
+    equal($.idealPostcodes.validatePostcodeFormat("BT74 0AQ"), true);
     equal($.idealPostcodes.validatePostcodeFormat("ID11QD"), true);
     equal($.idealPostcodes.validatePostcodeFormat("id11qd"), true);
     equal($.idealPostcodes.validatePostcodeFormat("id1 1qd"), true);
