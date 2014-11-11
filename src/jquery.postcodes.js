@@ -86,6 +86,9 @@
     error_message_default: "Sorry, we weren't able to get the address you were looking for. Please type your address manually",
     error_message_class: "",
 
+    // Address search fallback - if enabled, postcode searches which fail validation will be forward to the Address search API
+    address_search: false,
+
     // Configuration to prevent wasting lookups
     last_lookup: "", // Tracks previous lookup, prevents consecutive lookup of same postcode
     disable_interval: 1000, // Disables lookup button in (ms) after lookup
