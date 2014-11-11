@@ -2,7 +2,7 @@
 
 (function($){
 
-  // caching original jquery ajax method
+  // Caching jQuery ajax method
   var ajax = $.ajax
   var fakeWebServices = {}
   var defaults = {
@@ -24,7 +24,7 @@
       return ajax.apply(this, arguments);
     }
         
-    if( !fakeWebServices[options.url] ) {
+    if(!fakeWebServices[options.url]) {
       $.error('{url} 404 not found'.replace(/{url}/, options.url));
       return deferred.reject('404');
     }
@@ -33,12 +33,12 @@
     setTimeout(function() {
       var data = fakeWebServices[options.url](options.data);
       if(options.success) {
-        options.success( data );
+        options.success(data);
       }
       if(options.complete) {
-        options.complete( data );
+        options.complete(data);
       }
-      deferred.resolve( data );
+      deferred.resolve(data);
       
     }, options.wait);
     
@@ -52,8 +52,7 @@
     }
   };
   
-  // expose to jquery api
-  // --------------------
+  // Swap out jQuery ajax for fake method
   $.ajax = ajaxFake;
   $.ajax.fake = {
     defaults: defaults,

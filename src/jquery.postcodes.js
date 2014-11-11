@@ -460,19 +460,51 @@
      * - success: (function) Callback invoked upon successful request
      * - error: (function) Optional callback invoked upon failed HTTP request
      */
+
     lookupPostcode: function (postcode, api_key, success, error) {
-      var endpoint = defaults.api_endpoint,
-          resource = "postcodes",
-          url = [endpoint, resource, postcode].join('/'),
-          options = {
-            url: url,
-            data: {
-              api_key: api_key
-            },
-            dataType: 'jsonp',
-            timeout: 5000,
-            success: success
-          };
+      var endpoint = defaults.api_endpoint;
+      var resource = "postcodes";
+      var url = [endpoint, resource, postcode].join('/');
+      var options = {
+        url: url,
+        data: {
+          api_key: api_key
+        },
+        dataType: 'jsonp',
+        timeout: 5000,
+        success: success
+      };
+
+      if (error) {
+        options.error = error;
+      }
+
+      $.ajax(options);
+    },
+
+    /*
+     * Perform an Address Search
+     * - searchOptions: (object) config object (may be extended in later versions)
+     *   - searchOptions.query (string) address to search for
+     * - api_key: (string) API Key required
+     * - success: (function) Callback invoked upon successful request
+     * - error: (function) Optional callback invoked upon failed HTTP request
+     */
+
+    lookupAddress: function (searchOptions, api_key, success, error) {
+      var endpoint = defaults.api_endpoint;
+      var resource = "addresses";
+      var url = [endpoint, resource].join('/');
+      var options = {
+        url: url,
+        data: {
+          api_key: api_key,
+          query: searchOptions.query
+        },
+        dataType: 'jsonp',
+        timeout: 5000,
+        success: success
+      };
 
       if (error) {
         options.error = error;
@@ -487,9 +519,6 @@
      * - success: (function) Callback invoked when key is available
      * - error: (function) Optional callback invoked when key is not available or HTTP request failed
      */
-
-    // Changes - need to cache
-    // If no cache - register callbacks and init ajax
 
     checkKey: function (api_key, success, error) {
       error = error || function () {};

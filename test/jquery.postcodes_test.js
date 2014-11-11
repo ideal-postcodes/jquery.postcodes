@@ -101,6 +101,29 @@ QUnit.testStart(function(testDetails){
     $.idealPostcodes.lookupPostcode("ID1KFA", apiKey, success);
   });
 
+  asyncTest("$.idealPostcodes.lookupAddress should lookup an address", 3, function () {
+    var success = function (data) {
+      start();
+      equal(data.code, 2000, "should return 2000 for valid search query");
+      equal(data.result.total, 7);
+      equal(data.result.hits[0].postcode, "ID1 1QD", "should contain relevant addresses");
+    };
+    $.idealPostcodes.lookupAddress({
+      query: "ID1 1QD"
+    }, apiKey, success);
+  });
+
+  asyncTest("$.idealPostcodes.lookupAddress should lookup an address", 2, function () {
+    var success = function (data) {
+      start();
+      equal(data.code, 2000, "should return 2000 for valid search query");
+      equal(data.result.total, 0);
+    };
+    $.idealPostcodes.lookupAddress({
+      query: "ID1 KFA"
+    }, apiKey, success);
+  });
+
   asyncTest("$.idealPostcodes.checkKey should return true if key is usable and cache result", 2, function () {
     var success = function () {
       equal(2000, 2000);
