@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Ideal Postcodes Example</title>
+  <LINK href="bootstrap.css" rel="stylesheet" type="text/css">
+	<LINK href="bootstrap-theme.css" rel="stylesheet" type="text/css">
+	<script src="//code.jquery.com/jquery-1.9.1.min.js"></script>
+
+	<!-- Drop the jQuery Plugin here -->
+  <script src="../src/jquery.postcodes.js"></script>
+</head>
+<body>
+	<div class="container">
+		<div class="row">
+		<div id="lookup_field" class="form-group"></div>
+    <form class="form-horizontal" role="form">
+    	
+		  <div class="form-group">
+		    <label for="line_1" class="col-sm-2 control-label">Address First Line</label>
+		    <div class="col-sm-5">
+		      <input type="text" class="form-control" id="first_line" placeholder="">
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="line_2" class="col-sm-2 control-label">Address Second Line</label>
+		    <div class="col-sm-5">
+		      <input type="text" class="form-control" id="second_line" placeholder="">
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="line_3" class="col-sm-2 control-label">Address Third Line</label>
+		    <div class="col-sm-5">
+		      <input type="text" class="form-control" id="third_line" placeholder="">
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="post_town" class="col-sm-2 control-label">Town or City</label>
+		    <div class="col-sm-5">
+		      <input type="text" class="form-control" id="post_town" placeholder="">
+		    </div>
+		  </div>
+		  <div class="form-group">
+		    <label for="postcode" class="col-sm-2 control-label">Postcode</label>
+		    <div class="col-sm-5">
+		      <input type="text" class="form-control" id="postcode" placeholder="">
+		    </div>
+		  </div>
+		</form>
+	  </div>
+	</div>
+
+<script>
+
+$('#lookup_field').setupPostcodeLookup({
+  api_key: 'iddqd',
+  address_search: true,
+  output_fields: {
+    line_1: '#first_line',  
+    line_2: '#second_line',         
+    line_3: '#third_line',
+    post_town: '#post_town',
+    postcode: '#postcode'
+  }
+});
+
+</script>
+</body>
+</html>
