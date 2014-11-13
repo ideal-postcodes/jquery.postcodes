@@ -620,17 +620,18 @@ QUnit.testStart(function(testDetails){
     } 
   });
 
-  asyncTest("should perform an address lookup if postcode is not valid", 4, function () {
+  asyncTest("should perform an address lookup if postcode is not valid and return options in correct format", 5, function () {
     $input_field.val("10 Downing Street London");
     $lookup_button.trigger("click");
     $(document).off("completedJsonp").on("completedJsonp", function (event, response) {
       start();
       $dropdown = $("#" + defaults.dropdown_id);
       ok($dropdown.length, "it has a dropdown menu");
-      equal(response.result.hits.length, 2);
+      equal(response.result.hits.length, 2, "it returns the right number of results");
       $.each(response.result.hits, function (index, elem) {
-        ok(elem.postcode === "SW1A 2AA" || elem.postcode === "WC1N 1LX");
+        ok(elem.postcode === "SW1A 2AA" || elem.postcode === "WC1N 1LX", "it contains the right results");
       });
+      equal($dropdown.children("option[value=0]").text(), "Prime Minister & First Lord Of The Treasury, 10 Downing Street, LONDON, SW1A", "it is the right format");
     });
   });
   

@@ -349,7 +349,16 @@
         if (self.response_code === 2000) {
           if (self.result.total > 0) {
             self.last_lookup = searchOptions.query;
-            self.setDropDown(self.result.hits);
+            self.setDropDown(self.result.hits, function (address) {
+              // Define new suggestion format
+              var result = [address.line_1];
+              if (address.line_2 !== "") {
+                result.push(address.line_2);
+              }
+              result.push(address.post_town);
+              result.push(address.postcode_outward);
+              return result.join(", ");
+            });
           } else {
             self.setErrorMessage(self.error_message_address_not_found); 
           }
@@ -383,8 +392,16 @@
    * Removes dropdown from DOM if data is undefined
    */
 
-  IdealPostcodes.prototype.setDropDown = function (data) {
+  IdealPostcodes.prototype.setDropDown = function (data, suggestionFormatter) {
     var self = this;
+
+    suggestionFormatter = suggestionFormatter || function (address) {
+      var result = [address.line_1];
+      if (address.line_2 !== "") {
+        result.push(address.line_2);
+      }
+      return result.join(" ");
+    };
 
     if (this.$dropdown && this.$dropdown.length) {
       this.$dropdown.remove();
@@ -409,7 +426,7 @@
     for (var i = 0; i < length; i += 1) {
       $('<option />', {
         value: i,
-        text: data[i].line_1 + " " + data[i].line_2
+        text: suggestionFormatter(data[i])
       }).appendTo(dropDown);
     }
 
