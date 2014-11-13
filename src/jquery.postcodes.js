@@ -83,6 +83,7 @@
     error_message_id: "idpc_error_message",
     error_message_invalid_postcode: "Please check your postcode, it seems to be incorrect",
     error_message_not_found: "Your postcode could not be found. Please type in your address",
+    error_message_address_not_found: "We could not find a match for your address. Please type in your address",
     error_message_default: "Sorry, we weren't able to get the address you were looking for. Please type your address manually",
     error_message_class: "",
 
@@ -275,19 +276,27 @@
   };
 
   /*
-   * Triggers a postcode lookup and appropriate response
-   *
+   * Validate search term and then trigger postcode lookup
+   *  - On successful search, display results in a dropdown menu
+   *  - On successful search but postcode does not exist, show error message
+   *  - On failed search, show error message and invoke error callback
    */
 
   IdealPostcodes.prototype.lookupPostcode = function (postcode) {
     var self = this;
     if (!$.idealPostcodes.validatePostcodeFormat(postcode)) {
-      this.enableLookup();
-      return self.setErrorMessage(this.error_message_invalid_postcode);
+      // Fallback to address search
+      if (self.address_search) {
+        return this.searchAddress({
+          query: postcode
+        });
+      } else {
+        this.enableLookup();
+        return self.setErrorMessage(this.error_message_invalid_postcode);
+      }
     }
 
     $.idealPostcodes.lookupPostcode(postcode, self.api_key, 
-      // Successful result
       function (data) {
         self.response_code = data.code;
         self.response_message = data.message;
@@ -310,7 +319,54 @@
           self.onLookupSuccess.call(self, data);
         }
       }, 
-      // Unsuccessful result
+      // Lookup Failed
+      function () {
+        self.setErrorMessage("Unable to connect to server");
+        self.enableLookup();
+        if (self.onLookupError) {
+          self.onLookupError.call(self);
+        }
+      }
+    );
+  };
+
+  /*
+   * Triggers an address search and appropriate response
+   *  - On successful search, display results in a dropdown menu
+   *  - On successful search but no results, show error message
+   *  - On failed search, show error message and invoke error callback
+   */
+
+  IdealPostcodes.prototype.searchAddress = function (searchOptions) {
+    var self = this;
+    $.idealPostcodes.lookupAddress(searchOptions, self.api_key, 
+      function (data) {
+        self.response_code = data.code;
+        self.response_message = data.message;
+        self.result = data.result;
+        self.enableLookup();
+
+        if (self.response_code === 2000) {
+          if (self.result.total > 0) {
+            self.last_lookup = searchOptions.query;
+            self.setDropDown(self.result.hits);
+          } else {
+            self.setErrorMessage(self.error_message_address_not_found); 
+          }
+
+          if (self.onLookupSuccess) {
+            self.onLookupSuccess.call(self, data);
+          }
+
+        } else {
+          if (self.debug_mode) {
+            self.setErrorMessage("(" + self.response_code + ") " + self.response_message);
+          } else {
+            self.setErrorMessage(self.error_message_default);  
+          } 
+        }
+      }, 
+      // Lookup Failed
       function () {
         self.setErrorMessage("Unable to connect to server");
         self.enableLookup();

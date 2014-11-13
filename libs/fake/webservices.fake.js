@@ -488,6 +488,78 @@ var addressSearchTest = {
   "message": "Success"
 }
 
+var addressSearchTestDowningStreet = {
+  "result": {
+    "total": 2,
+    "limit": 10,
+    "page": 0,
+    "hits": [
+      {
+        "dependant_locality": "",
+        "postcode_type": "L",
+        "po_box": "",
+        "post_town": "LONDON",
+        "delivery_point_suffix": "1A",
+        "double_dependant_locality": "",
+        "su_organisation_indicator": " ",
+        "longitude": -0.127695242183412,
+        "department_name": "",
+        "district": "Westminster",
+        "building_name": "",
+        "dependant_thoroughfare": "",
+        "northings": 179951,
+        "postcode_outward": "SW1A",
+        "postcode_inward": "2AA",
+        "sub_building_name": "",
+        "eastings": 530047,
+        "postcode": "SW1A 2AA",
+        "udprn": 23747771,
+        "line_3": "",
+        "organisation_name": "Prime Minister & First Lord Of The Treasury",
+        "ward": "St James's",
+        "county": "",
+        "line_1": "Prime Minister & First Lord Of The Treasury",
+        "building_number": "10",
+        "thoroughfare": "Downing Street",
+        "line_2": "10 Downing Street",
+        "latitude": 51.5035398826274
+      },
+      {
+        "dependant_locality": "",
+        "postcode_type": "S",
+        "po_box": "",
+        "post_town": "LONDON",
+        "delivery_point_suffix": "1B",
+        "double_dependant_locality": "",
+        "su_organisation_indicator": " ",
+        "longitude": -0.122624730080001,
+        "department_name": "",
+        "district": "Camden",
+        "building_name": "Downing Court",
+        "dependant_thoroughfare": "",
+        "northings": 182178,
+        "postcode_outward": "WC1N",
+        "postcode_inward": "1LX",
+        "sub_building_name": "Flat 10",
+        "eastings": 530342,
+        "postcode": "WC1N 1LX",
+        "udprn": 26245117,
+        "line_3": "Grenville Street",
+        "organisation_name": "",
+        "ward": "Bloomsbury",
+        "county": "",
+        "line_1": "Flat 10",
+        "building_number": " ",
+        "thoroughfare": "Grenville Street",
+        "line_2": "Downing Court",
+        "latitude": 51.5234851731108
+      }
+    ]
+  },
+  "code": 2000,
+  "message": "Success"
+}
+
 var addressSearchNoResults = {
   "result": {
     "total": 0,
@@ -528,6 +600,8 @@ fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/addresses', functi
 		return addressSearchTest;
 	} else if (data.query === "ID1 KFA") {
 		return addressSearchNoResults;
+	} else if (data.query === "10 Downing Street London") {
+		return addressSearchTestDowningStreet;
 	} else {
 		return addressSearchNoResults;
 	}

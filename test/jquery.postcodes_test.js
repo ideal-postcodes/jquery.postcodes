@@ -113,6 +113,18 @@ QUnit.testStart(function(testDetails){
     }, apiKey, success);
   });
 
+  asyncTest("$.idealPostcodes.lookupAddress should lookup an address", 3, function () {
+    var success = function (data) {
+      start();
+      equal(data.code, 2000, "should return 2000 for valid search query");
+      equal(data.result.total, 2);
+      equal(data.result.hits[0].postcode, "SW1A 2AA", "should contain relevant addresses");
+    };
+    $.idealPostcodes.lookupAddress({
+      query: "10 Downing Street London"
+    }, apiKey, success);
+  });
+
   asyncTest("$.idealPostcodes.lookupAddress should lookup an address", 2, function () {
     var success = function (data) {
       start();
@@ -589,5 +601,52 @@ QUnit.testStart(function(testDetails){
       });
     });
   });
+
+  module("jQuery#setupPostcodeLookup with address search fallback", { 
+    setup: function () {
+      $("#postcode_lookup_field").setupPostcodeLookup({
+        api_key: "iddqd",
+        address_search: true,
+        disable_interval: 0,
+        onLookupSuccess: function (data) {
+          $.event.trigger("completedJsonp", [data]);
+        },
+        onAddressSelected: function (selectedData) {
+          $.event.trigger("addressSelected", [selectedData]);
+        }
+      });
+      $input_field = $("#"+defaults.input_id);
+      $lookup_button = $("#"+defaults.button_id);
+    } 
+  });
+
+  asyncTest("should perform an address lookup if postcode is not valid", 4, function () {
+    $input_field.val("10 Downing Street London");
+    $lookup_button.trigger("click");
+    $(document).off("completedJsonp").on("completedJsonp", function (event, response) {
+      start();
+      $dropdown = $("#" + defaults.dropdown_id);
+      ok($dropdown.length, "it has a dropdown menu");
+      equal(response.result.hits.length, 2);
+      $.each(response.result.hits, function (index, elem) {
+        ok(elem.postcode === "SW1A 2AA" || elem.postcode === "WC1N 1LX");
+      });
+    });
+  });
   
+  asyncTest("should return an error message if no matches were found in an address search", 3, function () {
+    $input_field.val("Street does not exist");
+    $lookup_button.trigger("click");
+    $(document).off("completedJsonp").on("completedJsonp", function (event, response) {
+      start();
+      var $errorMessage = $("#" + defaults.error_message_id);
+      $dropdown = $("#" + defaults.dropdown_id);
+      equal($dropdown.length, 0);
+      equal($errorMessage.html(), defaults.error_message_address_not_found);
+      equal(response.result.hits.length, 0);
+    });
+  });
+
+  
+
 }(jQuery));
