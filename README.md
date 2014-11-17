@@ -78,6 +78,9 @@ MIT
 
 ## Changelog
 
+*v2.2.0*
+- Added fallback to address search if address_search: true. Any postcode search which does not validate as a postcode will be passed through to the address search API.
+
 *v2.1.2*
 - Key checks are only performed against the API if the plugin is invoked in the DOM and not upon initialisation
 - Results from a key check are now cached and multiple calls to the same key are merged into the same request
