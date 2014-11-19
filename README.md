@@ -78,6 +78,9 @@ MIT
 
 ## Changelog
 
+*v2.2.1*
+- Added optional max_results for address searches
+
 *v2.2.0*
 - Added fallback to address search if address_search: true. Any postcode search which does not validate as a postcode will be passed through to the address search API.
 
