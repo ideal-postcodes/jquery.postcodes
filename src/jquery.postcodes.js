@@ -287,9 +287,13 @@
     if (!$.idealPostcodes.validatePostcodeFormat(postcode)) {
       // Fallback to address search
       if (self.address_search) {
-        return this.searchAddress({
+        var search = {
           query: postcode
-        });
+        };
+        if (typeof self.address_search === "object") {
+          search.limit = self.address_search.limit || 10;
+        }
+        return this.searchAddress(search);
       } else {
         this.enableLookup();
         return self.setErrorMessage(this.error_message_invalid_postcode);
@@ -537,7 +541,7 @@
     lookupPostcode: function (postcode, api_key, success, error) {
       var endpoint = defaults.api_endpoint;
       var resource = "postcodes";
-      var url = [endpoint, resource, postcode].join('/');
+      var url = [endpoint, resource, encodeURI(postcode)].join('/');
       var options = {
         url: url,
         data: {
@@ -568,12 +572,14 @@
       var endpoint = defaults.api_endpoint;
       var resource = "addresses";
       var url = [endpoint, resource].join('/');
+      var queryString = {
+        api_key: api_key,
+        query: searchOptions.query
+      };
+      queryString.limit = searchOptions.limit || 10;
       var options = {
         url: url,
-        data: {
-          api_key: api_key,
-          query: searchOptions.query
-        },
+        data: queryString,
         dataType: 'jsonp',
         timeout: 5000,
         success: success

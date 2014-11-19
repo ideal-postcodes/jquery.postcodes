@@ -136,6 +136,18 @@ QUnit.testStart(function(testDetails){
     }, apiKey, success);
   });
 
+  asyncTest("$.idealPostcodes.lookupAddress should be sensitive to limits", 2, function () {
+    var success = function (data) {
+      start();
+      equal(data.code, 2000, "should return 2000 for valid search query");
+      equal(data.result.hits.length, 20);
+    };
+    $.idealPostcodes.lookupAddress({
+      query: "Test Limit",
+      limit: 20
+    }, apiKey, success);
+  });
+
   asyncTest("$.idealPostcodes.checkKey should return true if key is usable and cache result", 2, function () {
     var success = function () {
       equal(2000, 2000);
@@ -645,6 +657,40 @@ QUnit.testStart(function(testDetails){
       equal($dropdown.length, 0);
       equal($errorMessage.html(), defaults.error_message_address_not_found);
       equal(response.result.hits.length, 0);
+    });
+  });
+
+  module("jQuery#setupPostcodeLookup with address search fallback", { 
+    setup: function () {
+      $("#postcode_lookup_field").setupPostcodeLookup({
+        api_key: "iddqd",
+        address_search: {
+          limit: 20
+        },
+        disable_interval: 0,
+        onLookupSuccess: function (data) {
+          $.event.trigger("completedJsonp", [data]);
+        },
+        onAddressSelected: function (selectedData) {
+          $.event.trigger("addressSelected", [selectedData]);
+        }
+      });
+      $input_field = $("#"+defaults.input_id);
+      $lookup_button = $("#"+defaults.button_id);
+    } 
+  });
+
+  asyncTest("should perform an address lookup and be sensitive to limit", 22, function () {
+    $input_field.val("Test Limit");
+    $lookup_button.trigger("click");
+    $(document).off("completedJsonp").on("completedJsonp", function (event, response) {
+      start();
+      $dropdown = $("#" + defaults.dropdown_id);
+      ok($dropdown.length, "it has a dropdown menu");
+      equal(response.result.hits.length, 20, "it returns the right number of results");
+      $.each(response.result.hits, function (index, elem) {
+        ok(elem.postcode === "L21 1EX");
+      });
     });
   });
 
