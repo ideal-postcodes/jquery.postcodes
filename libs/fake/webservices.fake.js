@@ -1495,12 +1495,34 @@ var addressSearchNoResults = {
   "message": "Success"
 };
 
+var noLookupsRemaining = {
+	code: 4020,
+	message: "Token balance depleted. For more information see http://ideal-postcodes.co.uk/documentation/response-codes#4020"
+};
+
+var lookupLimitBreached = {
+	code: 4021,
+	message: "Lookup Limit Reached. For more information see http://ideal-postcodes.co.uk/documentation/response-codes#4021"
+}
+
 fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/postcodes/ID11QD', function(data) {
 	return testPostcodeResult;
 });
 
 fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/postcodes/ID11QE', function(data) {
 	return postcodeNotFound;
+});
+
+fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/postcodes/ID1KFA', function(data) {
+	return postcodeNotFound;
+});
+
+fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/postcodes/ID1CLIP', function(data) {
+	return noLookupsRemaining;
+});
+
+fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/postcodes/ID1CHOP', function(data) {
+	return lookupLimitBreached;
 });
 
 fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/postcodes/ID1KFA', function(data) {
