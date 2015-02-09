@@ -78,6 +78,9 @@ MIT
 
 ## Changelog
 
+*v2.2.2*
+- onLookupSuccess is now also triggered when pre-flight postcode validation fails
+
 *v2.2.1*
 - Added optional max_results for address searches
 
