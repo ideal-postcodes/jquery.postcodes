@@ -296,6 +296,12 @@
         return this.searchAddress(search);
       } else {
         this.enableLookup();
+        if (self.onLookupSuccess) {
+          self.onLookupSuccess.call(self, {
+            code: 4040,
+            message: "Postcode Not Found"
+          });
+        }
         return self.setErrorMessage(this.error_message_invalid_postcode);
       }
     }
