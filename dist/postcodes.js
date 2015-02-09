@@ -1,6 +1,6 @@
-/*! Ideal Postcodes jQuery Plugin - v2.2.1 - 2014-11-19
+/*! Ideal Postcodes jQuery Plugin - v2.2.2 - 2015-02-09
 * https://github.com/ideal-postcodes/jquery.postcodes
-2014 Ideal Postcodes; Licensed MIT */
+2015 Ideal Postcodes; Licensed MIT */
 (function($) {
   "use strict";
   // Cache for all new instances of the plugin
@@ -288,6 +288,12 @@
         return this.searchAddress(search);
       } else {
         this.enableLookup();
+        if (self.onLookupSuccess) {
+          self.onLookupSuccess.call(self, {
+            code: 4040,
+            message: "Postcode Not Found"
+          });
+        }
         return self.setErrorMessage(this.error_message_invalid_postcode);
       }
     }
