@@ -568,6 +568,44 @@ QUnit.testStart(function(testDetails){
     });
   });
 
+  // asyncTest("onLookupSuccess is triggered when pre-flight validation fails", 1, function () {
+  //   $input_field.val("BOGUS");
+  //   $lookup_button.trigger("click");
+  //   $(document).off("completedJsonp").on("completedJsonp", function (e, data) {
+  //     start();
+  //     equal(data.code, 4040);
+  //     equal(data.message, "Postcode not found");
+  //   });
+  // });
+
+  asyncTest("onLookupSuccess is triggered when Postcode not Found error returned", 2, function () {
+    $input_field.val("ID1KFA");
+    $lookup_button.trigger("click");
+    $(document).off("completedJsonp").on("completedJsonp", function (e, data) {
+      start();
+      equal(data.code, 4040);
+      equal(data.message, "Postcode Not Found");
+    });
+  });
+
+  asyncTest("onLookupSuccess is triggered when No Lookups Remaining error returned", 1, function () {
+    $input_field.val("ID1CLIP");
+    $lookup_button.trigger("click");
+    $(document).off("completedJsonp").on("completedJsonp", function (e, data) {
+      start();
+      equal(data.code, 4020);
+    });
+  });
+
+  asyncTest("onLookupSuccess is triggered when Limit Breached error returned", 1, function () {
+    $input_field.val("ID1CHOP");
+    $lookup_button.trigger("click");
+    $(document).off("completedJsonp").on("completedJsonp", function (e, data) {
+      start();
+      equal(data.code, 4021);
+    });
+  });
+
   module("Remove Organisation from address lines", {
     setup: function () {
       $("#postcode_lookup_field").setupPostcodeLookup({
