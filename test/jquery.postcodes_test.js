@@ -200,7 +200,7 @@ QUnit.testStart(function(testDetails){
     } 
   });
 
-  asyncTest("#setupPostcodeLookup creates necessary elements for postcode lookup", 6, function () {
+  test("#setupPostcodeLookup creates necessary elements for postcode lookup", 6, function () {
     ok($input_field.length, "there appears to be an input");
     ok($lookup_button.length, "there appears to be button");
     strictEqual($lookup_button.html(), defaults.button_label,"button has correct labeling");
@@ -209,7 +209,6 @@ QUnit.testStart(function(testDetails){
       strictEqual($input_field.val(), "","input responds correctly when clicked on");
       $.when($input_field.triggerHandler("blur")).done(function () {
         strictEqual($input_field.val(), defaults.input_label, "input responds correctly when defocused with no input");
-        start();
       });
     });
   });
@@ -228,7 +227,10 @@ QUnit.testStart(function(testDetails){
       });
       $input_field = $("#"+defaults.input_id);
       $lookup_button = $("#"+defaults.button_id);
-    } 
+    },
+    teardown: function () {
+      $(document).off("completedJsonp");
+    }
   });
 
  test("Postcode entries are validated before submission", 2, function () {
@@ -242,8 +244,7 @@ QUnit.testStart(function(testDetails){
   asyncTest("Address options are presented after a successful postcode lookup", 7, function () {
     $input_field.val("ID11QD");
     equal($lookup_button.prop("disabled"), false, "initial lookup button not disabled");
-    $lookup_button.trigger("click");
-    $(document).off("completedJsonp").on("completedJsonp", function () {
+    $(document).on("completedJsonp", function () {
       start();
       equal($lookup_button.prop("disabled"), false, "lookup button not disabled after click");
       $dropdown = $("#"+defaults.dropdown_id);
@@ -255,13 +256,13 @@ QUnit.testStart(function(testDetails){
         ok($(addressLines[i]).val(), addressLines[i] + " has content");
       }
     });
+    $lookup_button.trigger("click");
   });
   
   asyncTest("Postcode lookup cleanup", 8, function () {
     $input_field.val("ID11QD");
     equal($lookup_button.prop("disabled"), false, "initial lookup button not disabled");
-    $lookup_button.trigger("click");
-    $(document).off("completedJsonp").on("completedJsonp", function () {
+    $(document).on("completedJsonp", function () {
       start();
       isPresent("default input box", defaults.input_id);
       isPresent("dropdown menu", defaults.dropdown_id);
@@ -272,18 +273,19 @@ QUnit.testStart(function(testDetails){
       isNotPresent("dropdown menu", defaults.dropdown_id);
       isNotPresent("default lookup button", defaults.button_id);
     });
+    $lookup_button.trigger("click");
   });
   
   asyncTest("Postcode not found result", 4, function () {
     $input_field.val("ID11QE");
     equal($lookup_button.prop("disabled"), false, "initial lookup button not disabled");
-    $lookup_button.trigger("click");
-    $(document).off("completedJsonp").on("completedJsonp", function () {
+    $(document).on("completedJsonp", function () {
       start();
       equal($lookup_button.prop("disabled"), false, "lookup button not disabled after click");
       ok($("#" + defaults.error_message_id).length, "it has an error message");
       strictEqual($("#" + defaults.error_message_id).html(), defaults.error_message_not_found, "it has the correct error message");
     });
+    $lookup_button.trigger("click");
   });
 
   asyncTest("Postcode lookup should be triggered by enter key in input box", 5, function () {
@@ -291,15 +293,14 @@ QUnit.testStart(function(testDetails){
     equal($lookup_button.prop("disabled"), false, "initial lookup button not disabled");
     var e = $.Event("keypress");
     e.which = 13;
-    $input_field.trigger(e);
-
-    $(document).off("completedJsonp").on("completedJsonp", function () {
+    $(document).on("completedJsonp", function () {
       start();
       isPresent("default input box", defaults.input_id);
       isPresent("dropdown menu", defaults.dropdown_id);
       isPresent("default lookup button", defaults.button_id);
       equal($lookup_button.prop("disabled"), false, "lookup button not disabled after click");
     });
+    $input_field.trigger(e);
   });
 
   test("Lookup with invalid postcode caught by regexp", 5, function () {
@@ -310,21 +311,20 @@ QUnit.testStart(function(testDetails){
     isPresent("default lookup button", defaults.button_id);
     isPresent("error message", defaults.error_message_id);
     equal($lookup_button.prop("disabled"), false, "lookup button not disabled after click");
-    // Check button is enabled
   });
 
 
   asyncTest("Lookup with invalid postcode", 5, function () {
     $input_field.val("ID11QE");
     equal($lookup_button.prop("disabled"), false, "initial lookup button not disabled");
-    $lookup_button.trigger("click");
-    $(document).off("completedJsonp").on("completedJsonp", function () {
+    $(document).on("completedJsonp", function () {
       start();
       isPresent("default input box", defaults.input_id);
       isPresent("default lookup button", defaults.button_id);
       isPresent("error message", defaults.error_message_id);
       equal($lookup_button.prop("disabled"), false, "lookup button not disabled after click");
     });
+    $lookup_button.trigger("click");
   });
 
   module("Postcode Lookups: Custom Input Field", { 
@@ -347,7 +347,10 @@ QUnit.testStart(function(testDetails){
       });
       $input_field = $("#"+inputId);
       $lookup_button = $("#"+defaults.button_id);
-    } 
+    },
+    teardown: function () {
+      $(document).off("completedJsonp");
+    }
   });
 
   test("Lookup elements are setup correctly", 4, function () {
@@ -360,8 +363,7 @@ QUnit.testStart(function(testDetails){
   asyncTest("Successful Postcode Lookup", 7, function () {
     $input_field.val("ID11QD");
     equal($lookup_button.prop("disabled"), false, "initial lookup button not disabled");
-    $lookup_button.trigger("click");
-    $(document).off("completedJsonp").on("completedJsonp", function () {
+    $(document).on("completedJsonp", function () {
       start();
       equal($lookup_button.prop("disabled"), false, "lookup button not disabled after click");
       $dropdown = $("#"+defaults.dropdown_id);
@@ -373,18 +375,19 @@ QUnit.testStart(function(testDetails){
         ok($(addressLines[i]).val(), addressLines[i] + " has content");
       }
     });
+    $lookup_button.trigger("click");
   });
 
   asyncTest("Lookup with invalid postcode", 4, function () {
     $input_field.val("ID11QE");
     equal($lookup_button.prop("disabled"), false, "initial lookup button not disabled");
-    $lookup_button.trigger("click");
-    $(document).off("completedJsonp").on("completedJsonp", function () {
+    $(document).on("completedJsonp", function () {
       start();
       isPresent("error message", defaults.error_message_id);
       equal($lookup_button.prop("disabled"), false, "lookup button not disabled after click");
       strictEqual($("#" + defaults.error_message_id).html(), defaults.error_message_not_found, "it has the correct error message");
     });
+    $lookup_button.trigger("click");
   });
 
   test("Invalid postcode caught by regexp", 3, function () {
@@ -418,7 +421,10 @@ QUnit.testStart(function(testDetails){
       });
       $input_field = $("#"+defaults.input_id);
       $lookup_button = $("#"+buttonId);
-    } 
+    },
+    teardown: function () {
+      $(document).off("completedJsonp");
+    }
   });
 
   test("Lookup elements are setup correctly", 4, function () {
@@ -432,8 +438,7 @@ QUnit.testStart(function(testDetails){
     var customMessage = $lookup_button.html();
     $input_field.val("ID11QD");
     equal($lookup_button.html(), customMessage, "Button should have custom label");
-    $lookup_button.trigger("click");
-    $(document).off("completedJsonp").on("completedJsonp", function () {
+    $(document).on("completedJsonp", function () {
       start();
       equal($lookup_button.html(), customMessage, "Button should have custom label");
       $dropdown = $("#"+defaults.dropdown_id);
@@ -445,16 +450,17 @@ QUnit.testStart(function(testDetails){
         ok($(addressLines[i]).val(), addressLines[i] + " has content");
       }
     });
+    $lookup_button.trigger("click");
   });
 
   asyncTest("Lookup with invalid postcode", 2, function () {
     $input_field.val("ID11QE");
-    $lookup_button.trigger("click");
-    $(document).off("completedJsonp").on("completedJsonp", function () {
+    $(document).on("completedJsonp", function () {
       start();
       isPresent("error message", defaults.error_message_id);
       strictEqual($("#" + defaults.error_message_id).html(), defaults.error_message_not_found, "it has the correct error message");
     });
+    $lookup_button.trigger("click");
   });
 
   test("Invalid postcode caught by regexp", 1, function () {
@@ -480,8 +486,7 @@ QUnit.testStart(function(testDetails){
     } 
   });
 
-  asyncTest("has postcode lookup tools setup", 6, function () {
-    start();
+  test("has postcode lookup tools setup", 6, function () {
     ok($input_field.length, "there is an input field");
     ok($lookup_button.length, "there is a lookup button");
     strictEqual($lookup_button.html(), defaults.button_label, "button has correct labeling");
@@ -557,8 +562,7 @@ QUnit.testStart(function(testDetails){
   asyncTest("onLookupSuccess and onAddressSelected triggered by postcode lookup callback and clicking on an address respectively", 1, function () {
     var addresses;
     $input_field.val("ID11QD");
-    $lookup_button.trigger("click");
-    $(document).off("completedJsonp").on("completedJsonp", function (e, data) {
+    $(document).on("completedJsonp", function (e, data) {
       addresses = data;
       $("#idpc_dropdown").val(2).trigger("change");
     });
@@ -566,44 +570,45 @@ QUnit.testStart(function(testDetails){
       start();
       deepEqual(addresses.result[2], selectedData);
     });
+    $lookup_button.trigger("click");
   });
 
-  // asyncTest("onLookupSuccess is triggered when pre-flight validation fails", 1, function () {
-  //   $input_field.val("BOGUS");
-  //   $lookup_button.trigger("click");
-  //   $(document).off("completedJsonp").on("completedJsonp", function (e, data) {
-  //     start();
-  //     equal(data.code, 4040);
-  //     equal(data.message, "Postcode not found");
-  //   });
-  // });
-
-  asyncTest("onLookupSuccess is triggered when Postcode not Found error returned", 2, function () {
-    $input_field.val("ID1KFA");
-    $lookup_button.trigger("click");
-    $(document).off("completedJsonp").on("completedJsonp", function (e, data) {
+  asyncTest("onLookupSuccess is triggered when pre-flight validation fails", 2, function () {
+    $input_field.val("BOGUS");
+    $(document).on("completedJsonp", function (e, data) {
       start();
       equal(data.code, 4040);
       equal(data.message, "Postcode Not Found");
     });
+    $lookup_button.trigger("click");
+  });
+
+  asyncTest("onLookupSuccess is triggered when Postcode not Found error returned", 2, function () {
+    $input_field.val("ID1KFA");
+    $(document).on("completedJsonp", function (e, data) {
+      start();
+      equal(data.code, 4040);
+      equal(data.message, "Postcode Not Found");
+    });
+    $lookup_button.trigger("click");
   });
 
   asyncTest("onLookupSuccess is triggered when No Lookups Remaining error returned", 1, function () {
     $input_field.val("ID1CLIP");
-    $lookup_button.trigger("click");
-    $(document).off("completedJsonp").on("completedJsonp", function (e, data) {
+    $(document).on("completedJsonp", function (e, data) {
       start();
       equal(data.code, 4020);
     });
+    $lookup_button.trigger("click");
   });
 
   asyncTest("onLookupSuccess is triggered when Limit Breached error returned", 1, function () {
     $input_field.val("ID1CHOP");
-    $lookup_button.trigger("click");
-    $(document).off("completedJsonp").on("completedJsonp", function (e, data) {
+    $(document).on("completedJsonp", function (e, data) {
       start();
       equal(data.code, 4021);
     });
+    $lookup_button.trigger("click");
   });
 
   module("Remove Organisation from address lines", {
@@ -621,13 +626,15 @@ QUnit.testStart(function(testDetails){
       });
       $input_field = $("#"+defaults.input_id);
       $lookup_button = $("#"+defaults.button_id);
-    } 
+    },
+    teardown: function () {
+      $(document).off("completedJsonp");
+    }
   });
 
   asyncTest("strips Organisation name from address lines", 5, function () {
     $input_field.val("ID11QD");
-    $lookup_button.trigger("click");
-    $(document).off("completedJsonp").on("completedJsonp", function (event, response) {
+    $(document).on("completedJsonp", function (event, response) {
       start();
       var organisationAddress, organisationIndex;
       $dropdown = $("#"+defaults.dropdown_id);
@@ -650,6 +657,7 @@ QUnit.testStart(function(testDetails){
         notEqual($(line).val(), organisationAddress.organisation_name, "does not contain organisation name");
       });
     });
+    $lookup_button.trigger("click");
   });
 
   module("jQuery#setupPostcodeLookup with address search fallback", { 
@@ -667,13 +675,15 @@ QUnit.testStart(function(testDetails){
       });
       $input_field = $("#"+defaults.input_id);
       $lookup_button = $("#"+defaults.button_id);
-    } 
+    },
+    teardown: function () {
+      $(document).off("completedJsonp");
+    }
   });
 
   asyncTest("should perform an address lookup if postcode is not valid and return options in correct format", 5, function () {
     $input_field.val("10 Downing Street London");
-    $lookup_button.trigger("click");
-    $(document).off("completedJsonp").on("completedJsonp", function (event, response) {
+    $(document).on("completedJsonp", function (event, response) {
       start();
       $dropdown = $("#" + defaults.dropdown_id);
       ok($dropdown.length, "it has a dropdown menu");
@@ -683,12 +693,12 @@ QUnit.testStart(function(testDetails){
       });
       equal($dropdown.children("option[value=0]").text(), "Prime Minister & First Lord Of The Treasury, 10 Downing Street, LONDON, SW1A", "it is the right format");
     });
+    $lookup_button.trigger("click");
   });
   
   asyncTest("should return an error message if no matches were found in an address search", 3, function () {
     $input_field.val("Street does not exist");
-    $lookup_button.trigger("click");
-    $(document).off("completedJsonp").on("completedJsonp", function (event, response) {
+    $(document).on("completedJsonp", function (event, response) {
       start();
       var $errorMessage = $("#" + defaults.error_message_id);
       $dropdown = $("#" + defaults.dropdown_id);
@@ -696,6 +706,7 @@ QUnit.testStart(function(testDetails){
       equal($errorMessage.html(), defaults.error_message_address_not_found);
       equal(response.result.hits.length, 0);
     });
+    $lookup_button.trigger("click");
   });
 
   module("jQuery#setupPostcodeLookup with address search fallback", { 
@@ -715,13 +726,15 @@ QUnit.testStart(function(testDetails){
       });
       $input_field = $("#"+defaults.input_id);
       $lookup_button = $("#"+defaults.button_id);
-    } 
+    },
+    teardown: function () {
+      $(document).off("completedJsonp");
+    }
   });
 
   asyncTest("should perform an address lookup and be sensitive to limit", 22, function () {
     $input_field.val("Test Limit");
-    $lookup_button.trigger("click");
-    $(document).off("completedJsonp").on("completedJsonp", function (event, response) {
+    $(document).on("completedJsonp", function (event, response) {
       start();
       $dropdown = $("#" + defaults.dropdown_id);
       ok($dropdown.length, "it has a dropdown menu");
@@ -730,6 +743,7 @@ QUnit.testStart(function(testDetails){
         ok(elem.postcode === "L21 1EX");
       });
     });
+    $lookup_button.trigger("click");
   });
 
   
