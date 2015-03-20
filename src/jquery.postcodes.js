@@ -77,6 +77,7 @@
     dropdown_id: "idpc_dropdown",
     dropdown_select_message: "Please select your address",
     dropdown_class: "",
+    dropdown_container: undefined,
 
     // Error Message Configuration
     $error_message: undefined,
@@ -440,7 +441,15 @@
       }).appendTo(dropDown);
     }
 
-    dropDown.appendTo(self.$context)
+    var dropdownContainer;
+    if ($(this.dropdown_container).length) {
+      // Use custom dropdown container
+      dropdownContainer = $(this.dropdown_container).first();
+    } else {
+      dropdownContainer = this.$context;
+    }
+
+    dropDown.appendTo(dropdownContainer)
     .change(function () {
       var address;
       var index = $(this).val();

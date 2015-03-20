@@ -55,6 +55,7 @@ QUnit.testStart(function(testDetails){
   var $dropdown;
   var inputId;
   var buttonId;
+  var dropdownContainerId;
   var defaults = $.idealPostcodes.defaults;
   var apiKey = "iddqd";
 
@@ -467,6 +468,45 @@ QUnit.testStart(function(testDetails){
     $input_field.val("asd");
     $lookup_button.trigger("click");
     isPresent("error message", defaults.error_message_id);
+  });
+
+  module("Postcode Lookups: Custom Dropdown Container", {
+    setup: function () {
+      dropdownContainerId = "custom-dropdown-container";
+      $("<div />", {
+        id: dropdownContainerId,
+      })
+      .html("Results: ")
+      .appendTo($("#qunit-fixture"));
+      $("#postcode_lookup_field").setupPostcodeLookup({
+        api_key: apiKey,
+        disable_interval: 0,
+        dropdown_container: "#" + dropdownContainerId,
+        onLookupSuccess: function () {
+          $.event.trigger("completedJsonp");
+        },
+        onLookupError: function () {
+          $.event.trigger("completedJsonp");
+        }
+      });
+      $input_field = $("#"+defaults.input_id);
+      $lookup_button = $("#"+defaults.button_id);
+    },
+    teardown: function () {
+      $(document).off("completedJsonp");
+    }
+  });
+
+  asyncTest("Dropdown is added to a custom parent element", 1, function () {
+    $input_field.val("ID11QD");
+    $(document).on("completedJsonp", function () {
+      start();
+      var dropdownParentActual = $("#" + defaults.dropdown_id).first().parent()[0];
+      var dropdownParentExpected = $("#" + dropdownContainerId).first()[0];
+      strictEqual(dropdownParentActual, dropdownParentExpected,
+        "the dropdown menu is a child of the custom dropdown container element");
+    });
+    $lookup_button.trigger("click");
   });
 
   module("jQuery#setupPostcodeLookup with passing pre-initialisation check", { 
