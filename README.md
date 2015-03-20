@@ -78,6 +78,9 @@ MIT
 
 ## Changelog
 
+*v2.2.4*
+- Configuration object now accepts `dropdown_container` to specify a custom container to display the results dropdown
+
 *v2.2.2*
 - onLookupSuccess is now also triggered when pre-flight postcode validation fails
 
