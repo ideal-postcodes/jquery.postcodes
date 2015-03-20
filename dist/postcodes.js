@@ -1,4 +1,4 @@
-/*! Ideal Postcodes jQuery Plugin - v2.2.3 - 2015-02-09
+/*! Ideal Postcodes jQuery Plugin - v2.2.4 - 2015-03-20
 * https://github.com/ideal-postcodes/jquery.postcodes
 2015 Ideal Postcodes; Licensed MIT */
 (function($) {
@@ -69,6 +69,7 @@
     dropdown_id: "idpc_dropdown",
     dropdown_select_message: "Please select your address",
     dropdown_class: "",
+    dropdown_container: undefined,
 
     // Error Message Configuration
     $error_message: undefined,
@@ -432,7 +433,15 @@
       }).appendTo(dropDown);
     }
 
-    dropDown.appendTo(self.$context)
+    var dropdownContainer;
+    if ($(this.dropdown_container).length) {
+      // Use custom dropdown container
+      dropdownContainer = $(this.dropdown_container).first();
+    } else {
+      dropdownContainer = this.$context;
+    }
+
+    dropDown.appendTo(dropdownContainer)
     .change(function () {
       var address;
       var index = $(this).val();
