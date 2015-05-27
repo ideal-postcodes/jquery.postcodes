@@ -90,7 +90,23 @@ QUnit.testStart(function(testDetails){
       notEqual(data.result.length, 0, "should return an array of addresses");
       equal(data.result[0].postcode, "ID1 1QD", "should contain relevant addresses");
     };
-    $.idealPostcodes.lookupPostcode("ID11QD", apiKey, success);
+    $.idealPostcodes.lookupPostcode({ 
+      query: "ID11QD", 
+      api_key: apiKey
+    }, success);
+  });
+
+  asyncTest("$.idealPostcodes.lookupPostcode also accept postcode as query attribute", 3, function () {
+    var success = function (data) {
+      start();
+      equal(data.code, 2000, "should return 2000 for valid postcode");
+      notEqual(data.result.length, 0, "should return an array of addresses");
+      equal(data.result[0].postcode, "ID1 1QD", "should contain relevant addresses");
+    };
+    $.idealPostcodes.lookupPostcode({ 
+      postcode: "ID11QD", 
+      api_key: apiKey
+    }, success);
   });
 
   asyncTest("$.idealPostcodes.lookupPostcode should return an empty response if postcode not found", 2, function () {
@@ -99,7 +115,10 @@ QUnit.testStart(function(testDetails){
       equal(data.code, 4040, "should return code 4040 for invalid postcode");
       equal(data.result, undefined, "Postcode should not be defined");
     };
-    $.idealPostcodes.lookupPostcode("ID1KFA", apiKey, success);
+    $.idealPostcodes.lookupPostcode({
+      query: "ID1KFA", 
+      api_key: apiKey
+    }, success);
   });
 
   asyncTest("$.idealPostcodes.lookupAddress should lookup an address", 3, function () {

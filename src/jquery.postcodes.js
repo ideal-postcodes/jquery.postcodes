@@ -307,38 +307,38 @@
       }
     }
 
-    $.idealPostcodes.lookupPostcode(postcode, self.api_key, 
-      function (data) {
-        self.response_code = data.code;
-        self.response_message = data.message;
-        self.result = data.result;
-        self.enableLookup();
+    $.idealPostcodes.lookupPostcode({
+      query: postcode, 
+      api_key: self.api_key
+    }, function (data) {
+      self.response_code = data.code;
+      self.response_message = data.message;
+      self.result = data.result;
+      self.enableLookup();
 
-        if (self.response_code === 2000) {
-          self.last_lookup = postcode;
-          self.setDropDown(self.result);
-        } else if (self.response_code === 4040) {
-          self.setErrorMessage(self.error_message_not_found); 
+      if (self.response_code === 2000) {
+        self.last_lookup = postcode;
+        self.setDropDown(self.result);
+      } else if (self.response_code === 4040) {
+        self.setErrorMessage(self.error_message_not_found); 
+      } else {
+        if (self.debug_mode) {
+          self.setErrorMessage("(" + self.response_code + ") " + self.response_message);
         } else {
-          if (self.debug_mode) {
-            self.setErrorMessage("(" + self.response_code + ") " + self.response_message);
-          } else {
-            self.setErrorMessage(self.error_message_default);  
-          } 
-        }
-        if (self.onLookupSuccess) {
-          self.onLookupSuccess.call(self, data);
-        }
-      }, 
-      // Lookup Failed
-      function () {
-        self.setErrorMessage("Unable to connect to server");
-        self.enableLookup();
-        if (self.onLookupError) {
-          self.onLookupError.call(self);
-        }
+          self.setErrorMessage(self.error_message_default);  
+        } 
       }
-    );
+      if (self.onLookupSuccess) {
+        self.onLookupSuccess.call(self, data);
+      }
+    }, 
+    function () {
+      self.setErrorMessage("Unable to connect to server");
+      self.enableLookup();
+      if (self.onLookupError) {
+        self.onLookupError.call(self);
+      }
+    });
   };
 
   /*
@@ -547,13 +547,16 @@
 
     /*
      * Perform a Postcode Lookup
-     * - postcode: (string) Postcode to lookup, case and space insensitive
-     * - api_key: (string) API Key required
+     * - options: (object) Configuration object for postcode lookup
+     *  - options.query: (string) Postcode to lookup, case and space insensitive
+     *  - options.api_key: (string) API Key required
      * - success: (function) Callback invoked upon successful request
      * - error: (function) Optional callback invoked upon failed HTTP request
      */
 
-    lookupPostcode: function (postcode, api_key, success, error) {
+    lookupPostcode: function (o, success, error) {
+      var postcode = o.query || o.postcode || "";
+      var api_key = o.api_key || "";
       var endpoint = defaults.api_endpoint;
       var resource = "postcodes";
       var url = [endpoint, resource, encodeURI(postcode)].join('/');
