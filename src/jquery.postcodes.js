@@ -54,7 +54,7 @@
      * Below is not required
      */
 
-    api_endpoint: "https://api.ideal-postcodes.co.uk/v1",
+    endpoint: "https://api.ideal-postcodes.co.uk/v1",
 
     // Input Field Configuration
     input: undefined,
@@ -551,7 +551,7 @@
     lookupPostcode: function (o, success, error) {
       var postcode = o.query || o.postcode || "";
       var api_key = o.api_key || "";
-      var endpoint = defaults.api_endpoint;
+      var endpoint = defaults.endpoint;
       var resource = "postcodes";
       var url = [endpoint, resource, encodeURI(postcode)].join('/');
       var options = {
@@ -584,7 +584,7 @@
     lookupAddress: function (o, success, error) {
       var query = o.query || "";
       var api_key = o.api_key || "";
-      var endpoint = defaults.api_endpoint;
+      var endpoint = defaults.endpoint;
       var resource = "addresses";
       var url = [endpoint, resource].join('/');
       var queryString = {
@@ -642,7 +642,7 @@
         };
       }
 
-      var endpoint = defaults.api_endpoint;
+      var endpoint = defaults.endpoint;
       var resource = "keys";
       var url = [endpoint, resource, api_key].join('/');
       var options = {
