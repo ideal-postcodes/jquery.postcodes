@@ -96,7 +96,7 @@ QUnit.testStart(function(testDetails){
     }, success);
   });
 
-  asyncTest("$.idealPostcodes.lookupPostcode also accept postcode as query attribute", 3, function () {
+  asyncTest("$.idealPostcodes.lookupPostcode also accept `postcode` as query attribute", 3, function () {
     var success = function (data) {
       start();
       equal(data.code, 2000, "should return 2000 for valid postcode");
@@ -129,8 +129,9 @@ QUnit.testStart(function(testDetails){
       equal(data.result.hits[0].postcode, "ID1 1QD", "should contain relevant addresses");
     };
     $.idealPostcodes.lookupAddress({
-      query: "ID1 1QD"
-    }, apiKey, success);
+      query: "ID1 1QD",
+      api_key: apiKey
+    }, success);
   });
 
   asyncTest("$.idealPostcodes.lookupAddress should lookup an address", 3, function () {
@@ -141,8 +142,9 @@ QUnit.testStart(function(testDetails){
       equal(data.result.hits[0].postcode, "SW1A 2AA", "should contain relevant addresses");
     };
     $.idealPostcodes.lookupAddress({
-      query: "10 Downing Street London"
-    }, apiKey, success);
+      query: "10 Downing Street London",
+      api_key: apiKey
+    }, success);
   });
 
   asyncTest("$.idealPostcodes.lookupAddress should lookup an address", 2, function () {
@@ -152,8 +154,9 @@ QUnit.testStart(function(testDetails){
       equal(data.result.total, 0);
     };
     $.idealPostcodes.lookupAddress({
-      query: "ID1 KFA"
-    }, apiKey, success);
+      query: "ID1 KFA",
+      api_key: apiKey
+    }, success);
   });
 
   asyncTest("$.idealPostcodes.lookupAddress should be sensitive to limits", 2, function () {
@@ -164,8 +167,9 @@ QUnit.testStart(function(testDetails){
     };
     $.idealPostcodes.lookupAddress({
       query: "Test Limit",
+      api_key: apiKey,
       limit: 20
-    }, apiKey, success);
+    }, success);
   });
 
   asyncTest("$.idealPostcodes.checkKey should return true if key is usable and cache result", 2, function () {

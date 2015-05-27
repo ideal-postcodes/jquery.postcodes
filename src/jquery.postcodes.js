@@ -294,7 +294,7 @@
         if (typeof self.address_search === "object") {
           search.limit = self.address_search.limit || 10;
         }
-        return this.searchAddress(search);
+        return this.lookupAddress(search);
       } else {
         this.enableLookup();
         if (self.onLookupSuccess) {
@@ -331,8 +331,7 @@
       if (self.onLookupSuccess) {
         self.onLookupSuccess.call(self, data);
       }
-    }, 
-    function () {
+    }, function () {
       self.setErrorMessage("Unable to connect to server");
       self.enableLookup();
       if (self.onLookupError) {
@@ -348,53 +347,48 @@
    *  - On failed search, show error message and invoke error callback
    */
 
-  IdealPostcodes.prototype.searchAddress = function (searchOptions) {
+  IdealPostcodes.prototype.lookupAddress = function (searchOptions) {
     var self = this;
-    $.idealPostcodes.lookupAddress(searchOptions, self.api_key, 
-      function (data) {
-        self.response_code = data.code;
-        self.response_message = data.message;
-        self.result = data.result;
-        self.enableLookup();
-
-        if (self.response_code === 2000) {
-          if (self.result.total > 0) {
-            self.last_lookup = searchOptions.query;
-            self.setDropDown(self.result.hits, function (address) {
-              // Define new suggestion format
-              var result = [address.line_1];
-              if (address.line_2 !== "") {
-                result.push(address.line_2);
-              }
-              result.push(address.post_town);
-              result.push(address.postcode_outward);
-              return result.join(", ");
-            });
-          } else {
-            self.setErrorMessage(self.error_message_address_not_found); 
-          }
-
-          if (self.onLookupSuccess) {
-            self.onLookupSuccess.call(self, data);
-          }
-
+    searchOptions.api_key = self.api_key;
+    $.idealPostcodes.lookupAddress(searchOptions, function (data) {
+      self.response_code = data.code;
+      self.response_message = data.message;
+      self.result = data.result;
+      self.enableLookup();
+      if (self.response_code === 2000) {
+        if (self.result.total > 0) {
+          self.last_lookup = searchOptions.query;
+          self.setDropDown(self.result.hits, function (address) {
+            // Define new suggestion format
+            var result = [address.line_1];
+            if (address.line_2 !== "") {
+              result.push(address.line_2);
+            }
+            result.push(address.post_town);
+            result.push(address.postcode_outward);
+            return result.join(", ");
+          });
         } else {
-          if (self.debug_mode) {
-            self.setErrorMessage("(" + self.response_code + ") " + self.response_message);
-          } else {
-            self.setErrorMessage(self.error_message_default);  
-          } 
+          self.setErrorMessage(self.error_message_address_not_found); 
         }
-      }, 
-      // Lookup Failed
-      function () {
-        self.setErrorMessage("Unable to connect to server");
-        self.enableLookup();
-        if (self.onLookupError) {
-          self.onLookupError.call(self);
+
+        if (self.onLookupSuccess) {
+          self.onLookupSuccess.call(self, data);
         }
+      } else {
+        if (self.debug_mode) {
+          self.setErrorMessage("(" + self.response_code + ") " + self.response_message);
+        } else {
+          self.setErrorMessage(self.error_message_default);  
+        } 
       }
-    );
+    }, function () {
+      self.setErrorMessage("Unable to connect to server");
+      self.enableLookup();
+      if (self.onLookupError) {
+        self.onLookupError.call(self);
+      }
+    });
   };
 
   /*
@@ -579,22 +573,25 @@
 
     /*
      * Perform an Address Search
-     * - searchOptions: (object) config object (may be extended in later versions)
-     *   - searchOptions.query (string) address to search for
-     * - api_key: (string) API Key required
+     * - options: (object) Configuration object for address search
+     *   - options.query (string) address to search for
+     *   - options.api_key: (string) API Key required
+     *   - options.limit: (number) Maximum number of addresses to return (default 10)
      * - success: (function) Callback invoked upon successful request
      * - error: (function) Optional callback invoked upon failed HTTP request
      */
 
-    lookupAddress: function (searchOptions, api_key, success, error) {
+    lookupAddress: function (o, success, error) {
+      var query = o.query || "";
+      var api_key = o.api_key || "";
       var endpoint = defaults.api_endpoint;
       var resource = "addresses";
       var url = [endpoint, resource].join('/');
       var queryString = {
         api_key: api_key,
-        query: searchOptions.query
+        query: query
       };
-      queryString.limit = searchOptions.limit || 10;
+      queryString.limit = o.limit || 10;
       var options = {
         url: url,
         data: queryString,
@@ -612,7 +609,7 @@
 
     /*
      * Checks whether key can be used
-     * - api_key: (string) API Key to test
+     * - api_key: (string) API Key to testing
      * - success: (function) Callback invoked when key is available
      * - error: (function) Optional callback invoked when key is not available or HTTP request failed
      */
