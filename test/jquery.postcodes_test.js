@@ -474,7 +474,7 @@ QUnit.testStart(function(testDetails){
     setup: function () {
       dropdownContainerId = "custom-dropdown-container";
       $("<div />", {
-        id: dropdownContainerId,
+        id: dropdownContainerId
       })
       .html("Results: ")
       .appendTo($("#qunit-fixture"));
