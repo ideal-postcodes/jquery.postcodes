@@ -181,7 +181,9 @@ QUnit.testStart(function(testDetails){
     var failure = function () {
       start();
     };
-    $.idealPostcodes.checkKey("iddqd", success, failure);
+    $.idealPostcodes.checkKey({
+      api_key: "iddqd"
+    }, success, failure);
   });
 
   asyncTest("$.idealPostcodes.checkKey should return false if key is not usable and cache result", 2, function () {
@@ -193,7 +195,9 @@ QUnit.testStart(function(testDetails){
       equal($.idealPostcodes.keyCheckCache["idkfa"], false, "Failed result is cached");
       start();
     };
-    $.idealPostcodes.checkKey("idkfa", success, failure);
+    $.idealPostcodes.checkKey({
+      api_key: "idkfa"
+    }, success, failure);
   });
 
   asyncTest("$.idealPostcodes.checkKey should return false if invalid response is returned and clear the cache", 1, function () {
@@ -204,7 +208,9 @@ QUnit.testStart(function(testDetails){
       start();
       equal(2000, 2000);
     };
-    $.idealPostcodes.checkKey("idd", success, failure);
+    $.idealPostcodes.checkKey({
+      api_key: "idd"
+    }, success, failure);
   });
 
   /*

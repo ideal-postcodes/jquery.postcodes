@@ -609,12 +609,15 @@
 
     /*
      * Checks whether key can be used
-     * - api_key: (string) API Key to testing
+     * - options: (object) Configuration object for key checking
+     *  - options.api_key: (string) API Key to testing
      * - success: (function) Callback invoked when key is available
      * - error: (function) Optional callback invoked when key is not available or HTTP request failed
      */
 
-    checkKey: function (api_key, success, error) {
+    checkKey: function (o, success, error) {
+      var api_key = o.api_key || "";
+
       error = error || function () {};
 
       var cache = keyCheckCache[api_key];
@@ -715,7 +718,9 @@
 
     // Check if key is usable if necessary
     if (options.check_key) {
-      $.idealPostcodes.checkKey(options.api_key, initPlugin, failedKeyCheck);
+      $.idealPostcodes.checkKey({
+        api_key: options.api_key 
+      }, initPlugin, failedKeyCheck);
     } else {
       initPlugin();
     }
