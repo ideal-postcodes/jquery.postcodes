@@ -26,6 +26,7 @@ Version 3.0.0 brings some backwards incompatible changes
 - Request tagging
 - Custom error message container
 - More appropriately named custom callbacks
+- Removed client side postcode validation method
 
 ***
 
@@ -140,13 +141,15 @@ The plugin may also be configured for closer integration on a form. Below is a n
 
 ***
 
-# Advanced Usage
+# Other Methods
+
+This plugin also exposes a couple of methods which you may find useful without having to invoke the plugin. These methods are listed below
 
 <br />
 
 ## $.idealPostcodes.lookupPostcode(options, success[, error])
 
-Performs a postcode lookup on the Ideal Postcodes API
+Retrieve all addresses at a given postcode
 
 **Function Arguments**
 
@@ -215,7 +218,7 @@ $.idealPostcodes.lookupPostcode({
 
 ## $.idealPostcodes.lookupAddress(options, success[, error])
 
-Performs an address search on the Ideal Postcodes API
+Performs an address search on the Ideal Postcodes API using a search string
 
 **Function Arguments**
 
