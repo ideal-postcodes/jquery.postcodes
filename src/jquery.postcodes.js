@@ -113,7 +113,7 @@
     onAddressSelected: undefined  // User has clicked an address in dropdown
   };
 
-  function IdealPostcodes (options) {
+  function AddressFinderController (options) {
     // Load in defaults
     this.config = {};
     $.extend(this, defaults);
@@ -134,7 +134,7 @@
   }
 
 
-  IdealPostcodes.prototype.setupPostcodeInput = function (context) {
+  AddressFinderController.prototype.setupPostcodeInput = function (context) {
     this.$context = context;
     this.setupInputField();
     this.setupLookupButton();
@@ -148,7 +148,7 @@
    *
    */
 
-  IdealPostcodes.prototype.setupInputField = function () {
+  AddressFinderController.prototype.setupInputField = function () {
     var self = this;
     if ($(this.input).length) {
       // Use custom input
@@ -190,7 +190,7 @@
    *
    */
 
-  IdealPostcodes.prototype.setupLookupButton = function () {
+  AddressFinderController.prototype.setupLookupButton = function () {
     var self = this;
     if ($(this.button).length) {
       this.$button = $(this.button).first();
@@ -224,7 +224,7 @@
    * Prevents lookup button from being triggered
    */
 
-  IdealPostcodes.prototype.disableLookup = function (message) {
+  AddressFinderController.prototype.disableLookup = function (message) {
     // Cancel if custom button
     if (this.button) {
       return;
@@ -237,7 +237,7 @@
    * Allows lookup button to be triggered
    */
 
-  IdealPostcodes.prototype.enableLookup = function () {
+  AddressFinderController.prototype.enableLookup = function () {
     // Cancel if custom button
     if (this.button) {
       return;
@@ -257,7 +257,7 @@
    *
    */
 
-  IdealPostcodes.prototype.clearAll = function () {
+  AddressFinderController.prototype.clearAll = function () {
     this.setDropDown();
     this.setErrorMessage();
   };
@@ -267,7 +267,7 @@
    *
    */
 
-  IdealPostcodes.prototype.removeAll = function () {
+  AddressFinderController.prototype.removeAll = function () {
     this.$context = null;
 
     $.each([this.$input, this.$button, this.$dropdown, this.$error_message], function (index, element) {
@@ -284,7 +284,7 @@
    *  - On failed search, show error message and invoke error callback
    */
 
-  IdealPostcodes.prototype.executeSearch = function (term) {
+  AddressFinderController.prototype.executeSearch = function (term) {
     // Check if address search specified
     if (this.address_search) {
       return this.executeAddressSearch(term);
@@ -300,7 +300,7 @@
    *  - On failed search, show error message and invoke error callback
    */
 
-  IdealPostcodes.prototype.executePostcodeSearch = function (postcode) {
+  AddressFinderController.prototype.executePostcodeSearch = function (postcode) {
     var self = this;
     $.idealPostcodes.lookupPostcode({
       query: postcode, 
@@ -339,7 +339,7 @@
    *  - On failed search, show error message and invoke error callback
    */
 
-  IdealPostcodes.prototype.executeAddressSearch = function (query) {
+  AddressFinderController.prototype.executeAddressSearch = function (query) {
     var self = this;
     var limit;
     if (typeof self.address_search === "object") {
@@ -392,7 +392,7 @@
    *  Caches search result with raw data object
    */ 
 
-  IdealPostcodes.prototype.cacheSearchResults = function (data) {
+  AddressFinderController.prototype.cacheSearchResults = function (data) {
     this.response_code = data.code;
     this.response_message = data.message;
     this.result = data.result;
@@ -405,7 +405,7 @@
    * Removes dropdown from DOM if data is undefined
    */
 
-  IdealPostcodes.prototype.setDropDown = function (data, suggestionFormatter) {
+  AddressFinderController.prototype.setDropDown = function (data, suggestionFormatter) {
     var self = this;
 
     suggestionFormatter = suggestionFormatter || function (address) {
@@ -479,7 +479,7 @@
    * Removes error message from DOM if undefined
    */
 
-  IdealPostcodes.prototype.setErrorMessage = function (message) {
+  AddressFinderController.prototype.setErrorMessage = function (message) {
     if (this.$error_message && this.$error_message.length) {
       this.$error_message.remove();
       delete this.$error_message;
@@ -512,7 +512,7 @@
    * Empties output fields if undefined
    */
 
-  IdealPostcodes.prototype.setAddressFields = function (data) {
+  AddressFinderController.prototype.setAddressFields = function (data) {
     data = data || {};
 
     for (var key in this.$output_fields) {
@@ -707,7 +707,7 @@
     var initPlugin = function () {
       // Initialise plugin on all DOM elements
       $.each(self, function (index, context) {
-        var postcodeLookup = new IdealPostcodes(options);
+        var postcodeLookup = new AddressFinderController(options);
         pluginInstances.push(postcodeLookup);
         postcodeLookup.setupPostcodeInput($(context));
       });
