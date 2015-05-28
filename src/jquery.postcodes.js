@@ -208,12 +208,12 @@
       });
     }
     this.$button.click(function () {
-      var postcode = self.$input.val();
-      if (self.last_lookup !== postcode) {
-        self.last_lookup = postcode;
+      var term = self.$input.val();
+      if (self.last_lookup !== term) {
+        self.last_lookup = term;
         self.clearAll();
         self.disableLookup();
-        self.lookupPostcode(postcode);
+        self.executeSearch(term);
       }
       return false;
     });
@@ -284,39 +284,30 @@
    *  - On failed search, show error message and invoke error callback
    */
 
-  IdealPostcodes.prototype.lookupPostcode = function (postcode) {
-    var self = this;
-    if (!$.idealPostcodes.validatePostcodeFormat(postcode)) {
-      // Fallback to address search
-      if (self.address_search) {
-        var search = {
-          query: postcode
-        };
-        if (typeof self.address_search === "object") {
-          search.limit = self.address_search.limit || 10;
-        }
-        return this.lookupAddress(search);
-      } else {
-        this.enableLookup();
-        if (self.onLookupSuccess) {
-          self.onLookupSuccess.call(self, {
-            code: 4040,
-            message: "Postcode Not Found"
-          });
-        }
-        return self.setErrorMessage(this.error_message_invalid_postcode);
-      }
+  IdealPostcodes.prototype.executeSearch = function (term) {
+    // Check if address search specified
+    if (this.address_search) {
+      return this.executeAddressSearch(term);
+    } else {
+      return this.executePostcodeSearch(term);
     }
+  };
 
+  /*
+   * Triggers postcode lookup and appropriate response
+   *  - On successful search, display results in a dropdown menu
+   *  - On successful search but no results, show error message
+   *  - On failed search, show error message and invoke error callback
+   */
+
+  IdealPostcodes.prototype.executePostcodeSearch = function (postcode) {
+    var self = this;
     $.idealPostcodes.lookupPostcode({
       query: postcode, 
       api_key: self.api_key
     }, function (data) {
-      self.response_code = data.code;
-      self.response_message = data.message;
-      self.result = data.result;
       self.enableLookup();
-
+      self.cacheSearchResults(data);
       if (self.response_code === 2000) {
         self.last_lookup = postcode;
         self.setDropDown(self.result);
@@ -348,17 +339,22 @@
    *  - On failed search, show error message and invoke error callback
    */
 
-  IdealPostcodes.prototype.lookupAddress = function (searchOptions) {
+  IdealPostcodes.prototype.executeAddressSearch = function (query) {
     var self = this;
-    searchOptions.api_key = self.api_key;
-    $.idealPostcodes.lookupAddress(searchOptions, function (data) {
-      self.response_code = data.code;
-      self.response_message = data.message;
-      self.result = data.result;
+    var limit;
+    if (typeof self.address_search === "object") {
+      limit = self.address_search.limit || 10;
+    }
+    $.idealPostcodes.lookupAddress({
+      query: query,
+      limit: limit,
+      api_key: self.api_key
+    }, function (data) {
       self.enableLookup();
+      self.cacheSearchResults(data);
       if (self.response_code === 2000) {
         if (self.result.total > 0) {
-          self.last_lookup = searchOptions.query;
+          self.last_lookup = query;
           self.setDropDown(self.result.hits, function (address) {
             // Define new suggestion format
             var result = [address.line_1];
@@ -390,6 +386,17 @@
         self.onLookupError.call(self);
       }
     });
+  };
+
+  /*
+   *  Caches search result with raw data object
+   */ 
+
+  IdealPostcodes.prototype.cacheSearchResults = function (data) {
+    this.response_code = data.code;
+    this.response_message = data.message;
+    this.result = data.result;
+    return data;
   };
 
   /*
@@ -540,13 +547,8 @@
     // Expose key check cache for testing
     keyCheckCache: keyCheckCache,
 
-    // Simple validation for postcode. Excludes test postcodes starting with ID1
-    validatePostcodeFormat: function (postcode) {
-      return !!postcode.match(/^[a-zA-Z0-9]{1,4}\s?\d[a-zA-Z]{2}$/) || !!postcode.match(/^id1/i);
-    },
-
     /*
-     * Perform a Postcode Lookup
+     * Perform a Postcode Lookup - retrieve a list of addresses using a postcode
      * - options: (object) Configuration object for postcode lookup
      *  - options.query: (string) Postcode to lookup, case and space insensitive
      *  - options.api_key: (string) API Key required
@@ -578,7 +580,7 @@
     },
 
     /*
-     * Perform an Address Search
+     * Perform an Address Search - query for addresses using a search string
      * - options: (object) Configuration object for address search
      *   - options.query (string) address to search for
      *   - options.api_key: (string) API Key required

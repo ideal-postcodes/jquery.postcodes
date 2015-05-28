@@ -75,15 +75,6 @@ QUnit.testStart(function(testDetails){
 
   module("Class Methods");
 
-  test("$.idealPostcodes.validatePostcodeFormat", 6, function () {
-    equal($.idealPostcodes.validatePostcodeFormat("BT74 0AQ"), true);
-    equal($.idealPostcodes.validatePostcodeFormat("ID11QD"), true);
-    equal($.idealPostcodes.validatePostcodeFormat("id11qd"), true);
-    equal($.idealPostcodes.validatePostcodeFormat("id1 1qd"), true);
-    equal($.idealPostcodes.validatePostcodeFormat("ID1 1QD"), true);
-    equal($.idealPostcodes.validatePostcodeFormat("IDDQD"), false);
-  });
-
   asyncTest("$.idealPostcodes.lookupPostcode should lookup a postcode", 3, function () {
     var success = function (data) {
       start();
@@ -264,14 +255,6 @@ QUnit.testStart(function(testDetails){
     }
   });
 
- test("Postcode entries are validated before submission", 2, function () {
-    $input_field.val("BOGUSPOSTCODE");
-    $lookup_button.trigger("click");
-    ok($("#" + defaults.error_message_id).length, "it has an error message");
-    strictEqual($("#" + defaults.error_message_id).html(), defaults.error_message_invalid_postcode,"it has the correct error message");
-  }); 
-
-
   asyncTest("Address options are presented after a successful postcode lookup", 7, function () {
     $input_field.val("ID11QD");
     equal($lookup_button.prop("disabled"), false, "initial lookup button not disabled");
@@ -333,17 +316,6 @@ QUnit.testStart(function(testDetails){
     });
     $input_field.trigger(e);
   });
-
-  test("Lookup with invalid postcode caught by regexp", 5, function () {
-    $input_field.val("asd");
-    equal($lookup_button.prop("disabled"), false, "initial lookup button not disabled");
-    $lookup_button.trigger("click");
-    isPresent("default input box", defaults.input_id);
-    isPresent("default lookup button", defaults.button_id);
-    isPresent("error message", defaults.error_message_id);
-    equal($lookup_button.prop("disabled"), false, "lookup button not disabled after click");
-  });
-
 
   asyncTest("Lookup with invalid postcode", 5, function () {
     $input_field.val("ID11QE");
@@ -421,15 +393,6 @@ QUnit.testStart(function(testDetails){
     $lookup_button.trigger("click");
   });
 
-  test("Invalid postcode caught by regexp", 3, function () {
-    $input_field.val("asd");
-    equal($lookup_button.prop("disabled"), false, "initial lookup button not disabled");
-    $lookup_button.trigger("click");
-    isPresent("error message", defaults.error_message_id);
-    equal($lookup_button.prop("disabled"), false, "lookup button not disabled after click");
-  });
-
-
   module("Postcode Lookups: Custom Lookup Trigger", { 
     setup: function () {
       buttonId = "customInput";
@@ -492,12 +455,6 @@ QUnit.testStart(function(testDetails){
       strictEqual($("#" + defaults.error_message_id).html(), defaults.error_message_not_found, "it has the correct error message");
     });
     $lookup_button.trigger("click");
-  });
-
-  test("Invalid postcode caught by regexp", 1, function () {
-    $input_field.val("asd");
-    $lookup_button.trigger("click");
-    isPresent("error message", defaults.error_message_id);
   });
 
   module("Postcode Lookups: Custom Dropdown Container", {
@@ -678,16 +635,6 @@ QUnit.testStart(function(testDetails){
     $(document).off("addressSelected").on("addressSelected", function (e, selectedData) {
       start();
       deepEqual(addresses.result[2], selectedData);
-    });
-    $lookup_button.trigger("click");
-  });
-
-  asyncTest("onLookupSuccess is triggered when pre-flight validation fails", 2, function () {
-    $input_field.val("BOGUS");
-    $(document).on("completedJsonp", function (e, data) {
-      start();
-      equal(data.code, 4040);
-      equal(data.message, "Postcode Not Found");
     });
     $lookup_button.trigger("click");
   });
