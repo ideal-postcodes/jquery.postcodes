@@ -475,13 +475,13 @@ Below is a list of optional parameters you can use to style or modify the postco
 <td>If the plugin is configured to check the key, this callback will only be invoked if the key is not usable.</td>
 </tr>
 <tr>
-<td> onLookupSuccess</td>
+<td>onSearchCompleted</td>
 <td><code>function</code></td>
 <td>undefined</td>
-<td>A function invoked when a successful API request is made. Note that this is also invoked on 400-type errors such as "postcode not found" or "lookup balance exhausted". This property takes a function, which accepts a `data` argument representing the JSON response.</td>
+<td>A function invoked when a successful API request is made. An API request is made <br />Note that this is also invoked on 400-type errors such as "postcode not found" or "lookup balance exhausted". This property takes a function, which accepts a `data` argument representing the JSON response.</td>
 </tr>
 <tr>
-<td>onLookupError</td>
+<td>onRequestFailed</td>
 <td><code>function</code></td>
 <td>undefined</td>
 <td>A function invoked when the plugin was not able to make a successful request to the API. For instance, a request timeout. This property takes a function with no arguments.</td>

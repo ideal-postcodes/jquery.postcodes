@@ -106,11 +106,14 @@
     remove_organisation: false,
 
     // Register callbacks at specific stages
-    onLoaded: undefined,          // When plugin is initialised
-    onFailedCheck: undefined,     // When key check fails (requires check_key: true)
-    onLookupSuccess: undefined,   // When a lookup succeeds, E.g. Server responds that Postcode is found or doesn't exist
-    onLookupError: undefined,     // When a lookup fails, can be a connection issue or bad request   
-    onAddressSelected: undefined  // User has clicked an address in dropdown
+    onLoaded: undefined,              // When plugin is initialised
+    onFailedCheck: undefined,         // When key check fails (requires check_key: true)
+    onSearchCompleted: undefined,     // When a lookup succeeds, E.g. Server responds that Postcode is found or doesn't exist
+    onAddressesRetrieved: undefined,  // When a lookup succeeds with a list of addresses
+    onSearchError: undefined,         // When a request succeeds but the API returns an error code
+    onRequestFailed: undefined,       // When a lookup fails, can be a connection issue or bad request
+    onDropdownCreated: undefined,     // When the address selection dropdown is inserted to DOM
+    onAddressSelected: undefined      // User has clicked an address in dropdown
   };
 
   function AddressFinderController (options) {
@@ -320,14 +323,14 @@
           self.setErrorMessage(self.error_message_default);  
         } 
       }
-      if (self.onLookupSuccess) {
-        self.onLookupSuccess.call(self, data);
+      if (self.onSearchCompleted) {
+        self.onSearchCompleted.call(self, data);
       }
     }, function () {
       self.setErrorMessage("Unable to connect to server");
       self.enableLookup();
-      if (self.onLookupError) {
-        self.onLookupError.call(self);
+      if (self.onRequestFailed) {
+        self.onRequestFailed.call(self);
       }
     });
   };
@@ -369,8 +372,8 @@
           self.setErrorMessage(self.error_message_address_not_found); 
         }
 
-        if (self.onLookupSuccess) {
-          self.onLookupSuccess.call(self, data);
+        if (self.onSearchCompleted) {
+          self.onSearchCompleted.call(self, data);
         }
       } else {
         if (self.debug_mode) {
@@ -382,8 +385,8 @@
     }, function () {
       self.setErrorMessage("Unable to connect to server");
       self.enableLookup();
-      if (self.onLookupError) {
-        self.onLookupError.call(self);
+      if (self.onRequestFailed) {
+        self.onRequestFailed.call(self);
       }
     });
   };

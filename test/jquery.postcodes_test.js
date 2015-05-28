@@ -240,10 +240,10 @@ QUnit.testStart(function(testDetails){
       $("#postcode_lookup_field").setupPostcodeLookup({
         api_key: apiKey,
         disable_interval: 0,
-        onLookupSuccess: function () {
+        onSearchCompleted: function () {
           $.event.trigger("completedJsonp");
         },
-        onLookupError: function () {
+        onSearchError: function () {
           $.event.trigger("completedJsonp");
         }
       });
@@ -341,10 +341,10 @@ QUnit.testStart(function(testDetails){
         api_key: apiKey,
         input: "#" + inputId,
         disable_interval: 0,
-        onLookupSuccess: function () {
+        onSearchCompleted: function () {
           $.event.trigger("completedJsonp");
         },
-        onLookupError: function () {
+        onSearchError: function () {
           $.event.trigger("completedJsonp");
         }
       });
@@ -406,10 +406,10 @@ QUnit.testStart(function(testDetails){
         api_key: apiKey,
         button: "#" + buttonId,
         disable_interval: 0,
-        onLookupSuccess: function () {
+        onSearchCompleted: function () {
           $.event.trigger("completedJsonp");
         },
-        onLookupError: function () {
+        onSearchError: function () {
           $.event.trigger("completedJsonp");
         }
       });
@@ -457,7 +457,7 @@ QUnit.testStart(function(testDetails){
     $lookup_button.trigger("click");
   });
 
-  module("Postcode Lookups: Custom Dropdown Container", {
+  module("Custom Dropdown Container", {
     setup: function () {
       dropdownContainerId = "custom-dropdown-container";
       $("<div />", {
@@ -469,10 +469,10 @@ QUnit.testStart(function(testDetails){
         api_key: apiKey,
         disable_interval: 0,
         dropdown_container: "#" + dropdownContainerId,
-        onLookupSuccess: function () {
+        onSearchCompleted: function () {
           $.event.trigger("completedJsonp");
         },
-        onLookupError: function () {
+        onSearchError: function () {
           $.event.trigger("completedJsonp");
         }
       });
@@ -496,7 +496,7 @@ QUnit.testStart(function(testDetails){
     $lookup_button.trigger("click");
   });
 
-  module("Postcode Lookups: Custom Error Message Container", {
+  module("Custom Error Message Container", {
     setup: function () {
       errorMessageContainerId = "custom-error-container";
       $("<div />", {
@@ -508,10 +508,10 @@ QUnit.testStart(function(testDetails){
         api_key: apiKey,
         disable_interval: 0,
         error_message_container: "#" + errorMessageContainerId,
-        onLookupSuccess: function () {
+        onSearchCompleted: function () {
           $.event.trigger("completedJsonp");
         },
-        onLookupError: function () {
+        onSearchError: function () {
           $.event.trigger("completedJsonp");
         }
       });
@@ -605,12 +605,66 @@ QUnit.testStart(function(testDetails){
     equal($widget[0].id, "postcode_lookup_field");
   });
 
-  module("onLookupSuccess and onAddressSelected Callback Test", { 
+  module("onSearchCompleted Callback", { 
     setup: function () {
       $("#postcode_lookup_field").setupPostcodeLookup({
         api_key: apiKey,
         disable_interval: 0,
-        onLookupSuccess: function (data) {
+        onSearchCompleted: function (data) {
+          $.event.trigger("completedJsonp", [data]);
+        }
+      });
+      $input_field = $("#"+defaults.input_id);
+      $lookup_button = $("#"+defaults.button_id);
+    },
+    teardown: function () {
+      $(document).off("completedJsonp");
+    }
+  });
+
+  asyncTest("onSearchCompleted triggered by postcode lookup", 1, function () {
+    $input_field.val("ID11QD");
+    $(document).on("completedJsonp", function (e, data) {
+      start();
+      equal(data.result.length > 0, true);
+    });
+    $lookup_button.trigger("click");
+  });
+
+  asyncTest("onSearchCompleted is triggered when Postcode not Found error returned", 2, function () {
+    $input_field.val("ID1KFA");
+    $(document).on("completedJsonp", function (e, data) {
+      start();
+      equal(data.code, 4040);
+      equal(data.message, "Postcode Not Found");
+    });
+    $lookup_button.trigger("click");
+  });
+
+  asyncTest("onSearchCompleted is triggered when No Lookups Remaining error returned", 1, function () {
+    $input_field.val("ID1CLIP");
+    $(document).on("completedJsonp", function (e, data) {
+      start();
+      equal(data.code, 4020);
+    });
+    $lookup_button.trigger("click");
+  });
+
+  asyncTest("onSearchCompleted is triggered when Limit Breached error returned", 1, function () {
+    $input_field.val("ID1CHOP");
+    $(document).on("completedJsonp", function (e, data) {
+      start();
+      equal(data.code, 4021);
+    });
+    $lookup_button.trigger("click");
+  });
+
+  module("onAddressSelected Callback", { 
+    setup: function () {
+      $("#postcode_lookup_field").setupPostcodeLookup({
+        api_key: apiKey,
+        disable_interval: 0,
+        onSearchCompleted: function (data) {
           $.event.trigger("completedJsonp", [data]);
         },
         onAddressSelected: function (selectedData) {
@@ -625,7 +679,7 @@ QUnit.testStart(function(testDetails){
     }
   });
 
-  asyncTest("onLookupSuccess and onAddressSelected triggered by postcode lookup callback and clicking on an address respectively", 1, function () {
+  asyncTest("onAddressSelected triggered by clicking on an address", 1, function () {
     var addresses;
     $input_field.val("ID11QD");
     $(document).on("completedJsonp", function (e, data) {
@@ -639,41 +693,13 @@ QUnit.testStart(function(testDetails){
     $lookup_button.trigger("click");
   });
 
-  asyncTest("onLookupSuccess is triggered when Postcode not Found error returned", 2, function () {
-    $input_field.val("ID1KFA");
-    $(document).on("completedJsonp", function (e, data) {
-      start();
-      equal(data.code, 4040);
-      equal(data.message, "Postcode Not Found");
-    });
-    $lookup_button.trigger("click");
-  });
-
-  asyncTest("onLookupSuccess is triggered when No Lookups Remaining error returned", 1, function () {
-    $input_field.val("ID1CLIP");
-    $(document).on("completedJsonp", function (e, data) {
-      start();
-      equal(data.code, 4020);
-    });
-    $lookup_button.trigger("click");
-  });
-
-  asyncTest("onLookupSuccess is triggered when Limit Breached error returned", 1, function () {
-    $input_field.val("ID1CHOP");
-    $(document).on("completedJsonp", function (e, data) {
-      start();
-      equal(data.code, 4021);
-    });
-    $lookup_button.trigger("click");
-  });
-
   module("Remove Organisation from address lines", {
     setup: function () {
       $("#postcode_lookup_field").setupPostcodeLookup({
         api_key: apiKey,
         disable_interval: 0,
         remove_organisation: true,
-        onLookupSuccess: function (data) {
+        onSearchCompleted: function (data) {
           $.event.trigger("completedJsonp", [data]);
         },
         onAddressSelected: function (selectedData) {
@@ -722,7 +748,7 @@ QUnit.testStart(function(testDetails){
         api_key: "iddqd",
         address_search: true,
         disable_interval: 0,
-        onLookupSuccess: function (data) {
+        onSearchCompleted: function (data) {
           $.event.trigger("completedJsonp", [data]);
         },
         onAddressSelected: function (selectedData) {
@@ -773,7 +799,7 @@ QUnit.testStart(function(testDetails){
           limit: 20
         },
         disable_interval: 0,
-        onLookupSuccess: function (data) {
+        onSearchCompleted: function (data) {
           $.event.trigger("completedJsonp", [data]);
         },
         onAddressSelected: function (selectedData) {
