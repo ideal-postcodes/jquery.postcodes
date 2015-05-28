@@ -56,6 +56,7 @@ QUnit.testStart(function(testDetails){
   var inputId;
   var buttonId;
   var dropdownContainerId;
+  var errorMessageContainerId;
   var defaults = $.idealPostcodes.defaults;
   var apiKey = "iddqd";
 
@@ -538,6 +539,45 @@ QUnit.testStart(function(testDetails){
     $lookup_button.trigger("click");
   });
 
+  module("Postcode Lookups: Custom Error Message Container", {
+    setup: function () {
+      errorMessageContainerId = "custom-error-container";
+      $("<div />", {
+        id: errorMessageContainerId
+      })
+      .html("Errors: ")
+      .appendTo($("#qunit-fixture"));
+      $("#postcode_lookup_field").setupPostcodeLookup({
+        api_key: apiKey,
+        disable_interval: 0,
+        error_message_container: "#" + errorMessageContainerId,
+        onLookupSuccess: function () {
+          $.event.trigger("completedJsonp");
+        },
+        onLookupError: function () {
+          $.event.trigger("completedJsonp");
+        }
+      });
+      $input_field = $("#"+defaults.input_id);
+      $lookup_button = $("#"+defaults.button_id);
+    },
+    teardown: function () {
+      $(document).off("completedJsonp");
+    }
+  });
+
+  asyncTest("Error message is added to a custom parent element", 1, function () {
+    $input_field.val("ID1KFA");
+    $(document).on("completedJsonp", function () {
+      start();
+      var errorMessageParentActual = $("#" + defaults.error_message_id).first().parent()[0];
+      var errorMessageParentExpected = $("#" + errorMessageContainerId).first()[0];
+      strictEqual(errorMessageParentActual, errorMessageParentExpected,
+        "the error message element is a child of the custom error container element");
+    });
+    $lookup_button.trigger("click");
+  });
+
   module("jQuery#setupPostcodeLookup with passing pre-initialisation check", { 
     setup: function () {
       stop();
@@ -814,7 +854,5 @@ QUnit.testStart(function(testDetails){
     });
     $lookup_button.trigger("click");
   });
-
-  
 
 }(jQuery));

@@ -87,6 +87,7 @@
     error_message_address_not_found: "We could not find a match for your address. Please type in your address",
     error_message_default: "Sorry, we weren't able to get the address you were looking for. Please type your address manually",
     error_message_class: "",
+    error_message_container: undefined,
 
     // Address search fallback - if enabled, postcode searches which fail validation will be forward to the Address search API
     address_search: false,
@@ -481,14 +482,19 @@
       return;
     }
 
-    // Need to enable lookup button
-    // Idpc.enable_lookup_button();
+    var container;
+    if ($(this.error_message_container).length) {
+      container = $(this.error_message_container).first();
+    } else {
+      container = this.$context;
+    }
+
     this.$error_message = $('<p />', {
       html: message,
       id: this.error_message_id
     })
     .addClass(this.error_message_class)
-    .appendTo(this.$context);
+    .appendTo(container);
 
     return this.$error_message;
   };
