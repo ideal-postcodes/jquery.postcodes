@@ -56,41 +56,41 @@
     $lookup_button.trigger("click");
   });
 
-  // module("jQuery#setupPostcodeLookup with address search fallback", { 
-  //   setup: function () {
-  //     $("#postcode_lookup_field").setupPostcodeLookup({
-  //       api_key: apiKey,
-  //       address_search: {
-  //         limit: 20
-  //       },
-  //       disable_interval: 0,
-  //       onSearchCompleted: function (data) {
-  //         $.event.trigger("completedJsonp", [data]);
-  //       },
-  //       onAddressSelected: function (selectedData) {
-  //         $.event.trigger("addressSelected", [selectedData]);
-  //       }
-  //     });
-  //     $input_field = $("#"+defaults.input_id);
-  //     $lookup_button = $("#"+defaults.button_id);
-  //   },
-  //   teardown: function () {
-  //     $(document).off("completedJsonp").off("addressSelected");
-  //   }
-  // });
+  module("jQuery#setupPostcodeLookup with address search fallback", { 
+    setup: function () {
+      $("#postcode_lookup_field").setupPostcodeLookup({
+        api_key: apiKey,
+        address_search: {
+          limit: 20
+        },
+        disable_interval: 0,
+        onSearchCompleted: function (data) {
+          $.event.trigger("completedJsonp", [data]);
+        },
+        onAddressSelected: function (selectedData) {
+          $.event.trigger("addressSelected", [selectedData]);
+        }
+      });
+      $input_field = $("#"+defaults.input_id);
+      $lookup_button = $("#"+defaults.button_id);
+    },
+    teardown: function () {
+      $(document).off("completedJsonp").off("addressSelected");
+    }
+  });
 
-  // asyncTest("should perform an address lookup and be sensitive to limit", 22, function () {
-  //   $input_field.val("Test Limit");
-  //   $(document).on("completedJsonp", function (event, response) {
-  //     start();
-  //     $dropdown = $("#" + defaults.dropdown_id);
-  //     ok($dropdown.length, "it has a dropdown menu");
-  //     equal(response.result.hits.length, 20, "it returns the right number of results");
-  //     $.each(response.result.hits, function (index, elem) {
-  //       ok(elem.postcode === "L21 1EX");
-  //     });
-  //   });
-  //   $lookup_button.trigger("click");
-  // });
+  asyncTest("should perform an address lookup and be sensitive to limit", 22, function () {
+    $input_field.val("Test Limit");
+    $(document).on("completedJsonp", function (event, response) {
+      start();
+      $dropdown = $("#" + defaults.dropdown_id);
+      ok($dropdown.length, "it has a dropdown menu");
+      equal(response.result.hits.length, 20, "it returns the right number of results");
+      $.each(response.result.hits, function (index, elem) {
+        ok(elem.postcode === "L21 1EX");
+      });
+    });
+    $lookup_button.trigger("click");
+  });
 
 }(jQuery));
