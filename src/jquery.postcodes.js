@@ -308,29 +308,23 @@
     $.idealPostcodes.lookupPostcode({
       query: postcode, 
       api_key: self.api_key
-    }, function (data) {
+    }, function (error, addresses, data) {
       self.enableLookup();
       self.cacheSearchResults(data);
-      if (self.response_code === 2000) {
-        self.last_lookup = postcode;
-        self.setDropDown(self.result);
-      } else if (self.response_code === 4040) {
-        self.setErrorMessage(self.error_message_not_found); 
+      if (error) {
+        var message = self.debug_mode ? error.message : self.error_message_default;
+        self.setErrorMessage(message);
       } else {
-        if (self.debug_mode) {
-          self.setErrorMessage("(" + self.response_code + ") " + self.response_message);
+        if (addresses.length > 0) {
+          self.last_lookup = postcode;
+          self.setDropDown(addresses);
         } else {
-          self.setErrorMessage(self.error_message_default);  
-        } 
+          self.setErrorMessage(self.error_message_not_found); 
+        }
       }
+
       if (self.onSearchCompleted) {
         self.onSearchCompleted.call(self, data);
-      }
-    }, function () {
-      self.setErrorMessage("Unable to connect to server");
-      self.enableLookup();
-      if (self.onRequestFailed) {
-        self.onRequestFailed.call(self);
       }
     });
   };
@@ -352,13 +346,17 @@
       query: query,
       limit: limit,
       api_key: self.api_key
-    }, function (data) {
+    }, function (error, addresses, data) {
       self.enableLookup();
       self.cacheSearchResults(data);
-      if (self.response_code === 2000) {
-        if (self.result.total > 0) {
+
+      if (error) {
+        var message = self.debug_mode ? error.message : self.error_message_default;
+        self.setErrorMessage(message);
+      } else {
+        if (addresses.length > 0) {
           self.last_lookup = query;
-          self.setDropDown(self.result.hits, function (address) {
+          self.setDropDown(addresses, function (address) {
             // Define new suggestion format
             var result = [address.line_1];
             if (address.line_2 !== "") {
@@ -371,22 +369,10 @@
         } else {
           self.setErrorMessage(self.error_message_address_not_found); 
         }
-
-        if (self.onSearchCompleted) {
-          self.onSearchCompleted.call(self, data);
-        }
-      } else {
-        if (self.debug_mode) {
-          self.setErrorMessage("(" + self.response_code + ") " + self.response_message);
-        } else {
-          self.setErrorMessage(self.error_message_default);  
-        } 
       }
-    }, function () {
-      self.setErrorMessage("Unable to connect to server");
-      self.enableLookup();
-      if (self.onRequestFailed) {
-        self.onRequestFailed.call(self);
+
+      if (self.onSearchCompleted) {
+        self.onSearchCompleted.call(self, data);
       }
     });
   };
@@ -540,6 +526,10 @@
     return address;
   };
 
+  var extractError = function (data) {
+    return data.code + " - " + data.message;
+  };
+
   $.idealPostcodes = {
 
     // Expose defaults for testing
@@ -559,7 +549,7 @@
      * - error: (function) Optional callback invoked upon failed HTTP request
      */
 
-    lookupPostcode: function (o, success, error) {
+    lookupPostcode: function (o, callback) {
       var postcode = o.query || o.postcode || "";
       var api_key = o.api_key || "";
       var endpoint = defaults.endpoint;
@@ -572,12 +562,16 @@
         },
         dataType: 'jsonp',
         timeout: 5000,
-        success: success
+        success: function (data, _, jqxhr) {
+          if (data.code === 2000) {
+            return callback(null, data.result, data, jqxhr);
+          } else if (data.code === 4040) {
+            return callback(null, [], data, jqxhr);
+          } else {
+            return callback(new Error(extractError(data)), [], data, jqxhr);
+          }
+        }
       };
-
-      if (error) {
-        options.error = error;
-      }
 
       $.ajax(options);
     },
@@ -592,7 +586,7 @@
      * - error: (function) Optional callback invoked upon failed HTTP request
      */
 
-    lookupAddress: function (o, success, error) {
+    lookupAddress: function (o, callback) {
       var query = o.query || "";
       var api_key = o.api_key || "";
       var endpoint = defaults.endpoint;
@@ -608,12 +602,14 @@
         data: queryString,
         dataType: 'jsonp',
         timeout: 5000,
-        success: success
+        success: function (data, _, jqxhr) {
+          if (data.code === 2000) {
+            return callback(null, data.result.hits, data, jqxhr);
+          } else {
+            return callback(new Error(extractError(data)), [], data, jqxhr);
+          }
+        }
       };
-
-      if (error) {
-        options.error = error;
-      }
 
       $.ajax(options);
     },

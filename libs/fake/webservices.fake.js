@@ -1544,6 +1544,10 @@ fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/keys/idkfa', funct
 fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/addresses', function(data) {
 	if (data.query === "ID1 1QD") {
 		return addressSearchTest;
+	} else if (data.query === "ID1 CLIP") {
+		return noLookupsRemaining;
+	} else if (data.query === "ID1 CHOP") {
+		return lookupLimitBreached;
 	} else if (data.query === "ID1 KFA") {
 		return addressSearchNoResults;
 	} else if (data.query === "10 Downing Street London") {

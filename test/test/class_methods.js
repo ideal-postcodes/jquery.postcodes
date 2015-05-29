@@ -8,98 +8,158 @@
    *
    */
 
-  module("Class Methods");
+  module("$.idealPostcodes.lookupPostcode");
 
-  asyncTest("$.idealPostcodes.lookupPostcode should lookup a postcode", 3, function () {
-    var success = function (data) {
-      start();
-      equal(data.code, 2000, "should return 2000 for valid postcode");
-      notEqual(data.result.length, 0, "should return an array of addresses");
-      equal(data.result[0].postcode, "ID1 1QD", "should contain relevant addresses");
-    };
+  asyncTest("lookup a postcode", 4, function () {
     $.idealPostcodes.lookupPostcode({ 
       query: "ID11QD", 
       api_key: apiKey
-    }, success);
+    }, function (error, addresses, raw) {
+      start();
+      equal(error, null, "should not return an error");
+      notEqual(addresses.length, 0, "should return an array of addresses");
+      equal(addresses[0].postcode, "ID1 1QD", "should contain relevant addresses");
+      equal(raw.code, 2000);
+    });
   });
 
-  asyncTest("$.idealPostcodes.lookupPostcode also accept `postcode` as query attribute", 3, function () {
-    var success = function (data) {
-      start();
-      equal(data.code, 2000, "should return 2000 for valid postcode");
-      notEqual(data.result.length, 0, "should return an array of addresses");
-      equal(data.result[0].postcode, "ID1 1QD", "should contain relevant addresses");
-    };
+  asyncTest("accepts `postcode` as query attribute", 4, function () {
     $.idealPostcodes.lookupPostcode({ 
       postcode: "ID11QD", 
       api_key: apiKey
-    }, success);
+    }, function (error, addresses, raw) {
+      start();
+      equal(error, null, "should not return an error");
+      notEqual(addresses.length, 0, "should return an array of addresses");
+      equal(addresses[0].postcode, "ID1 1QD", "should contain relevant addresses");
+      equal(raw.code, 2000);
+    });
   });
 
-  asyncTest("$.idealPostcodes.lookupPostcode should return an empty response if postcode not found", 2, function () {
-    var success = function (data) {
-      start();
-      equal(data.code, 4040, "should return code 4040 for invalid postcode");
-      equal(data.result, undefined, "Postcode should not be defined");
-    };
+  asyncTest("returns empty response if postcode not found", 3, function () {
     $.idealPostcodes.lookupPostcode({
       query: "ID1KFA", 
       api_key: apiKey
-    }, success);
+    }, function (error, addresses, raw) {
+      start();
+      equal(error, null, "should not return an error");
+      equal(addresses.length, 0, "No addresses found");
+      equal(raw.code, 4040);
+    });
   });
 
-  asyncTest("$.idealPostcodes.lookupAddress should lookup an address", 3, function () {
-    var success = function (data) {
+  asyncTest("returns an error if no lookups remaining", 4, function () {
+    $.idealPostcodes.lookupPostcode({
+      query: "ID1CLIP", 
+      api_key: apiKey
+    }, function (error, addresses, raw) {
       start();
-      equal(data.code, 2000, "should return 2000 for valid search query");
-      equal(data.result.total, 7);
-      equal(data.result.hits[0].postcode, "ID1 1QD", "should contain relevant addresses");
-    };
+      notEqual(error, null, "should return an error");
+      ok(error.message.match(/^4020/));
+      equal(addresses.length, 0, "No addresses found");
+      equal(raw.code, 4020);
+    });
+  });
+
+  asyncTest("returns an error if limit reached", 4, function () {
+    $.idealPostcodes.lookupPostcode({
+      query: "ID1CHOP", 
+      api_key: apiKey
+    }, function (error, addresses, raw) {
+      start();
+      notEqual(error, null, "should return an error");
+      ok(error.message.match(/^4021/));
+      equal(addresses.length, 0, "No addresses found");
+      equal(raw.code, 4021);
+    });
+  });
+
+  module("$.idealPostcodes.lookupAddress");
+
+  asyncTest("returns an address search", 5, function () {
     $.idealPostcodes.lookupAddress({
       query: "ID1 1QD",
       api_key: apiKey
-    }, success);
+    }, function (error, addresses, data) {
+      start();
+      equal(error, null, "does not return an error");
+      equal(addresses.length, 7, "returns addresses");
+      equal(data.code, 2000, "returns 2000 for valid search query");
+      equal(data.result.total, 7);
+      equal(data.result.hits[0].postcode, "ID1 1QD", "should contain relevant addresses");
+    });
   });
 
-  asyncTest("$.idealPostcodes.lookupAddress should lookup an address", 3, function () {
-    var success = function (data) {
-      start();
-      equal(data.code, 2000, "should return 2000 for valid search query");
-      equal(data.result.total, 2);
-      equal(data.result.hits[0].postcode, "SW1A 2AA", "should contain relevant addresses");
-    };
+  asyncTest("returns an address search", 5, function () {
     $.idealPostcodes.lookupAddress({
       query: "10 Downing Street London",
       api_key: apiKey
-    }, success);
+    }, function (error, addresses, data) {
+      start();
+      equal(error, null, "does not return an error");
+      equal(addresses.length, 2, "returns addresses");
+      equal(data.code, 2000, "returns 2000 for valid search query");
+      equal(data.result.total, 2);
+      equal(data.result.hits[0].postcode, "SW1A 2AA", "should contain relevant addresses");
+    });
   });
 
-  asyncTest("$.idealPostcodes.lookupAddress should lookup an address", 2, function () {
-    var success = function (data) {
-      start();
-      equal(data.code, 2000, "should return 2000 for valid search query");
-      equal(data.result.total, 0);
-    };
+  asyncTest("returns an empty result if no matches", 4, function () {
     $.idealPostcodes.lookupAddress({
       query: "ID1 KFA",
       api_key: apiKey
-    }, success);
+    }, function (error, addresses, data) {
+      start();
+      equal(error, null, "does not return error");
+      equal(addresses.length, 0, "returns empty array");
+      equal(data.code, 2000, "should return 2000 for valid search query");
+      equal(data.result.total, 0);
+    });
   });
 
-  asyncTest("$.idealPostcodes.lookupAddress should be sensitive to limits", 2, function () {
-    var success = function (data) {
-      start();
-      equal(data.code, 2000, "should return 2000 for valid search query");
-      equal(data.result.hits.length, 20);
-    };
+  asyncTest("is sensitive to limits", 4, function () {
     $.idealPostcodes.lookupAddress({
       query: "Test Limit",
       api_key: apiKey,
       limit: 20
-    }, success);
+    }, function (error, addresses, data) {
+      start();
+      equal(error, null, "does not return error");
+      equal(addresses.length, 20, "returns list of addresses");
+      equal(data.code, 2000, "should return 2000 for valid search query");
+      equal(data.result.hits.length, 20);
+    });
   });
 
-  asyncTest("$.idealPostcodes.checkKey should return true if key is usable and cache result", 2, function () {
+  asyncTest("returns an error if no lookups remaining", 4, function () {
+    $.idealPostcodes.lookupAddress({
+      query: "ID1 CLIP",
+      api_key: apiKey
+    }, function (error, addresses, data) {
+      start();
+      notEqual(error, null, "returns an error");
+      equal(data.code, 4020, "API returns an error");
+      ok(error.message.match(/^4020/));
+      equal(addresses.length, 0);
+    });
+  });
+
+  asyncTest("returns an error if lookup limit reached", 4, function () {
+    $.idealPostcodes.lookupAddress({
+      query: "ID1 CHOP",
+      api_key: apiKey
+    }, function (error, addresses, data) {
+      start();
+      notEqual(error, null, "returns an error");
+      equal(data.code, 4021, "API returns an error");
+      ok(error.message.match(/^4021/));
+      equal(addresses.length, 0);
+    });
+  });
+
+  module("$.idealPostcodes.checkKey");
+
+  asyncTest("returns true if key is usable and cache result", 2, function () {
     var success = function () {
       equal(2000, 2000);
       equal($.idealPostcodes.keyCheckCache["iddqd"], true, "Successful result is cached");
@@ -113,7 +173,7 @@
     }, success, failure);
   });
 
-  asyncTest("$.idealPostcodes.checkKey should return false if key is not usable and cache result", 2, function () {
+  asyncTest("returns false if key is not usable and cache result", 2, function () {
     var success = function () {
       start();
     };
@@ -127,7 +187,7 @@
     }, success, failure);
   });
 
-  asyncTest("$.idealPostcodes.checkKey should return false if invalid response is returned and clear the cache", 1, function () {
+  asyncTest("returns false if invalid response is returned and clear the cache", 1, function () {
     var success = function () {
       start();
     };
