@@ -158,7 +158,7 @@
     }
   });
 
-  asyncTest("onAddressesRetrieved triggered when addresses are received", 9, function () {
+  asyncTest("triggered when addresses are received", 9, function () {
     $input_field.val("ID11QD");
     $(document).on("retrieved", function (e, data) {
       start();
@@ -171,7 +171,7 @@
     $lookup_button.trigger("click");
   });
 
-  asyncTest("onAddressesRetrieved not triggered when no addresses are received", 1, function () {
+  asyncTest("not triggered when no addresses are received", 1, function () {
     $input_field.val("ID1KFA");
     $(document)
       .on("addressesReceived", function () {
@@ -181,6 +181,79 @@
         start();
         equal(callbackInvoked(), false);
       });
+    $lookup_button.trigger("click");
+  });
+
+  asyncTest("not triggered when error", 1, function () {
+    $input_field.val("ID1CLIP");
+    $(document)
+      .on("addressesReceived", function () {
+        callbackInvoked(true);
+      })
+      .on("completedJsonp", function () {
+        start();
+        equal(callbackInvoked(), false);
+      });
+    $lookup_button.trigger("click");
+  });
+
+  module("onDropdownCreated Callback", {
+    setup: function () {
+      $("#postcode_lookup_field").setupPostcodeLookup({
+        api_key: apiKey,
+        disable_interval: 0,
+        onDropdownCreated: function (dropdown) {
+          callbackInvoked(true);
+          $.event.trigger("dropdown", [dropdown]);
+        },
+        onSearchCompleted: function () {
+          $.event.trigger("completedJsonp");
+        }
+      });
+      $input_field = $("#"+defaults.input_id);
+      $lookup_button = $("#"+defaults.button_id);
+    },
+    teardown: function () {
+      callbackInvoked(false);
+      $(document).off("dropdown").off("completedJsonp");
+    }
+  });
+
+  asyncTest("triggered when addresses retrieved and populated", 2, function () {
+    $input_field.val("ID11QD");
+    $(document).on("dropdown", function (e, dropdown) {
+        start();
+        ok(callbackInvoked());
+        ok(dropdown.is($("#" + defaults.dropdown_id)));
+      });
+    $lookup_button.trigger("click");
+  });
+
+  asyncTest("not triggered when no addresses are found", 1, function () {
+    $input_field.val("ID1KFA");
+    $(document)
+    .on("completedJsonp", function () {
+      start();
+      equal(callbackInvoked(), false);
+    })
+    .on("dropdown", function () {
+      // This should not be invoked
+      callbackInvoked(true);
+    });
+    $lookup_button.trigger("click");
+  });
+
+  asyncTest("not triggered when error", 1, function () {
+    $input_field.val("ID1CLIP");
+    $(document)
+    .on("completedJsonp", function () {
+      start();
+      equal(callbackInvoked(), false);
+    })
+    .on("dropdown", function () {
+      // This should not be invoked
+      callbackInvoked(true);
+    });
     $lookup_button.trigger("click");
   });
 

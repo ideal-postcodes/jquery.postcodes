@@ -492,5 +492,11 @@ Below is a list of optional parameters you can use to style or modify the postco
 <td>undefined</td>
 <td>A function invoked when the user selects an address option on the plugin's dropdown menu. This property takes a function, which accepts a <code>address</code> argument representing the full details of the selected address. <code>this</code> is bound to the selected DOM element.</td>
 </tr>
+<tr>
+<td>onDropdownCreated</td>
+<td><code>function</code></td>
+<td>undefined</td>
+<td>A function invoked addresses have been retrieved and the dropdown has been inserted into the DOM. This property takes a function, which accepts a <code>$dropdown</code> argument representing the jQuery wrapped dropdown element.</td>
+</tr>
 
 </tbody></table></div>

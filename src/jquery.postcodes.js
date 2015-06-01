@@ -327,6 +327,7 @@
           }
 
           self.setDropDown(addresses);
+
         } else {
           message = self.address_search ? self.error_message_address_not_found : 
             self.error_message_not_found;
@@ -452,6 +453,10 @@
         }
       }
     });
+
+    if (self.onDropdownCreated) {
+      self.onDropdownCreated.call(self, dropDown);
+    }
     
     self.$dropdown = dropDown;
 
