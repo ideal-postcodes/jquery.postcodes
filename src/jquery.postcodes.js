@@ -105,6 +105,29 @@
     // Removes Organisation name from address lines
     remove_organisation: false,
 
+    // Methods to format address suggestions for dropdown box
+    address_formatters: {
+      // Dropdown address formatting for postcode search suggestions
+      postcode_search: function (address) {
+        var result = [address.line_1];
+        if (address.line_2 !== "") {
+          result.push(address.line_2);
+        }
+        return result.join(" ");
+      },
+      // Dropdown address formatting for address search suggestions
+      address_search: function (address) {
+        // Define new suggestion format
+        var result = [address.line_1];
+        if (address.line_2 !== "") {
+          result.push(address.line_2);
+        }
+        result.push(address.post_town);
+        result.push(address.postcode_outward);
+        return result.join(", ");
+      }
+    },
+
     // Register callbacks at specific stages
     onLoaded: undefined,              // When plugin is initialised
     onFailedCheck: undefined,         // When key check fails (requires check_key: true)
@@ -283,60 +306,60 @@
   /*
    * Validate search term and then trigger postcode lookup
    *  - On successful search, display results in a dropdown menu
-   *  - On successful search but postcode does not exist, show error message
-   *  - On failed search, show error message and invoke error callback
+   *  - On successful search but no addresses, show error message
+   *  - On failed search, show error message
    */
 
   AddressFinderController.prototype.executeSearch = function (term) {
-    // Check if address search specified
-    if (this.address_search) {
-      return this.executeAddressSearch(term);
-    } else {
-      return this.executePostcodeSearch(term);
-    }
-  };
-
-  /*
-   * Triggers postcode lookup and appropriate response
-   *  - On successful search, display results in a dropdown menu
-   *  - On successful search but no results, show error message
-   *  - On failed search, show error message and invoke error callback
-   */
-
-  AddressFinderController.prototype.executePostcodeSearch = function (postcode) {
     var self = this;
-    $.idealPostcodes.lookupPostcode({
-      query: postcode, 
-      api_key: self.api_key
-    }, function (error, addresses, data) {
+    var message;
+    var callback = function (error, addresses, data) {
       self.enableLookup();
       self.cacheSearchResults(data);
       if (error) {
-        var message = self.debug_mode ? error.message : self.error_message_default;
+        message = self.debug_mode ? error.message : self.error_message_default;
         self.setErrorMessage(message);
       } else {
         if (addresses.length > 0) {
-          self.last_lookup = postcode;
+          self.last_lookup = term;
           self.setDropDown(addresses);
         } else {
-          self.setErrorMessage(self.error_message_not_found); 
+          message = self.address_search ? self.error_message_address_not_found : 
+            self.error_message_not_found;
+          self.setErrorMessage(message); 
         }
       }
 
       if (self.onSearchCompleted) {
         self.onSearchCompleted.call(self, data);
       }
-    });
+    };
+
+    // Check if address search specified
+    if (self.address_search) {
+      return self.executeAddressSearch(term, callback);
+    } else {
+      return self.executePostcodeSearch(term, callback);
+    }
   };
 
   /*
-   * Triggers an address search and appropriate response
-   *  - On successful search, display results in a dropdown menu
-   *  - On successful search but no results, show error message
-   *  - On failed search, show error message and invoke error callback
+   * Invoke postcode lookup
    */
 
-  AddressFinderController.prototype.executeAddressSearch = function (query) {
+  AddressFinderController.prototype.executePostcodeSearch = function (postcode, callback) {
+    var self = this;
+    $.idealPostcodes.lookupPostcode({
+      query: postcode, 
+      api_key: self.api_key
+    }, callback);
+  };
+
+  /*
+   * Invoke an address search
+   */
+
+  AddressFinderController.prototype.executeAddressSearch = function (query, callback) {
     var self = this;
     var limit;
     if (typeof self.address_search === "object") {
@@ -346,35 +369,7 @@
       query: query,
       limit: limit,
       api_key: self.api_key
-    }, function (error, addresses, data) {
-      self.enableLookup();
-      self.cacheSearchResults(data);
-
-      if (error) {
-        var message = self.debug_mode ? error.message : self.error_message_default;
-        self.setErrorMessage(message);
-      } else {
-        if (addresses.length > 0) {
-          self.last_lookup = query;
-          self.setDropDown(addresses, function (address) {
-            // Define new suggestion format
-            var result = [address.line_1];
-            if (address.line_2 !== "") {
-              result.push(address.line_2);
-            }
-            result.push(address.post_town);
-            result.push(address.postcode_outward);
-            return result.join(", ");
-          });
-        } else {
-          self.setErrorMessage(self.error_message_address_not_found); 
-        }
-      }
-
-      if (self.onSearchCompleted) {
-        self.onSearchCompleted.call(self, data);
-      }
-    });
+    }, callback);
   };
 
   /*
@@ -394,16 +389,13 @@
    * Removes dropdown from DOM if data is undefined
    */
 
-  AddressFinderController.prototype.setDropDown = function (data, suggestionFormatter) {
+  AddressFinderController.prototype.setDropDown = function (data) {
     var self = this;
 
-    suggestionFormatter = suggestionFormatter || function (address) {
-      var result = [address.line_1];
-      if (address.line_2 !== "") {
-        result.push(address.line_2);
-      }
-      return result.join(" ");
-    };
+    var suggestionFormatter = self.address_formatters.postcode_search;
+    if (self.address_search) {
+      suggestionFormatter = self.address_formatters.address_search;
+    } 
 
     if (this.$dropdown && this.$dropdown.length) {
       this.$dropdown.remove();

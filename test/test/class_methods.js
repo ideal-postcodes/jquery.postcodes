@@ -2,6 +2,7 @@
   "use strict";
 
   var apiKey = "iddqd";
+  var defaults = $.idealPostcodes.defaults();
 
   /*
    * Class Method Tests
@@ -198,6 +199,40 @@
     $.idealPostcodes.checkKey({
       api_key: "idd"
     }, success, failure);
+  });
+
+  var formatter; 
+  var expected;
+  var address = {
+    "line_1": "Prime Minister & First Lord Of The Treasury",
+    "line_2": "10 Downing Street",
+    "post_town": "LONDON",
+    "postcode_outward": "SW1A",
+    "postcode": "SW1A 2AA"
+  };
+
+  module("Address Formatter: Postcode Search", {
+    setup: function () {
+      formatter = defaults.address_formatters.postcode_search;
+    }
+  });
+
+  test("Returns a properly formatted address", 1, function () {
+    // expected = [address.line_1, address.line_2].join(", ");
+    expected = "Prime Minister & First Lord Of The Treasury 10 Downing Street";
+    equal(formatter(address), expected);
+  });
+
+  module("Address Formatter: Address Search", {
+    setup: function () {
+      formatter = defaults.address_formatters.address_search;
+    }
+  });
+
+  test("Returns a properly formatted address", 1, function () {
+    // expected = [address.line_1, address.line_2, address.post_town, adddress.postcode_outward].join(", ");
+    expected = "Prime Minister & First Lord Of The Treasury, 10 Downing Street, LONDON, SW1A";
+    equal(formatter(address), expected);
   });
 
 }(jQuery));

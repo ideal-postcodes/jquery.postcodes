@@ -28,11 +28,11 @@
     }
   });
 
-  asyncTest("should perform an address lookup if postcode is not valid and return options in correct format", 5, function () {
+  asyncTest("performs an address lookup if postcode is not valid and return options in correct format", 5, function () {
     $input_field.val("10 Downing Street London");
     $(document).on("completedJsonp", function (event, response) {
       start();
-      $dropdown = $("#" + defaults.dropdown_id);
+      $dropdown = $("#" + defaults.dropdown_id);  
       ok($dropdown.length, "it has a dropdown menu");
       equal(response.result.hits.length, 2, "it returns the right number of results");
       $.each(response.result.hits, function (index, elem) {
@@ -43,7 +43,7 @@
     $lookup_button.trigger("click");
   });
   
-  asyncTest("should return an error message if no matches were found in an address search", 3, function () {
+  asyncTest("returns an error message if no matches were found in an address search", 3, function () {
     $input_field.val("Street does not exist");
     $(document).on("completedJsonp", function (event, response) {
       start();
