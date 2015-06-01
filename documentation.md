@@ -466,25 +466,25 @@ Below is a list of optional parameters you can use to style or modify the postco
 <td>onLoaded</td>
 <td><code>function</code></td>
 <td>undefined</td>
-<td>A function invoked once the plugin has initialised. If the plugin is configured to check the key, this callback will only be invoked if the key is usable.</td>
+<td>A function invoked once the plugin has initialised. <br />If the plugin is configured to check the key, i.e. <code>check_key: true</code>, this callback will only be invoked if the key is usable.</td>
 </tr>
 <tr>
 <td>onFailedCheck</td>
 <td><code>function</code></td>
 <td>undefined</td>
-<td>If the plugin is configured to check the key, this callback will only be invoked if the key is not usable.</td>
+<td>A function invoked if <code>check_key</code> is enabled and the check fails.</td>
 </tr>
 <tr>
 <td>onSearchCompleted</td>
 <td><code>function</code></td>
 <td>undefined</td>
-<td>A function invoked when a successful API request is made. An API request is made <br />Note that this is also invoked on 400-type errors such as "postcode not found" or "lookup balance exhausted". This property takes a function, which accepts a `data` argument representing the JSON response.</td>
+<td>A function invoked when a successful API request is made. An API request is made <br />Note that this is also invoked on 400-type errors such as "postcode not found" or "lookup balance exhausted". This property takes a function, which accepts a `data` argument representing the raw JSON response.</td>
 </tr>
 <tr>
-<td>onRequestFailed</td>
+<td>onAddressesReceived</td>
 <td><code>function</code></td>
 <td>undefined</td>
-<td>A function invoked when the plugin was not able to make a successful request to the API. For instance, a request timeout. This property takes a function with no arguments.</td>
+<td>A function invoked when a successful API request is made and at least 1 address is returned. This property takes a function, which accepts an `addresses` argument representing the addresses returned by the API.</td>
 </tr>
 <tr>
 <td>onAddressSelected</td>

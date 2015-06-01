@@ -133,10 +133,9 @@
     onFailedCheck: undefined,         // When key check fails (requires check_key: true)
     onSearchCompleted: undefined,     // When a lookup succeeds, E.g. Server responds that Postcode is found or doesn't exist
     onAddressesRetrieved: undefined,  // When a lookup succeeds with a list of addresses
-    onSearchError: undefined,         // When a request succeeds but the API returns an error code
-    onRequestFailed: undefined,       // When a lookup fails, can be a connection issue or bad request
+    onAddressSelected: undefined,     // User has clicked an address in dropdown
     onDropdownCreated: undefined,     // When the address selection dropdown is inserted to DOM
-    onAddressSelected: undefined      // User has clicked an address in dropdown
+    onSearchError: undefined          // When a request succeeds but the API returns an error code
   };
 
   function AddressFinderController (options) {
@@ -322,6 +321,11 @@
       } else {
         if (addresses.length > 0) {
           self.last_lookup = term;
+
+          if (self.onAddressesRetrieved) {
+            self.onAddressesRetrieved.call(self, addresses);
+          }
+
           self.setDropDown(addresses);
         } else {
           message = self.address_search ? self.error_message_address_not_found : 
