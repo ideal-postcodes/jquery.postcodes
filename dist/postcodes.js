@@ -1,4 +1,4 @@
-/*! Ideal Postcodes jQuery Plugin - v2.2.4 - 2015-03-20
+/*! Ideal Postcodes jQuery Plugin - v3.0.0 - 2015-06-02
 * https://github.com/ideal-postcodes/jquery.postcodes
 2015 Ideal Postcodes; Licensed MIT */
 (function($) {
@@ -46,7 +46,7 @@
      * Below is not required
      */
 
-    api_endpoint: "https://api.ideal-postcodes.co.uk/v1",
+    endpoint: "https://api.ideal-postcodes.co.uk/v1",
 
     // Input Field Configuration
     input: undefined,
@@ -79,6 +79,7 @@
     error_message_address_not_found: "We could not find a match for your address. Please type in your address",
     error_message_default: "Sorry, we weren't able to get the address you were looking for. Please type your address manually",
     error_message_class: "",
+    error_message_container: undefined,
 
     // Address search fallback - if enabled, postcode searches which fail validation will be forward to the Address search API
     address_search: false,
@@ -96,15 +97,44 @@
     // Removes Organisation name from address lines
     remove_organisation: false,
 
+    // Methods to format address suggestions for dropdown box
+    address_formatters: {
+      // Dropdown address formatting for postcode search suggestions
+      postcode_search: function (address) {
+        var result = [address.line_1];
+        if (address.line_2 !== "") {
+          result.push(address.line_2);
+        }
+        return result.join(" ");
+      },
+      // Dropdown address formatting for address search suggestions
+      address_search: function (address) {
+        // Define new suggestion format
+        var result = [address.line_1];
+        if (address.line_2 !== "") {
+          result.push(address.line_2);
+        }
+        result.push(address.post_town);
+        result.push(address.postcode_outward);
+        return result.join(", ");
+      }
+    },
+
     // Register callbacks at specific stages
-    onLoaded: undefined,          // When plugin is initialised
-    onFailedCheck: undefined,     // When key check fails (requires check_key: true)
-    onLookupSuccess: undefined,   // When a lookup succeeds, E.g. Server responds that Postcode is found or doesn't exist
-    onLookupError: undefined,     // When a lookup fails, can be a connection issue or bad request   
-    onAddressSelected: undefined  // User has clicked an address in dropdown
+    onLoaded: undefined,              // When plugin is initialised
+    onFailedCheck: undefined,         // When key check fails (requires check_key: true)
+    onSearchCompleted: undefined,     // When a lookup succeeds, E.g. Server responds that Postcode is found or doesn't exist
+    onAddressesRetrieved: undefined,  // When a lookup succeeds with a list of addresses
+    onAddressSelected: undefined,     // User has clicked an address in dropdown
+    onDropdownCreated: undefined,     // When the address selection dropdown is inserted to DOM
+    onLookupTriggered: undefined,     // When user clicks the button to trigger a lookup
+    onSearchError: undefined,         // When a request succeeds but the API returns an error code
+
+    // Tags to be included with search requests
+    tags: undefined
   };
 
-  function IdealPostcodes (options) {
+  function AddressFinderController (options) {
     // Load in defaults
     this.config = {};
     $.extend(this, defaults);
@@ -125,7 +155,7 @@
   }
 
 
-  IdealPostcodes.prototype.setupPostcodeInput = function (context) {
+  AddressFinderController.prototype.setupPostcodeInput = function (context) {
     this.$context = context;
     this.setupInputField();
     this.setupLookupButton();
@@ -139,7 +169,7 @@
    *
    */
 
-  IdealPostcodes.prototype.setupInputField = function () {
+  AddressFinderController.prototype.setupInputField = function () {
     var self = this;
     if ($(this.input).length) {
       // Use custom input
@@ -181,41 +211,46 @@
    *
    */
 
-  IdealPostcodes.prototype.setupLookupButton = function () {
+  AddressFinderController.prototype.setupLookupButton = function () {
     var self = this;
-    if ($(this.button).length) {
-      this.$button = $(this.button).first();
+    if ($(self.button).length) {
+      self.$button = $(self.button).first();
     } else {
-      this.$button = $('<button />', {
-        html: this.button_label,
-        id: this.button_id,
+      self.$button = $('<button />', {
+        html: self.button_label,
+        id: self.button_id,
         type: "button"
       })
-      .appendTo(this.$context)
-      .addClass(this.button_class)
+      .appendTo(self.$context)
+      .addClass(self.button_class)
       .attr("onclick", "return false;")
       .submit(function () {
         return false;
       });
     }
-    this.$button.click(function () {
-      var postcode = self.$input.val();
-      if (self.last_lookup !== postcode) {
-        self.last_lookup = postcode;
+    self.$button.click(function () {
+      var term = self.$input.val();
+
+      if (self.onLookupTriggered) {
+        self.onLookupTriggered.call(self);
+      }
+
+      if (self.last_lookup !== term) {
+        self.last_lookup = term;
         self.clearAll();
         self.disableLookup();
-        self.lookupPostcode(postcode);
+        self.executeSearch(term);
       }
       return false;
     });
-    return this.$button;
+    return self.$button;
   };
 
   /*
    * Prevents lookup button from being triggered
    */
 
-  IdealPostcodes.prototype.disableLookup = function (message) {
+  AddressFinderController.prototype.disableLookup = function (message) {
     // Cancel if custom button
     if (this.button) {
       return;
@@ -228,7 +263,7 @@
    * Allows lookup button to be triggered
    */
 
-  IdealPostcodes.prototype.enableLookup = function () {
+  AddressFinderController.prototype.enableLookup = function () {
     // Cancel if custom button
     if (this.button) {
       return;
@@ -248,7 +283,7 @@
    *
    */
 
-  IdealPostcodes.prototype.clearAll = function () {
+  AddressFinderController.prototype.clearAll = function () {
     this.setDropDown();
     this.setErrorMessage();
   };
@@ -258,7 +293,7 @@
    *
    */
 
-  IdealPostcodes.prototype.removeAll = function () {
+  AddressFinderController.prototype.removeAll = function () {
     this.$context = null;
 
     $.each([this.$input, this.$button, this.$dropdown, this.$error_message], function (index, element) {
@@ -271,122 +306,101 @@
   /*
    * Validate search term and then trigger postcode lookup
    *  - On successful search, display results in a dropdown menu
-   *  - On successful search but postcode does not exist, show error message
-   *  - On failed search, show error message and invoke error callback
+   *  - On successful search but no addresses, show error message
+   *  - On failed search, show error message
    */
 
-  IdealPostcodes.prototype.lookupPostcode = function (postcode) {
+  AddressFinderController.prototype.executeSearch = function (term) {
     var self = this;
-    if (!$.idealPostcodes.validatePostcodeFormat(postcode)) {
-      // Fallback to address search
-      if (self.address_search) {
-        var search = {
-          query: postcode
-        };
-        if (typeof self.address_search === "object") {
-          search.limit = self.address_search.limit || 10;
+    var message;
+    var callback = function (error, addresses, data) {
+      self.enableLookup();
+      self.cacheSearchResults(data);
+      if (error) {
+        message = self.debug_mode ? error.message : self.error_message_default;
+        self.setErrorMessage(message);
+        if (self.onSearchError) {
+          self.onSearchError.call(self, error);
         }
-        return this.searchAddress(search);
       } else {
-        this.enableLookup();
-        if (self.onLookupSuccess) {
-          self.onLookupSuccess.call(self, {
-            code: 4040,
-            message: "Postcode Not Found"
-          });
-        }
-        return self.setErrorMessage(this.error_message_invalid_postcode);
-      }
-    }
+        if (addresses.length > 0) {
+          self.last_lookup = term;
 
-    $.idealPostcodes.lookupPostcode(postcode, self.api_key, 
-      function (data) {
-        self.response_code = data.code;
-        self.response_message = data.message;
-        self.result = data.result;
-        self.enableLookup();
+          if (self.onAddressesRetrieved) {
+            self.onAddressesRetrieved.call(self, addresses);
+          }
 
-        if (self.response_code === 2000) {
-          self.last_lookup = postcode;
-          self.setDropDown(self.result);
-        } else if (self.response_code === 4040) {
-          self.setErrorMessage(self.error_message_not_found); 
+          self.setDropDown(addresses);
+
         } else {
-          if (self.debug_mode) {
-            self.setErrorMessage("(" + self.response_code + ") " + self.response_message);
-          } else {
-            self.setErrorMessage(self.error_message_default);  
-          } 
-        }
-        if (self.onLookupSuccess) {
-          self.onLookupSuccess.call(self, data);
-        }
-      }, 
-      // Lookup Failed
-      function () {
-        self.setErrorMessage("Unable to connect to server");
-        self.enableLookup();
-        if (self.onLookupError) {
-          self.onLookupError.call(self);
+          message = self.address_search ? self.error_message_address_not_found : 
+            self.error_message_not_found;
+          self.setErrorMessage(message); 
         }
       }
-    );
+
+      if (self.onSearchCompleted) {
+        self.onSearchCompleted.call(self, data);
+      }
+    };
+
+    // Check if address search specified
+    if (self.address_search) {
+      return self.executeAddressSearch(term, callback);
+    } else {
+      return self.executePostcodeSearch(term, callback);
+    }
   };
 
   /*
-   * Triggers an address search and appropriate response
-   *  - On successful search, display results in a dropdown menu
-   *  - On successful search but no results, show error message
-   *  - On failed search, show error message and invoke error callback
+   * Invoke postcode lookup
    */
 
-  IdealPostcodes.prototype.searchAddress = function (searchOptions) {
+  AddressFinderController.prototype.executePostcodeSearch = function (postcode, callback) {
     var self = this;
-    $.idealPostcodes.lookupAddress(searchOptions, self.api_key, 
-      function (data) {
-        self.response_code = data.code;
-        self.response_message = data.message;
-        self.result = data.result;
-        self.enableLookup();
+    var options = {
+      query: postcode, 
+      api_key: self.api_key
+    };
 
-        if (self.response_code === 2000) {
-          if (self.result.total > 0) {
-            self.last_lookup = searchOptions.query;
-            self.setDropDown(self.result.hits, function (address) {
-              // Define new suggestion format
-              var result = [address.line_1];
-              if (address.line_2 !== "") {
-                result.push(address.line_2);
-              }
-              result.push(address.post_town);
-              result.push(address.postcode_outward);
-              return result.join(", ");
-            });
-          } else {
-            self.setErrorMessage(self.error_message_address_not_found); 
-          }
+    if (self.tags) {
+      options.tags = self.tags;
+    }
 
-          if (self.onLookupSuccess) {
-            self.onLookupSuccess.call(self, data);
-          }
+    $.idealPostcodes.lookupPostcode(options, callback);
+  };
 
-        } else {
-          if (self.debug_mode) {
-            self.setErrorMessage("(" + self.response_code + ") " + self.response_message);
-          } else {
-            self.setErrorMessage(self.error_message_default);  
-          } 
-        }
-      }, 
-      // Lookup Failed
-      function () {
-        self.setErrorMessage("Unable to connect to server");
-        self.enableLookup();
-        if (self.onLookupError) {
-          self.onLookupError.call(self);
-        }
-      }
-    );
+  /*
+   * Invoke an address search
+   */
+
+  AddressFinderController.prototype.executeAddressSearch = function (query, callback) {
+    var self = this;
+    var options = {
+      query: query,
+      api_key: self.api_key
+    };
+    
+    if (typeof self.address_search === "object") {
+      options.limit = self.address_search.limit || 10;
+    }
+
+    if (self.tags) {
+      options.tags = self.tags;
+    }
+
+    $.idealPostcodes.lookupAddress(options, callback);
+  };
+
+  /*
+   *  Caches search result with raw data object
+   */ 
+
+  AddressFinderController.prototype.cacheSearchResults = function (data) {
+    this.response_code = data.code;
+    this.response_message = data.message;
+    this.result = data.result;
+    return data;
   };
 
   /*
@@ -395,16 +409,13 @@
    * Removes dropdown from DOM if data is undefined
    */
 
-  IdealPostcodes.prototype.setDropDown = function (data, suggestionFormatter) {
+  AddressFinderController.prototype.setDropDown = function (data) {
     var self = this;
 
-    suggestionFormatter = suggestionFormatter || function (address) {
-      var result = [address.line_1];
-      if (address.line_2 !== "") {
-        result.push(address.line_2);
-      }
-      return result.join(" ");
-    };
+    var suggestionFormatter = self.address_formatters.postcode_search;
+    if (self.address_search) {
+      suggestionFormatter = self.address_formatters.address_search;
+    } 
 
     if (this.$dropdown && this.$dropdown.length) {
       this.$dropdown.remove();
@@ -457,6 +468,10 @@
         }
       }
     });
+
+    if (self.onDropdownCreated) {
+      self.onDropdownCreated.call(self, dropDown);
+    }
     
     self.$dropdown = dropDown;
 
@@ -469,7 +484,7 @@
    * Removes error message from DOM if undefined
    */
 
-  IdealPostcodes.prototype.setErrorMessage = function (message) {
+  AddressFinderController.prototype.setErrorMessage = function (message) {
     if (this.$error_message && this.$error_message.length) {
       this.$error_message.remove();
       delete this.$error_message;
@@ -479,14 +494,19 @@
       return;
     }
 
-    // Need to enable lookup button
-    // Idpc.enable_lookup_button();
+    var container;
+    if ($(this.error_message_container).length) {
+      container = $(this.error_message_container).first();
+    } else {
+      container = this.$context;
+    }
+
     this.$error_message = $('<p />', {
       html: message,
       id: this.error_message_id
     })
     .addClass(this.error_message_class)
-    .appendTo(this.$context);
+    .appendTo(container);
 
     return this.$error_message;
   };
@@ -497,7 +517,7 @@
    * Empties output fields if undefined
    */
 
-  IdealPostcodes.prototype.setAddressFields = function (data) {
+  AddressFinderController.prototype.setAddressFields = function (data) {
     data = data || {};
 
     for (var key in this.$output_fields) {
@@ -522,6 +542,10 @@
     return address;
   };
 
+  var extractError = function (data) {
+    return data.code + " - " + data.message;
+  };
+
   $.idealPostcodes = {
 
     // Expose defaults for testing
@@ -532,81 +556,103 @@
     // Expose key check cache for testing
     keyCheckCache: keyCheckCache,
 
-    // Simple validation for postcode. Excludes test postcodes starting with ID1
-    validatePostcodeFormat: function (postcode) {
-      return !!postcode.match(/^[a-zA-Z0-9]{1,4}\s?\d[a-zA-Z]{2}$/) || !!postcode.match(/^id1/i);
-    },
-
     /*
-     * Perform a Postcode Lookup
-     * - postcode: (string) Postcode to lookup, case and space insensitive
-     * - api_key: (string) API Key required
+     * Perform a Postcode Lookup - retrieve a list of addresses using a postcode
+     * - options: (object) Configuration object for postcode lookup
+     *  - options.query: (string) Postcode to lookup, case and space insensitive
+     *  - options.api_key: (string) API Key required
      * - success: (function) Callback invoked upon successful request
      * - error: (function) Optional callback invoked upon failed HTTP request
      */
 
-    lookupPostcode: function (postcode, api_key, success, error) {
-      var endpoint = defaults.api_endpoint;
+    lookupPostcode: function (o, callback) {
+      var postcode = o.query || o.postcode || "";
+      var api_key = o.api_key || "";
+      var endpoint = defaults.endpoint;
       var resource = "postcodes";
       var url = [endpoint, resource, encodeURI(postcode)].join('/');
-      var options = {
-        url: url,
-        data: {
-          api_key: api_key
-        },
-        dataType: 'jsonp',
-        timeout: 5000,
-        success: success
+      var queryString = {
+        api_key: api_key
       };
 
-      if (error) {
-        options.error = error;
+      if (o.tags && $.isArray(o.tags)) {
+        queryString.tags = o.tags.join(",");
       }
 
-      $.ajax(options);
-    },
-
-    /*
-     * Perform an Address Search
-     * - searchOptions: (object) config object (may be extended in later versions)
-     *   - searchOptions.query (string) address to search for
-     * - api_key: (string) API Key required
-     * - success: (function) Callback invoked upon successful request
-     * - error: (function) Optional callback invoked upon failed HTTP request
-     */
-
-    lookupAddress: function (searchOptions, api_key, success, error) {
-      var endpoint = defaults.api_endpoint;
-      var resource = "addresses";
-      var url = [endpoint, resource].join('/');
-      var queryString = {
-        api_key: api_key,
-        query: searchOptions.query
-      };
-      queryString.limit = searchOptions.limit || 10;
       var options = {
         url: url,
         data: queryString,
         dataType: 'jsonp',
         timeout: 5000,
-        success: success
+        success: function (data, _, jqxhr) {
+          if (data.code === 2000) {
+            return callback(null, data.result, data, jqxhr);
+          } else if (data.code === 4040) {
+            return callback(null, [], data, jqxhr);
+          } else {
+            return callback(new Error(extractError(data)), [], data, jqxhr);
+          }
+        }
       };
 
-      if (error) {
-        options.error = error;
+      $.ajax(options);
+    },
+
+    /*
+     * Perform an Address Search - query for addresses using a search string
+     * - options: (object) Configuration object for address search
+     *   - options.query (string) address to search for
+     *   - options.api_key: (string) API Key required
+     *   - options.limit: (number) Maximum number of addresses to return (default 10)
+     * - success: (function) Callback invoked upon successful request
+     * - error: (function) Optional callback invoked upon failed HTTP request
+     */
+
+    lookupAddress: function (o, callback) {
+      var query = o.query || "";
+      var api_key = o.api_key || "";
+      var endpoint = defaults.endpoint;
+      var resource = "addresses";
+      var url = [endpoint, resource].join('/');
+      var queryString = {
+        api_key: api_key,
+        query: query
+      };
+      
+      queryString.limit = o.limit || 10;
+
+      if (o.tags && $.isArray(o.tags)) {
+        queryString.tags = o.tags.join(",");
       }
+
+      var options = {
+        url: url,
+        data: queryString,
+        dataType: 'jsonp',
+        timeout: 5000,
+        success: function (data, _, jqxhr) {
+          if (data.code === 2000) {
+            return callback(null, data.result.hits, data, jqxhr);
+          } else {
+            return callback(new Error(extractError(data)), [], data, jqxhr);
+          }
+        }
+      };
 
       $.ajax(options);
     },
 
     /*
      * Checks whether key can be used
-     * - api_key: (string) API Key to test
+     * - options: (object) Configuration object for key checking
+     *  - options.api_key: (string) API Key to testing
      * - success: (function) Callback invoked when key is available
      * - error: (function) Optional callback invoked when key is not available or HTTP request failed
      */
 
-    checkKey: function (api_key, success, error) {
+    checkKey: function (o, success, error) {
+      var api_key = o.api_key || "";
+
       error = error || function () {};
 
       var cache = keyCheckCache[api_key];
@@ -631,7 +677,7 @@
         };
       }
 
-      var endpoint = defaults.api_endpoint;
+      var endpoint = defaults.endpoint;
       var resource = "keys";
       var url = [endpoint, resource, api_key].join('/');
       var options = {
@@ -688,7 +734,7 @@
     var initPlugin = function () {
       // Initialise plugin on all DOM elements
       $.each(self, function (index, context) {
-        var postcodeLookup = new IdealPostcodes(options);
+        var postcodeLookup = new AddressFinderController(options);
         pluginInstances.push(postcodeLookup);
         postcodeLookup.setupPostcodeInput($(context));
       });
@@ -707,7 +753,9 @@
 
     // Check if key is usable if necessary
     if (options.check_key) {
-      $.idealPostcodes.checkKey(options.api_key, initPlugin, failedKeyCheck);
+      $.idealPostcodes.checkKey({
+        api_key: options.api_key 
+      }, initPlugin, failedKeyCheck);
     } else {
       initPlugin();
     }
