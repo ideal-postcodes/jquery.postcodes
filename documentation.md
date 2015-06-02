@@ -26,7 +26,8 @@ Version 3.0.0 brings some backwards incompatible changes
 - Request tagging
 - Custom error message container
 - More appropriately named custom callbacks
-- Removed client side postcode validation method
+- `onLookupSuccess` is now called `onSearchCompleted`
+- Removed client side postcode validation
 
 The documentation for version 2.2.4 can be [found here](https://ideal-postcodes.co.uk/documentation/jquery-plugin-2-2-4)
 

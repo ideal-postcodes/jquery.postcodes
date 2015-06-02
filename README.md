@@ -78,6 +78,15 @@ MIT
 
 ## Changelog
 
+*v3.0.0*
+- Significant API backwards incompatible API changes
+- Simplified `$.idealPostcodes.lookupPostcode` and `$.idealPostcodes.lookupAddress` APIs
+- Added request tagging [read more here](https://ideal-postcodes.co.uk/documentation/metadata)
+- Added new callbacks and renamed existing callbacks
+- `onLookupSuccess` is now `onSearchCompleted`
+- Added callbacks `onAddressesReceived`, `onDropdownCreated`, `onLookupTriggered`, `onSearchError`
+- Added ability to insert error messages into custom containers
+
 *v2.2.4*
 - Configuration object now accepts `dropdown_container` to specify a custom container to display the results dropdown
 
