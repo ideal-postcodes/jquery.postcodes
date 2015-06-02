@@ -1,6 +1,6 @@
 {
   "name": "jquery-postcodes",
-  "version": "2.2.4",
+  "version": "3.0.0",
   "engines": {
     "node": ">= 0.8.0"
   },
