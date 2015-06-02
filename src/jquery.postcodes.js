@@ -135,6 +135,7 @@
     onAddressesRetrieved: undefined,  // When a lookup succeeds with a list of addresses
     onAddressSelected: undefined,     // User has clicked an address in dropdown
     onDropdownCreated: undefined,     // When the address selection dropdown is inserted to DOM
+    onLookupTriggered: undefined,     // When user clicks the button to trigger a lookup
     onSearchError: undefined          // When a request succeeds but the API returns an error code
   };
 
@@ -217,23 +218,28 @@
 
   AddressFinderController.prototype.setupLookupButton = function () {
     var self = this;
-    if ($(this.button).length) {
-      this.$button = $(this.button).first();
+    if ($(self.button).length) {
+      self.$button = $(self.button).first();
     } else {
-      this.$button = $('<button />', {
-        html: this.button_label,
-        id: this.button_id,
+      self.$button = $('<button />', {
+        html: self.button_label,
+        id: self.button_id,
         type: "button"
       })
-      .appendTo(this.$context)
-      .addClass(this.button_class)
+      .appendTo(self.$context)
+      .addClass(self.button_class)
       .attr("onclick", "return false;")
       .submit(function () {
         return false;
       });
     }
-    this.$button.click(function () {
+    self.$button.click(function () {
       var term = self.$input.val();
+
+      if (self.onLookupTriggered) {
+        self.onLookupTriggered.call(self);
+      }
+
       if (self.last_lookup !== term) {
         self.last_lookup = term;
         self.clearAll();
@@ -242,7 +248,7 @@
       }
       return false;
     });
-    return this.$button;
+    return self.$button;
   };
 
   /*

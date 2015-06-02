@@ -28,6 +28,8 @@ Version 3.0.0 brings some backwards incompatible changes
 - More appropriately named custom callbacks
 - Removed client side postcode validation method
 
+The documentation for version 2.2.4 can be [found here](https://ideal-postcodes.co.uk/documentation/jquery-plugin-2-2-4)
+
 ***
 
 # Getting Started
@@ -497,6 +499,12 @@ Below is a list of optional parameters you can use to style or modify the postco
 <td><code>function</code></td>
 <td>undefined</td>
 <td>A function invoked addresses have been retrieved and the dropdown has been inserted into the DOM. This property takes a function, which accepts a <code>$dropdown</code> argument representing the jQuery wrapped dropdown element.</td>
+</tr>
+<tr>
+<td>onLookupTriggered</td>
+<td><code>function</code></td>
+<td>undefined</td>
+<td>A function invoked when the user triggers a lookup (e.g. by clicking the button). This callback is invoked before any request is made to the API.</td>
 </tr>
 
 </tbody></table></div>
