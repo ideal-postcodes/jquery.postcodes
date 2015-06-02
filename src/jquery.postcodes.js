@@ -324,6 +324,9 @@
       if (error) {
         message = self.debug_mode ? error.message : self.error_message_default;
         self.setErrorMessage(message);
+        if (self.onSearchError) {
+          self.onSearchError.call(self, error);
+        }
       } else {
         if (addresses.length > 0) {
           self.last_lookup = term;

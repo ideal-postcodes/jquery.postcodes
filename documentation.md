@@ -506,5 +506,10 @@ Below is a list of optional parameters you can use to style or modify the postco
 <td>undefined</td>
 <td>A function invoked when the user triggers a lookup (e.g. by clicking the button). This callback is invoked before any request is made to the API.</td>
 </tr>
-
+<tr>
+<td>onSearchError</td>
+<td><code>function</code></td>
+<td>undefined</td>
+<td>A function invoked when the API returns an error. This property takes a function, which accepts an <code>error</code> argument representing the error returned by the API.<br />Examples of errors includes "lookup balance exhausted" and "lookup limit reached" errors.</td>
+</tr>
 </tbody></table></div>

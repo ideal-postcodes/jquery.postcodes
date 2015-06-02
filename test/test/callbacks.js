@@ -299,4 +299,57 @@
     $input_field.trigger(e);
   });
 
+  module("onSearchError Callback", {
+    setup: function () {
+      $("#postcode_lookup_field").setupPostcodeLookup({
+        api_key: apiKey,
+        disable_interval: 0,
+        onSearchError: function (error) {
+          callbackInvoked(true);
+          $.event.trigger("errored", [error]);
+        },
+        onSearchCompleted: function () {
+          $.event.trigger("completedJsonp");
+        }
+      });
+      $input_field = $("#"+defaults.input_id);
+      $lookup_button = $("#"+defaults.button_id);
+    },
+    teardown: function () {
+      callbackInvoked(false);
+      $(document).off("errored").off("completedJsonp");
+    }
+  });
+
+  asyncTest("triggered when lookup limit error", 1, function() {
+    $input_field.val("ID1CLIP");
+    $(document).on("errored", function () {
+      start();
+      ok(callbackInvoked());
+    });
+    $lookup_button.trigger("click");
+  });
+
+  asyncTest("triggered when no lookups error", 1, function () {
+    $input_field.val("ID1CHOP");
+    $(document).on("errored", function () {
+      start();
+      ok(callbackInvoked());
+    });
+    $lookup_button.trigger("click");
+  });
+
+  asyncTest("not triggered no error", 1, function () {
+    $input_field.val("ID11QD");
+    $(document)
+      .on("errored", function () {
+        callbackInvoked(true);
+      })
+      .on("completedJsonp", function () {
+        start();
+        equal(callbackInvoked(), false);
+      });
+    $lookup_button.trigger("click");
+  });
+
 }(jQuery));
