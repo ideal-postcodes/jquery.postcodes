@@ -149,7 +149,7 @@ This plugin also exposes a couple of methods which you may find useful without h
 
 <br />
 
-## $.idealPostcodes.lookupPostcode(options, success[, error])
+## $.idealPostcodes.lookupPostcode(options, callback)
 
 Retrieve all addresses at a given postcode
 
@@ -181,14 +181,14 @@ Retrieve all addresses at a given postcode
 <td>API Key to access service</td>
 </tr>
 <tr>
-<td>success</td>
-<td>Function</td>
-<td>Asynchronous handler when data is received. If data.code != 2000, an error has occured </td>
+<td>options.tags</td>
+<td><code>Array</code></td>
+<td>Label your requests using <code>tags</code>, which can be queried later. Accepts an array of strings. E.g. <code>["CRM"]</code></td>
 </tr>
 <tr>
-<td>error</td>
+<td>callback</td>
 <td>Function</td>
-<td>(Optional) Asynchronous handler in case of request timeout</td>
+<td>Asynchronous handler when data addresses are received. This function accepts 2 arguments. The first is <code>error</code>, which will be <code>null</code> for successful requests. Errors will surface if your key has no balance or one or your predefined limits has been reached. The second argument is <code>addresses</code>, which is an array of address objects matching your query. Invalid postcodes will return an empty array.</td>
 </tr>
 </tbody>
 </table>
@@ -202,8 +202,11 @@ var API_KEY = 'iddqd';
 $.idealPostcodes.lookupPostcode({ 
 	postcode: 'ID11QD', 
 	api_key: API_KEY 
-}, function (data) {
-    console.log(data.result[0]); 
+}, function (error, addresses) {
+	if (error) {
+		// Handle error
+	}
+    console.log(addresses[0]); 
     // prints to console: 
     // {  
     //      postcode: "ID1 1QD", 
@@ -218,7 +221,7 @@ $.idealPostcodes.lookupPostcode({
 
 <br />
 
-## $.idealPostcodes.lookupAddress(options, success[, error])
+## $.idealPostcodes.lookupAddress(options, callback)
 
 Performs an address search on the Ideal Postcodes API using a search string
 
@@ -256,14 +259,14 @@ Performs an address search on the Ideal Postcodes API using a search string
 <td>Maximum number of matches to return (default is 10, maximum is 150)</td>
 </tr>
 <tr>
-<td>success</td>
-<td>Function</td>
-<td>Asynchronous handler when data is received. If data.code != 2000, an error has occured </td>
+<td>options.tags</td>
+<td><code>Array</code></td>
+<td>Label your requests using <code>tags</code>, which can be queried later. Accepts an array of strings. E.g. <code>["CRM"]</code></td>
 </tr>
 <tr>
-<td>error</td>
+<td>callback</td>
 <td>Function</td>
-<td>(Optional) Asynchronous handler in case of request timeout</td>
+<td>Asynchronous handler when data addresses are received. This function accepts 2 arguments. The first is <code>error</code>, which will be <code>null</code> for successful requests. Errors will surface if your key has no balance or one or your predefined limits has been reached. The second argument is <code>addresses</code>, which is an array of address objects matching your query. Invalid postcodes will return an empty array.</td>
 </tr>
 </tbody>
 </table>
@@ -277,8 +280,11 @@ var API_KEY = 'iddqd';
 $.idealPostcodes.lookupAddress({ 
 	postcode: '10 Downing Street London', 
 	api_key: API_KEY 
-}, function (data) {
-    console.log(data.result.hits[0]); 
+}, function (error, addresses) {
+	if (error) {
+		// Handle error
+	}
+    console.log(addresses[0]); 
     // prints to console: 
     // {  
     //      postcode: "SW1A 2AA", 
@@ -341,6 +347,14 @@ Below is a list of optional parameters you can use to style or modify the postco
 <td>
     <p>If enabled, any lookups which do not validate as a standard postcode will be passed to the address search API instead.</p>
     <p>You can configure address search by passing in an <code>Object</code>. Currently this configuration object only accepts one parameter: limit. Limit determines the maximum number of search results to return. (Default is 10, maximum is 150)</p>
+</td>
+</tr>
+<tr>
+<td>tags</td>
+<td><code>Array</code></td>
+<td><code>undefined</code></td>
+<td>
+	<p>Label your requests using <code>tags</code>, which can be queried later. Accepts an array of strings. E.g. <code>["CRM"]</code></p>
 </td>
 </tr>
 
