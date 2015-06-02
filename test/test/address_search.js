@@ -1,11 +1,10 @@
 (function($) {
   "use strict";
-
+  var apiKey = $.idealKey;
   var $input_field;
   var $lookup_button;
   var $dropdown;
   var defaults = $.idealPostcodes.defaults();
-  var apiKey = "iddqd";
 
   module("jQuery#setupPostcodeLookup with address search fallback", { 
     setup: function () {
@@ -44,7 +43,7 @@
   });
   
   asyncTest("returns an error message if no matches were found in an address search", 3, function () {
-    $input_field.val("Street does not exist");
+    $input_field.val("ID1KFA");
     $(document).on("completedJsonp", function (event, response) {
       start();
       var $errorMessage = $("#" + defaults.error_message_id);

@@ -1506,6 +1506,16 @@ var lookupLimitBreached = {
 }
 
 fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/postcodes/ID11QD', function(data) {
+	if (data.tags) {
+		if (data.tags === 'foo,bar') {
+			return testPostcodeResult;
+		} else {
+			return {
+				code: 5000,
+				message: "An unknown error took place"
+			}
+		}
+	}
 	return testPostcodeResult;
 });
 
@@ -1542,6 +1552,17 @@ fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/keys/idkfa', funct
 });
 
 fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/addresses', function(data) {
+	if (data.tags) {
+		if (data.tags === 'foo,bar' && data.query === "ID1 1QD") {
+			return addressSearchTest;
+		} else {
+			return {
+				code: 5000,
+				message: "An unknown error took place"
+			};
+		}
+	}
+
 	if (data.query === "ID1 1QD") {
 		return addressSearchTest;
 	} else if (data.query === "ID1 CLIP") {

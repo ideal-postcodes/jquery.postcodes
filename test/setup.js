@@ -45,3 +45,7 @@ QUnit.testStart(function(testDetails){
     }
   };
 });
+
+(function ($) {
+  $.idealKey = "iddqd";
+}(jQuery));

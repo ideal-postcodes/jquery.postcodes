@@ -136,7 +136,10 @@
     onAddressSelected: undefined,     // User has clicked an address in dropdown
     onDropdownCreated: undefined,     // When the address selection dropdown is inserted to DOM
     onLookupTriggered: undefined,     // When user clicks the button to trigger a lookup
-    onSearchError: undefined          // When a request succeeds but the API returns an error code
+    onSearchError: undefined,         // When a request succeeds but the API returns an error code
+
+    // Tags to be included with search requests
+    tags: undefined
   };
 
   function AddressFinderController (options) {
@@ -363,10 +366,16 @@
 
   AddressFinderController.prototype.executePostcodeSearch = function (postcode, callback) {
     var self = this;
-    $.idealPostcodes.lookupPostcode({
+    var options = {
       query: postcode, 
       api_key: self.api_key
-    }, callback);
+    };
+
+    if (self.tags) {
+      options.tags = self.tags;
+    }
+
+    $.idealPostcodes.lookupPostcode(options, callback);
   };
 
   /*
@@ -375,15 +384,20 @@
 
   AddressFinderController.prototype.executeAddressSearch = function (query, callback) {
     var self = this;
-    var limit;
-    if (typeof self.address_search === "object") {
-      limit = self.address_search.limit || 10;
-    }
-    $.idealPostcodes.lookupAddress({
+    var options = {
       query: query,
-      limit: limit,
       api_key: self.api_key
-    }, callback);
+    };
+    
+    if (typeof self.address_search === "object") {
+      options.limit = self.address_search.limit || 10;
+    }
+
+    if (self.tags) {
+      options.tags = self.tags;
+    }
+
+    $.idealPostcodes.lookupAddress(options, callback);
   };
 
   /*
@@ -565,11 +579,17 @@
       var endpoint = defaults.endpoint;
       var resource = "postcodes";
       var url = [endpoint, resource, encodeURI(postcode)].join('/');
+      var queryString = {
+        api_key: api_key
+      };
+
+      if (o.tags && $.isArray(o.tags)) {
+        queryString.tags = o.tags.join(",");
+      }
+
       var options = {
         url: url,
-        data: {
-          api_key: api_key
-        },
+        data: queryString,
         dataType: 'jsonp',
         timeout: 5000,
         success: function (data, _, jqxhr) {
@@ -606,7 +626,13 @@
         api_key: api_key,
         query: query
       };
+      
       queryString.limit = o.limit || 10;
+
+      if (o.tags && $.isArray(o.tags)) {
+        queryString.tags = o.tags.join(",");
+      }
+
       var options = {
         url: url,
         data: queryString,

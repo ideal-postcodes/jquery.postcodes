@@ -1,13 +1,7 @@
 (function($) {
   "use strict";
-
-  var apiKey = "iddqd";
+  var apiKey = $.idealKey;
   var defaults = $.idealPostcodes.defaults();
-
-  /*
-   * Class Method Tests
-   *
-   */
 
   module("$.idealPostcodes.lookupPostcode");
 
@@ -75,12 +69,41 @@
     });
   });
 
+  asyncTest("accepts tags", 4, function () {
+    $.idealPostcodes.lookupPostcode({
+      query: "ID11QD", 
+      api_key: apiKey,
+      tags: ["foo", "bar"]
+    }, function (error, addresses, raw) {
+      start();
+      equal(error, null, "should not return an error");
+      notEqual(addresses.length, 0, "should return an array of addresses");
+      equal(addresses[0].postcode, "ID1 1QD", "should contain relevant addresses");
+      equal(raw.code, 2000);
+    });
+  });
+
   module("$.idealPostcodes.lookupAddress");
 
   asyncTest("returns an address search", 5, function () {
     $.idealPostcodes.lookupAddress({
       query: "ID1 1QD",
       api_key: apiKey
+    }, function (error, addresses, data) {
+      start();
+      equal(error, null, "does not return an error");
+      equal(addresses.length, 7, "returns addresses");
+      equal(data.code, 2000, "returns 2000 for valid search query");
+      equal(data.result.total, 7);
+      equal(data.result.hits[0].postcode, "ID1 1QD", "should contain relevant addresses");
+    });
+  });
+
+  asyncTest("accepts tags", 5, function () {
+    $.idealPostcodes.lookupAddress({
+      query: "ID1 1QD",
+      api_key: apiKey,
+      tags: ["foo", "bar"]
     }, function (error, addresses, data) {
       start();
       equal(error, null, "does not return an error");

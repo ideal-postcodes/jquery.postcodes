@@ -1,10 +1,9 @@
 (function($) {
   "use strict";
-
+  var apiKey = $.idealKey;
   var $input_field;
   var $lookup_button;
   var defaults = $.idealPostcodes.defaults();
-  var apiKey = "iddqd";
 
   var callbackInvoked = (function () {
     var invoked = false;
