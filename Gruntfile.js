@@ -53,7 +53,7 @@ module.exports = function(grunt) {
         // Manually point to right file
         src: ['src/jquery.postcodes.js'],
         dest: 'dist/<%= pkg.name %>.js'
-      },
+      }
     },
     uglify: {
       options: {
@@ -62,7 +62,7 @@ module.exports = function(grunt) {
       dist: {
         src: '<%= concat.dist.dest %>',
         dest: 'dist/<%= pkg.name %>.min.js'
-      },
+      }
     },
     qunit: {
       all: {
@@ -89,7 +89,7 @@ module.exports = function(grunt) {
           jshintrc: 'test/.jshintrc'
         },
         src: ['test/**/*.js']
-      },
+      }
     },
     watch: {
       gruntfile: {
@@ -103,7 +103,7 @@ module.exports = function(grunt) {
       test: {
         files: '<%= jshint.test.src %>',
         tasks: ['jshint:test', 'qunit']
-      },
+      }
     },
     connect: {
       server: {
@@ -112,7 +112,7 @@ module.exports = function(grunt) {
           keepalive: false
         }
       }
-    },
+    }
   });
 
   // These plugins provide necessary tasks.
