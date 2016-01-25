@@ -1,11 +1,11 @@
 {
   "name": "jquery.postcodes",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "authors": [
     "support@ideal-postcodes.co.uk"
   ],
   "description": "UK postcode and address lookup jQuery plugin",
-  "main": "/dist/postcodes.js",
+  "main": "/dist/postcodes.min.js",
   "keywords": [
     "uk",
     "address",
