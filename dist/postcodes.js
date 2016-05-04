@@ -1,4 +1,4 @@
-/*! Ideal Postcodes jQuery Plugin - v3.0.0 - 2016-01-25
+/*! Ideal Postcodes jQuery Plugin - v3.0.2 - 2016-05-04
 * https://github.com/ideal-postcodes/jquery.postcodes
 2016 Ideal Postcodes; Licensed MIT */
 (function($) {
@@ -397,6 +397,9 @@
    */ 
 
   AddressFinderController.prototype.cacheSearchResults = function (data) {
+    if (data === null) {
+      return null;
+    }
     this.response_code = data.code;
     this.response_message = data.message;
     this.result = data.result;
@@ -574,6 +577,14 @@
       var queryString = {
         api_key: api_key
       };
+      var errorHandler;
+      if (o.error) {
+        errorHandler = o.error;
+      } else {
+        errorHandler = function (jqxhr, error) {
+          return callback(new Error("Request Failed: " + error), [], null, jqxhr);
+        };
+      }
 
       if (o.tags && $.isArray(o.tags)) {
         queryString.tags = o.tags.join(",");
@@ -583,7 +594,7 @@
         url: url,
         data: queryString,
         dataType: 'jsonp',
-        timeout: 5000,
+        timeout: 10000,
         success: function (data, _, jqxhr) {
           if (data.code === 2000) {
             return callback(null, data.result, data, jqxhr);
@@ -592,7 +603,8 @@
           } else {
             return callback(new Error(extractError(data)), [], data, jqxhr);
           }
-        }
+        },
+        error: errorHandler
       };
 
       $.ajax(options);
@@ -618,6 +630,14 @@
         api_key: api_key,
         query: query
       };
+      var errorHandler;
+      if (o.error) {
+        errorHandler = o.error;
+      } else {
+        errorHandler = function (jqxhr, error) {
+          return callback(new Error("Request Failed: " + error), [], null, jqxhr);
+        };
+      }
       
       queryString.limit = o.limit || 10;
 
@@ -629,14 +649,15 @@
         url: url,
         data: queryString,
         dataType: 'jsonp',
-        timeout: 5000,
+        timeout: 10000,
         success: function (data, _, jqxhr) {
           if (data.code === 2000) {
             return callback(null, data.result.hits, data, jqxhr);
           } else {
             return callback(new Error(extractError(data)), [], data, jqxhr);
           }
-        }
+        },
+        error: errorHandler
       };
 
       $.ajax(options);
@@ -683,7 +704,7 @@
       var options = {
         url: url,
         dataType: 'jsonp',
-        timeout: 5000
+        timeout: 10000
       };
 
       // Save to cache and invoke all callbacks
