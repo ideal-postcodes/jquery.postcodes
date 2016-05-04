@@ -78,6 +78,9 @@ MIT
 
 ## Changelog
 
+*v3.0.2*
+- API Request timeouts now bubble up to API. Default request timeout increased to 10 seconds.
+
 *v3.0.0*
 - Significant API backwards incompatible API changes
 - Simplified `$.idealPostcodes.lookupPostcode` and `$.idealPostcodes.lookupAddress` APIs
