@@ -83,6 +83,20 @@
     });
   });
 
+  asyncTest("accepts licensees", 4, function () {
+    $.idealPostcodes.lookupPostcode({
+      query: "ID11QD", 
+      api_key: apiKey,
+      licensee: "testlicensee"
+    }, function (error, addresses, raw) {
+      start();
+      equal(error, null, "should not return an error");
+      notEqual(addresses.length, 0, "should return an array of addresses");
+      equal(addresses[0].postcode, "ID1 1QD", "should contain relevant addresses");
+      equal(raw.code, 2000);
+    });
+  });
+
   module("$.idealPostcodes.lookupAddress");
 
   asyncTest("returns an address search", 5, function () {
@@ -181,6 +195,19 @@
     });
   });
 
+  asyncTest("accepts licensee", 3, function () {
+    $.idealPostcodes.lookupAddress({
+      query: "Test Licensee",
+      api_key: apiKey,
+      licensee: "testlicensee"
+    }, function (error, addresses, data) {
+      start();
+      equal(error, null, "does not return an error");
+      equal(addresses.length, 7, "returns addresses");
+      equal(data.code, 2000, "returns 2000 for valid search query");
+    });
+  });
+
   module("$.idealPostcodes.checkKey");
 
   asyncTest("returns true if key is usable and cache result", 2, function () {
@@ -221,6 +248,20 @@
     };
     $.idealPostcodes.checkKey({
       api_key: "idd"
+    }, success, failure);
+  });
+
+  asyncTest("accepts licensee argument", 1, function () {
+    var success = function () {
+      equal(2000, 2000);
+      start();
+    };
+    var failure = function () {
+      start();
+    };
+    $.idealPostcodes.checkKey({
+      api_key: "idklicensees",
+      licensee: "testlicensee"
     }, success, failure);
   });
 

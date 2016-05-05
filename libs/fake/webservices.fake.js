@@ -1505,15 +1505,17 @@ var lookupLimitBreached = {
 	message: "Lookup Limit Reached. For more information see http://ideal-postcodes.co.uk/documentation/response-codes#4021"
 }
 
+var uncataloguedError = {
+	code: 5000,
+	message: "An unknown error took place"
+};
+
 fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/postcodes/ID11QD', function(data) {
 	if (data.tags) {
 		if (data.tags === 'foo,bar') {
 			return testPostcodeResult;
 		} else {
-			return {
-				code: 5000,
-				message: "An unknown error took place"
-			}
+			return uncataloguedError;
 		}
 	}
 	return testPostcodeResult;
@@ -1551,15 +1553,21 @@ fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/keys/idkfa', funct
 	return keyCheckFail;
 });
 
+// Mocked Licensees Requests
+fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/keys/idklicensees', function(data) {
+	return (data.licensee === "testlicensee") ? keyCheckPass : uncataloguedError;
+});
+
+fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/postcodes/id11li', function(data) {
+	return (data.licensee === "testlicensee") ? testPostcodeResult : uncataloguedError;
+});
+
 fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/addresses', function(data) {
 	if (data.tags) {
 		if (data.tags === 'foo,bar' && data.query === "ID1 1QD") {
 			return addressSearchTest;
 		} else {
-			return {
-				code: 5000,
-				message: "An unknown error took place"
-			};
+			return uncataloguedError;
 		}
 	}
 
@@ -1573,6 +1581,8 @@ fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/addresses', functi
 		return addressSearchNoResults;
 	} else if (data.query === "10 Downing Street London") {
 		return addressSearchTestDowningStreet;
+	} else if (data.query === "Test Licensee") {
+		return (data.licensee === "testlicensee") ? addressSearchTest : uncataloguedError;
 	} else if (data.query === "Test Limit") {
 		if (data.limit === 20) {
 			return testAddressSearchLimit20;

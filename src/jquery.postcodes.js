@@ -105,6 +105,9 @@
     // Removes Organisation name from address lines
     remove_organisation: false,
 
+    // Optional licensee key
+    licensee: null,
+
     // Methods to format address suggestions for dropdown box
     address_formatters: {
       // Dropdown address formatting for postcode search suggestions
@@ -375,6 +378,10 @@
       options.tags = self.tags;
     }
 
+    if (self.licensee) {
+      options.licensee = self.licensee;
+    }
+
     $.idealPostcodes.lookupPostcode(options, callback);
   };
 
@@ -395,6 +402,10 @@
 
     if (self.tags) {
       options.tags = self.tags;
+    }
+
+    if (self.licensee) {
+      options.licensee = self.licensee;
     }
 
     $.idealPostcodes.lookupAddress(options, callback);
@@ -572,6 +583,7 @@
      * - options: (object) Configuration object for postcode lookup
      *  - options.query: (string) Postcode to lookup, case and space insensitive
      *  - options.api_key: (string) API Key required
+     *  - options.licensee: (string) Licensee key
      * - success: (function) Callback invoked upon successful request
      * - error: (function) Optional callback invoked upon failed HTTP request
      */
@@ -596,6 +608,10 @@
 
       if (o.tags && $.isArray(o.tags)) {
         queryString.tags = o.tags.join(",");
+      }
+
+      if (o.licensee) {
+        queryString.licensee = o.licensee;
       }
 
       var options = {
@@ -623,6 +639,7 @@
      * - options: (object) Configuration object for address search
      *   - options.query (string) address to search for
      *   - options.api_key: (string) API Key required
+     *   - options.licensee: (string) Licensee key
      *   - options.limit: (number) Maximum number of addresses to return (default 10)
      * - success: (function) Callback invoked upon successful request
      * - error: (function) Optional callback invoked upon failed HTTP request
@@ -653,6 +670,10 @@
         queryString.tags = o.tags.join(",");
       }
 
+      if (o.licensee) {
+        queryString.licensee = o.licensee;
+      }
+
       var options = {
         url: url,
         data: queryString,
@@ -674,7 +695,8 @@
     /*
      * Checks whether key can be used
      * - options: (object) Configuration object for key checking
-     *  - options.api_key: (string) API Key to testing
+     *  - options.api_key: (string) API Key to test
+     *  - options.licensee: (string) Licensee key
      * - success: (function) Callback invoked when key is available
      * - error: (function) Optional callback invoked when key is not available or HTTP request failed
      */
@@ -714,6 +736,12 @@
         dataType: 'jsonp',
         timeout: 10000
       };
+
+      if (o.licensee) {
+        options.data = {
+          licensee: o.licensee
+        };
+      }
 
       // Save to cache and invoke all callbacks
       options.success = function (data) {
