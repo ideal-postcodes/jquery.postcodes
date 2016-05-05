@@ -78,6 +78,9 @@ MIT
 
 ## Changelog
 
+*v3.0.3*
+- Added `licensee` attribute to configuration object
+
 *v3.0.2*
 - API Request timeouts now bubble up to API. Default request timeout increased to 10 seconds.
 
