@@ -139,6 +139,7 @@
     onAddressSelected: undefined,     // User has clicked an address in dropdown
     onDropdownCreated: undefined,     // When the address selection dropdown is inserted to DOM
     onLookupTriggered: undefined,     // When user clicks the button to trigger a lookup
+    shouldLookupTrigger: undefined,   // 
     onSearchError: undefined,         // When a request succeeds but the API returns an error code
 
     // Tags to be included with search requests
@@ -240,18 +241,26 @@
       });
     }
     self.$button.click(function () {
-      var term = self.$input.val();
-
       if (self.onLookupTriggered) {
         self.onLookupTriggered.call(self);
       }
 
-      if (self.last_lookup !== term) {
-        self.last_lookup = term;
-        self.clearAll();
-        self.disableLookup();
-        self.executeSearch(term);
+      var executeLookup = function () {
+        var term = self.$input.val();
+        if (self.last_lookup !== term) {
+          self.last_lookup = term;
+          self.clearAll();
+          self.disableLookup();
+          self.executeSearch(term);
+        }
+      };
+
+      if (self.shouldLookupTrigger) {
+        self.shouldLookupTrigger.call(self, executeLookup);
+      } else {
+        executeLookup();
       }
+
       return false;
     });
     return self.$button;

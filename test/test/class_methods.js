@@ -199,7 +199,8 @@
     $.idealPostcodes.lookupAddress({
       query: "Test Licensee",
       api_key: apiKey,
-      licensee: "testlicensee"
+      licensee: "testlicensee",
+      limit: 7
     }, function (error, addresses, data) {
       start();
       equal(error, null, "does not return an error");

@@ -38,6 +38,36 @@
     ok(callbackInvoked());
   });
 
+  module("shouldLookupTrigger Callback", { 
+    setup: function () {
+      $("#postcode_lookup_field").setupPostcodeLookup({
+        api_key: apiKey,
+        shouldLookupTrigger: function (done) {
+          this.$input.val("ID1KFA");
+          callbackInvoked(true);
+          done();
+          $.event.trigger("completedJsonp", []);
+        }
+      });
+      $input_field = $("#"+defaults.input_id);
+      $lookup_button = $("#"+defaults.button_id);
+    },
+    teardown: function () {
+      callbackInvoked(false);
+      $(document).off("completedJsonp");
+    }
+  });
+
+  asyncTest("shouldLookupTrigger is invoked before lookup", 2, function () {
+    $input_field.val("ID11QD");
+    $(document).on("completedJsonp", function () {
+      start();
+      ok(callbackInvoked);
+      equal($input_field.val(), "ID1KFA");
+    });
+    $lookup_button.trigger("click");
+  });
+
   module("onSearchCompleted Callback", { 
     setup: function () {
       $("#postcode_lookup_field").setupPostcodeLookup({
