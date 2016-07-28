@@ -1,4 +1,4 @@
-/*! Ideal Postcodes jQuery Plugin - v3.0.3 - 2016-05-05
+/*! Ideal Postcodes jQuery Plugin - v3.0.4 - 2016-07-29
 * https://github.com/ideal-postcodes/jquery.postcodes
 2016 Ideal Postcodes; Licensed MIT */
 (function($) {
@@ -131,6 +131,7 @@
     onAddressSelected: undefined,     // User has clicked an address in dropdown
     onDropdownCreated: undefined,     // When the address selection dropdown is inserted to DOM
     onLookupTriggered: undefined,     // When user clicks the button to trigger a lookup
+    shouldLookupTrigger: undefined,   // 
     onSearchError: undefined,         // When a request succeeds but the API returns an error code
 
     // Tags to be included with search requests
@@ -232,18 +233,26 @@
       });
     }
     self.$button.click(function () {
-      var term = self.$input.val();
-
       if (self.onLookupTriggered) {
         self.onLookupTriggered.call(self);
       }
 
-      if (self.last_lookup !== term) {
-        self.last_lookup = term;
-        self.clearAll();
-        self.disableLookup();
-        self.executeSearch(term);
+      var executeLookup = function () {
+        var term = self.$input.val();
+        if (self.last_lookup !== term) {
+          self.last_lookup = term;
+          self.clearAll();
+          self.disableLookup();
+          self.executeSearch(term);
+        }
+      };
+
+      if (self.shouldLookupTrigger) {
+        self.shouldLookupTrigger.call(self, executeLookup);
+      } else {
+        executeLookup();
       }
+
       return false;
     });
     return self.$button;

@@ -78,6 +78,9 @@ MIT
 
 ## Changelog
 
+*v3.0.4*
+- Added shouldLookupTrigger callback
+
 *v3.0.3*
 - Added `licensee` attribute to configuration object
 
