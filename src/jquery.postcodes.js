@@ -60,6 +60,7 @@
     input: undefined,
     $input: undefined,
     input_label: "Please enter your postcode",
+    placeholder_label: "",
     input_muted_style: "color:#CBCBCB;",
     input_class: "",
     input_id: "idpc_input",
@@ -207,7 +208,8 @@
       this.$input = $('<input />', {
         type: "text",
         id: this.input_id,
-        value: this.input_label
+        value: this.input_label,
+        placeholder: this.placeholder_label
       })
       .appendTo(this.$context)
       .addClass(this.input_class)

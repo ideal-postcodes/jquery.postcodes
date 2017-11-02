@@ -1,5 +1,8 @@
 # Changelog
 
+## [3.0.5] 2017-11-02
+- Added placeholder to input field. The placeholder is determined by the `placeholder_label` attribute
+
 ## [3.0.4] 2016-07-29
 - Added shouldLookupTrigger callback
 
