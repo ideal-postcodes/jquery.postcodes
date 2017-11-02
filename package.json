@@ -6,7 +6,8 @@
   },
   "scripts": {
     "test": "./node_modules/.bin/grunt test",
-    "start": "./node_modules/.bin/http-server . -o"
+    "start": "./node_modules/.bin/http-server . -o",
+    "build": "./node_modules/.bin/grunt"
   },
   "devDependencies": {
     "grunt": "~1.0.1",
