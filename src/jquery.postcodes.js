@@ -146,6 +146,22 @@
     tags: undefined
   };
 
+  /* 
+   * Utility method to remove organisation from Address result
+   *
+   * All organisations will have their name as first line
+   */
+  var removeOrganisation = function (address) {
+    if (address.organisation_name.length !== 0 &&
+        (address.line_1 === address.organisation_name)) {
+      // Shift addresses up
+      address.line_1 = address.line_2;
+      address.line_2 = address.line_3;
+      address.line_3 = "";
+    }
+    return address;
+  };
+
   function AddressFinderController (options) {
     // Load in defaults
     this.config = {};
@@ -554,23 +570,6 @@
     for (var key in this.$output_fields) {
       this.$output_fields[key].val(data[key] || "");
     }
-  };
-
-  /* 
-   * Utility method to remove organisation from Address result
-   *
-   * All organisations will have their name as first line
-   */
-
-  var removeOrganisation = function (address) {
-    if (address.organisation_name.length !== 0 &&
-        (address.line_1 === address.organisation_name)) {
-      // Shift addresses up
-      address.line_1 = address.line_2;
-      address.line_2 = address.line_3;
-      address.line_3 = "";
-    }
-    return address;
   };
 
   var extractError = function (data) {
