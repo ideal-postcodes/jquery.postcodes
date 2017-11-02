@@ -5,20 +5,22 @@
     "node": ">= 0.8.0"
   },
   "scripts": {
-    "test": "./node_modules/.bin/grunt test"
+    "test": "./node_modules/.bin/grunt test",
+    "start": "./node_modules/.bin/http-server . -o"
   },
   "devDependencies": {
+    "grunt": "~1.0.1",
+    "grunt-cli": "1.2.0",
+    "grunt-contrib-clean": "~1.1.0",
+    "grunt-contrib-concat": "~1.0.1",
+    "grunt-contrib-connect": "~1.0.2",
     "grunt-contrib-jshint": "~1.1.0",
     "grunt-contrib-qunit": "~2.0.0",
-    "grunt-contrib-concat": "~1.0.1",
     "grunt-contrib-uglify": "~3.1.0",
     "grunt-contrib-watch": "~1.0.0",
-    "grunt-contrib-clean": "~1.1.0",
-    "grunt": "~1.0.1",
-    "grunt-contrib-connect": "~1.0.2",
     "grunt-saucelabs": "~9.0.0",
-    "request": "~2.83.0",
-    "grunt-cli": "1.2.0"
+    "http-server": "~0.10.0",
+    "request": "~2.83.0"
   },
   "readmeFilename": "README.md",
   "description": "Add UK address lookups with a simple postcode input field on any web form with the Ideal-Postcodes.co.uk API. Ideal Postcodes uses Royal Mail's addressing database, the Postcode Address File (PAF).",
@@ -36,6 +38,5 @@
   ],
   "author": "Ideal Postcodes",
   "license": "MIT",
-  "dependencies": {
-  }
+  "dependencies": {}
 }
