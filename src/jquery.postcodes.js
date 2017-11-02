@@ -139,6 +139,7 @@
     onAddressesRetrieved: undefined,  // When a lookup succeeds with a list of addresses
     onAddressSelected: undefined,     // User has clicked an address in dropdown
     onDropdownCreated: undefined,     // When the address selection dropdown is inserted to DOM
+    onDropdownDestroyed: undefined,   // When the address selection dropdown is removed (following new search)
     onLookupTriggered: undefined,     // When user clicks the button to trigger a lookup
     shouldLookupTrigger: undefined,   // 
     onSearchError: undefined,         // When a request succeeds but the API returns an error code
@@ -469,6 +470,9 @@
     if (this.$dropdown && this.$dropdown.length) {
       this.$dropdown.remove();
       delete this.$dropdown;
+      if (this.onDropdownDestroyed) {
+        this.onDropdownDestroyed.call(this);
+      }
     }
 
     if (!data) {

@@ -2,6 +2,7 @@
 
 ## [3.0.5] 2017-11-02
 - Added placeholder to input field. The placeholder is determined by the `placeholder_label` attribute
+- Added `onDropdownDestroyed` destroyed callback, invoked when dropdown is removed from DOM following a new search
 
 ## [3.0.4] 2016-07-29
 - Added shouldLookupTrigger callback

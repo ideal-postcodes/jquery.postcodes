@@ -1521,6 +1521,10 @@ fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/postcodes/ID11QD',
 	return testPostcodeResult;
 });
 
+fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/postcodes/ID1%201QD', function(data) {
+	return testPostcodeResult;
+});
+
 fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/postcodes/ID11QE', function(data) {
 	return postcodeNotFound;
 });

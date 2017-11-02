@@ -286,6 +286,46 @@
     $lookup_button.trigger("click");
   });
 
+  module("onDropdownDestroyed Callback", {
+    setup: function () {
+      $("#postcode_lookup_field").setupPostcodeLookup({
+        api_key: apiKey,
+        disable_interval: 0,
+        onDropdownDestroyed: function () {
+          callbackInvoked(true);
+          $.event.trigger("dropdownDestroyed");
+        },
+        onSearchCompleted: function () {
+          $.event.trigger("completedJsonp");
+        }
+      });
+      $input_field = $("#"+defaults.input_id);
+      $lookup_button = $("#"+defaults.button_id);
+    },
+    teardown: function () {
+      callbackInvoked(false);
+      $(document).off("dropdownDestroyed").off("completedJsonp");
+    }
+  });
+
+  asyncTest("triggered when addresses are retrieved", 2, function () {
+    $(document).on("dropdownDestroyed", function () {
+        start();
+        ok(callbackInvoked());
+        ok($("#" + defaults.dropdown_id).length === 0);
+      });
+    var counter = 0;
+    $(document).on("completedJsonp", function () {
+      counter += 1;
+      if (counter < 2) { // Trigger a second time to destroyDropdown
+        $input_field.val("ID1 1QD"); // Modify slightly to retrigger lookup
+        $lookup_button.trigger("click");
+      }
+    });
+    $input_field.val("ID11QD");
+    $lookup_button.trigger("click");
+  });
+
   module("onLookupTriggered Callback", {
     setup: function () {
       $("#postcode_lookup_field").setupPostcodeLookup({
