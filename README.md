@@ -64,7 +64,15 @@ Run automated tests with
 grunt test
 ```
 
-Please use jQuery 1.9.x or higher. This plugin has been tested against jQuery 1.9.x, 1.10.x, 1.11.x, 2.0.x, 2.1.x, 2.2.x and 3.0.x
+Please use jQuery 1.9.x or higher. This plugin has been tested against jQuery 1.9.x, 1.10.x, 1.11.x, 2.0.x, 2.1.x, 2.2.x, 3.0.x. 3.1.x and 3.2.x
+
+You may run the plugin locally and test in your browser
+
+```bash
+$ npm start # starts a HTTP server
+
+# Navigate to the `examples` folder and select an example in a *.html file
+```
 
 Our test postcodes are:
 - **ID1 1QD** Returns a successful postcode lookup response (2000)

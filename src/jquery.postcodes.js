@@ -60,6 +60,7 @@
     input: undefined,
     $input: undefined,
     input_label: "Please enter your postcode",
+    placeholder_label: "",
     input_muted_style: "color:#CBCBCB;",
     input_class: "",
     input_id: "idpc_input",
@@ -138,12 +139,29 @@
     onAddressesRetrieved: undefined,  // When a lookup succeeds with a list of addresses
     onAddressSelected: undefined,     // User has clicked an address in dropdown
     onDropdownCreated: undefined,     // When the address selection dropdown is inserted to DOM
+    onDropdownDestroyed: undefined,   // When the address selection dropdown is removed (following new search)
     onLookupTriggered: undefined,     // When user clicks the button to trigger a lookup
     shouldLookupTrigger: undefined,   // 
     onSearchError: undefined,         // When a request succeeds but the API returns an error code
 
     // Tags to be included with search requests
     tags: undefined
+  };
+
+  /* 
+   * Utility method to remove organisation from Address result
+   *
+   * All organisations will have their name as first line
+   */
+  var removeOrganisation = function (address) {
+    if (address.organisation_name.length !== 0 &&
+        (address.line_1 === address.organisation_name)) {
+      // Shift addresses up
+      address.line_1 = address.line_2;
+      address.line_2 = address.line_3;
+      address.line_3 = "";
+    }
+    return address;
   };
 
   function AddressFinderController (options) {
@@ -191,7 +209,8 @@
       this.$input = $('<input />', {
         type: "text",
         id: this.input_id,
-        value: this.input_label
+        value: this.input_label,
+        placeholder: this.placeholder_label
       })
       .appendTo(this.$context)
       .addClass(this.input_class)
@@ -451,6 +470,9 @@
     if (this.$dropdown && this.$dropdown.length) {
       this.$dropdown.remove();
       delete this.$dropdown;
+      if (this.onDropdownDestroyed) {
+        this.onDropdownDestroyed.call(this);
+      }
     }
 
     if (!data) {
@@ -554,23 +576,6 @@
     for (var key in this.$output_fields) {
       this.$output_fields[key].val(data[key] || "");
     }
-  };
-
-  /* 
-   * Utility method to remove organisation from Address result
-   *
-   * All organisations will have their name as first line
-   */
-
-  var removeOrganisation = function (address) {
-    if (address.organisation_name.length !== 0 &&
-        (address.line_1 === address.organisation_name)) {
-      // Shift addresses up
-      address.line_1 = address.line_2;
-      address.line_2 = address.line_3;
-      address.line_3 = "";
-    }
-    return address;
   };
 
   var extractError = function (data) {
