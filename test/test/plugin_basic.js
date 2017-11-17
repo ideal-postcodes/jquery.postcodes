@@ -185,4 +185,29 @@
     equal($lookup_button.length, 0, "there is no button");
   });
 
+  module("Sublicensee: Pre-initialisation check", { 
+    setup: function () {
+      stop();
+      var startTests = function () {
+        $input_field = $("#"+defaults.input_id);
+        $lookup_button = $("#"+defaults.button_id);
+        start();
+      };
+      $("#postcode_lookup_field").setupPostcodeLookup({
+        // Test key which will return false
+        api_key: "iddlicensees",
+        licensee: "testlicensee",
+        check_key: true,
+        disable_interval: 0,
+        onFailedCheck: startTests,
+        onLoaded: startTests
+      });
+    } 
+  });
+
+  test("has postcode lookup tools setup", 2, function () {
+    equal($input_field.length, 1, "there is postcode input");
+    equal($lookup_button.length, 1, "there is button");
+  });
+
 }(jQuery));
