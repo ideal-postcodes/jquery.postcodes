@@ -1,4 +1,4 @@
-/*! Ideal Postcodes jQuery Plugin - v3.0.5 - 2017-11-16
+/*! Ideal Postcodes jQuery Plugin - v3.0.6 - 2017-11-17
 * https://github.com/ideal-postcodes/jquery.postcodes
 2017 Ideal Postcodes; Licensed MIT */
 (function($) {
@@ -816,9 +816,11 @@
 
     // Check if key is usable if necessary
     if (options.check_key) {
-      $.idealPostcodes.checkKey({
-        api_key: options.api_key 
-      }, initPlugin, failedKeyCheck);
+      var keyOptions = { api_key: options.api_key };
+      if (options.licensee) {
+        keyOptions.licensee = options.licensee;
+      }
+      $.idealPostcodes.checkKey(keyOptions, initPlugin, failedKeyCheck);
     } else {
       initPlugin();
     }

@@ -1562,6 +1562,11 @@ fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/keys/idklicensees'
 	return (data.licensee === "testlicensee") ? keyCheckPass : uncataloguedError;
 });
 
+// Mocked Licensees Requests
+fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/keys/iddlicensees', function(data) {
+	return (data.licensee === "testlicensee") ? keyCheckPass : keyCheckFail;
+});
+
 fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/postcodes/id11li', function(data) {
 	return (data.licensee === "testlicensee") ? testPostcodeResult : uncataloguedError;
 });

@@ -824,9 +824,11 @@
 
     // Check if key is usable if necessary
     if (options.check_key) {
-      $.idealPostcodes.checkKey({
-        api_key: options.api_key 
-      }, initPlugin, failedKeyCheck);
+      var keyOptions = { api_key: options.api_key };
+      if (options.licensee) {
+        keyOptions.licensee = options.licensee;
+      }
+      $.idealPostcodes.checkKey(keyOptions, initPlugin, failedKeyCheck);
     } else {
       initPlugin();
     }

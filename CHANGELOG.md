@@ -1,5 +1,8 @@
 # Changelog
 
+## [3.0.6] 2017-11-02
+- Fix: Sublicensee key now passed into key checking API calls if `check_key: true`
+
 ## [3.0.5] 2017-11-02
 - Added placeholder to input field. The placeholder is determined by the `placeholder_label` attribute
 - Added `onDropdownDestroyed` destroyed callback, invoked when dropdown is removed from DOM following a new search
