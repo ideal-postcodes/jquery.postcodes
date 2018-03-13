@@ -598,6 +598,7 @@
      *  - options.query: (string) Postcode to lookup, case and space insensitive
      *  - options.api_key: (string) API Key required
      *  - options.licensee: (string) Licensee key
+     *  - options.endpoint: (string) API endpoint
      * - success: (function) Callback invoked upon successful request
      * - error: (function) Optional callback invoked upon failed HTTP request
      */
@@ -605,7 +606,7 @@
     lookupPostcode: function (o, callback) {
       var postcode = o.query || o.postcode || "";
       var api_key = o.api_key || "";
-      var endpoint = defaults.endpoint;
+      var endpoint = o.endpoint || defaults.endpoint;
       var resource = "postcodes";
       var url = [endpoint, resource, encodeURI(postcode)].join('/');
       var queryString = {
@@ -655,6 +656,7 @@
      *   - options.api_key: (string) API Key required
      *   - options.licensee: (string) Licensee key
      *   - options.limit: (number) Maximum number of addresses to return (default 10)
+     *   - options.endpoint: (string) API endpoint 
      * - success: (function) Callback invoked upon successful request
      * - error: (function) Optional callback invoked upon failed HTTP request
      */
@@ -662,7 +664,7 @@
     lookupAddress: function (o, callback) {
       var query = o.query || "";
       var api_key = o.api_key || "";
-      var endpoint = defaults.endpoint;
+      var endpoint = o.endpoint || defaults.endpoint;
       var resource = "addresses";
       var url = [endpoint, resource].join('/');
       var queryString = {
@@ -711,6 +713,7 @@
      * - options: (object) Configuration object for key checking
      *  - options.api_key: (string) API Key to test
      *  - options.licensee: (string) Licensee key
+     *  - options.endpoint: (string) API endpoint
      * - success: (function) Callback invoked when key is available
      * - error: (function) Optional callback invoked when key is not available or HTTP request failed
      */
@@ -742,7 +745,7 @@
         };
       }
 
-      var endpoint = defaults.endpoint;
+      var endpoint = o.endpoint || defaults.endpoint;
       var resource = "keys";
       var url = [endpoint, resource, api_key].join('/');
       var options = {
