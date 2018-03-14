@@ -31,23 +31,23 @@
       line_2: "#line_2",
       line_3: "#line_3",
       post_town: "#post_town",
-      postcode: "#postcode",
-      postcode_inward: undefined,
-      postcode_outward: undefined,
-      udprn: undefined,
-      dependant_locality: undefined,
-      double_dependant_locality: undefined,
-      thoroughfare: undefined,
-      dependant_thoroughfare: undefined,
-      building_number: undefined,
-      building_name: undefined,
-      sub_building_name: undefined,
-      po_box: undefined,
-      department_name: undefined,
-      organisation_name: undefined,
-      postcode_type: undefined,
-      su_organisation_indicator: undefined,
-      delivery_point_suffix: undefined
+      postcode: "#postcode"
+      // postcode_inward: undefined,
+      // postcode_outward: undefined,
+      // udprn: undefined,
+      // dependant_locality: undefined,
+      // double_dependant_locality: undefined,
+      // thoroughfare: undefined,
+      // dependant_thoroughfare: undefined,
+      // building_number: undefined,
+      // building_name: undefined,
+      // sub_building_name: undefined,
+      // po_box: undefined,
+      // department_name: undefined,
+      // organisation_name: undefined,
+      // postcode_type: undefined,
+      // su_organisation_indicator: undefined,
+      // delivery_point_suffix: undefined
     },
     
     /* 
@@ -57,8 +57,8 @@
     endpoint: "https://api.ideal-postcodes.co.uk/v1",
 
     // Input Field Configuration
-    input: undefined,
-    $input: undefined,
+    // input: undefined,
+    // $input: undefined,
     input_label: "Please enter your postcode",
     placeholder_label: "",
     input_muted_style: "color:#CBCBCB;",
@@ -66,29 +66,29 @@
     input_id: "idpc_input",
 
     // Button configuration
-    button: undefined,
-    $button: undefined,
+    // button: undefined,
+    // $button: undefined,
     button_id: "idpc_button",
     button_label: "Find my Address",
     button_class: "",
     button_disabled_message: "Looking up postcode...",
 
     // Dropdown configuration
-    $dropdown: undefined,
+    // $dropdown: undefined,
     dropdown_id: "idpc_dropdown",
     dropdown_select_message: "Please select your address",
     dropdown_class: "",
-    dropdown_container: undefined,
+    // dropdown_container: undefined,
 
     // Error Message Configuration
-    $error_message: undefined,
+    // $error_message: undefined,
     error_message_id: "idpc_error_message",
     error_message_invalid_postcode: "Please check your postcode, it seems to be incorrect",
     error_message_not_found: "Your postcode could not be found. Please type in your address",
     error_message_address_not_found: "We could not find a match for your address. Please type in your address",
     error_message_default: "Sorry, we weren't able to get the address you were looking for. Please type your address manually",
     error_message_class: "",
-    error_message_container: undefined,
+    // error_message_container: undefined,
 
     // Address search fallback - if enabled, postcode searches which fail validation will be forward to the Address search API
     address_search: false,
@@ -133,19 +133,19 @@
     },
 
     // Register callbacks at specific stages
-    onLoaded: undefined,              // When plugin is initialised
-    onFailedCheck: undefined,         // When key check fails (requires check_key: true)
-    onSearchCompleted: undefined,     // When a lookup succeeds, E.g. Server responds that Postcode is found or doesn't exist
-    onAddressesRetrieved: undefined,  // When a lookup succeeds with a list of addresses
-    onAddressSelected: undefined,     // User has clicked an address in dropdown
-    onDropdownCreated: undefined,     // When the address selection dropdown is inserted to DOM
-    onDropdownDestroyed: undefined,   // When the address selection dropdown is removed (following new search)
-    onLookupTriggered: undefined,     // When user clicks the button to trigger a lookup
-    shouldLookupTrigger: undefined,   // 
-    onSearchError: undefined,         // When a request succeeds but the API returns an error code
+    // onLoaded: undefined,              // When plugin is initialised
+    // onFailedCheck: undefined,         // When key check fails (requires check_key: true)
+    // onSearchCompleted: undefined,     // When a lookup succeeds, E.g. Server responds that Postcode is found or doesn't exist
+    // onAddressesRetrieved: undefined,  // When a lookup succeeds with a list of addresses
+    // onAddressSelected: undefined,     // User has clicked an address in dropdown
+    // onDropdownCreated: undefined,     // When the address selection dropdown is inserted to DOM
+    // onDropdownDestroyed: undefined,   // When the address selection dropdown is removed (following new search)
+    // onLookupTriggered: undefined,     // When user clicks the button to trigger a lookup
+    // shouldLookupTrigger: undefined,   // 
+    // onSearchError: undefined,         // When a request succeeds but the API returns an error code
 
     // Tags to be included with search requests
-    tags: undefined
+    // tags: undefined
   };
 
   /* 
@@ -196,9 +196,7 @@
    *
    * If a selector (this.input) is specified, that input is used
    * If no selector specified, a new input field is generated and added to context
-   *
    */
-
   AddressFinderController.prototype.setupInputField = function () {
     var self = this;
     if ($(this.input).length) {
@@ -239,9 +237,7 @@
 
   /*
    * Connects clickable element to the plugin to trigger
-   *
    */
-
   AddressFinderController.prototype.setupLookupButton = function () {
     var self = this;
     if ($(self.button).length) {
@@ -288,7 +284,6 @@
   /*
    * Prevents lookup button from being triggered
    */
-
   AddressFinderController.prototype.disableLookup = function (message) {
     // Cancel if custom button
     if (this.button) {
@@ -301,7 +296,6 @@
   /*
    * Allows lookup button to be triggered
    */
-
   AddressFinderController.prototype.enableLookup = function () {
     // Cancel if custom button
     if (this.button) {
@@ -319,9 +313,7 @@
 
   /*
    * Clears the following fields
-   *
    */
-
   AddressFinderController.prototype.clearAll = function () {
     this.setDropDown();
     this.setErrorMessage();
@@ -329,9 +321,7 @@
 
   /*
    * Removes all elements from DOM
-   *
    */
-
   AddressFinderController.prototype.removeAll = function () {
     this.$context = null;
 
@@ -348,7 +338,6 @@
    *  - On successful search but no addresses, show error message
    *  - On failed search, show error message
    */
-
   AddressFinderController.prototype.executeSearch = function (term) {
     var self = this;
     var message;
@@ -394,12 +383,12 @@
   /*
    * Invoke postcode lookup
    */
-
   AddressFinderController.prototype.executePostcodeSearch = function (postcode, callback) {
     var self = this;
     var options = {
       query: postcode, 
-      api_key: self.api_key
+      api_key: self.api_key,
+      endpoint: self.endpoint
     };
 
     if (self.tags) {
@@ -416,12 +405,12 @@
   /*
    * Invoke an address search
    */
-
   AddressFinderController.prototype.executeAddressSearch = function (query, callback) {
     var self = this;
     var options = {
       query: query,
-      api_key: self.api_key
+      api_key: self.api_key,
+      endpoint: self.endpoint
     };
     
     if (typeof self.address_search === "object") {
@@ -442,7 +431,6 @@
   /*
    *  Caches search result with raw data object
    */ 
-
   AddressFinderController.prototype.cacheSearchResults = function (data) {
     if (data === null) {
       return null;
@@ -458,7 +446,6 @@
    *
    * Removes dropdown from DOM if data is undefined
    */
-
   AddressFinderController.prototype.setDropDown = function (data) {
     var self = this;
 
@@ -536,7 +523,6 @@
    *
    * Removes error message from DOM if undefined
    */
-
   AddressFinderController.prototype.setErrorMessage = function (message) {
     if (this.$error_message && this.$error_message.length) {
       this.$error_message.remove();
@@ -569,7 +555,6 @@
    *
    * Empties output fields if undefined
    */
-
   AddressFinderController.prototype.setAddressFields = function (data) {
     data = data || {};
 
@@ -602,7 +587,6 @@
      * - success: (function) Callback invoked upon successful request
      * - error: (function) Optional callback invoked upon failed HTTP request
      */
-
     lookupPostcode: function (o, callback) {
       var postcode = o.query || o.postcode || "";
       var api_key = o.api_key || "";
@@ -660,7 +644,6 @@
      * - success: (function) Callback invoked upon successful request
      * - error: (function) Optional callback invoked upon failed HTTP request
      */
-
     lookupAddress: function (o, callback) {
       var query = o.query || "";
       var api_key = o.api_key || "";
@@ -717,7 +700,6 @@
      * - success: (function) Callback invoked when key is available
      * - error: (function) Optional callback invoked when key is not available or HTTP request failed
      */
-
     checkKey: function (o, success, error) {
       var api_key = o.api_key || "";
 
@@ -828,6 +810,9 @@
     // Check if key is usable if necessary
     if (options.check_key) {
       var keyOptions = { api_key: options.api_key };
+      if (options.endpoint) {
+        keyOptions.endpoint = options.endpoint;
+      }
       if (options.licensee) {
         keyOptions.licensee = options.licensee;
       }

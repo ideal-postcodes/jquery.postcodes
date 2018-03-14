@@ -210,4 +210,67 @@
     equal($lookup_button.length, 1, "there is button");
   });
 
+  module("Custom endpoint", { 
+    setup: function () {
+      $("#postcode_lookup_field").setupPostcodeLookup({
+        api_key: apiKey,
+        endpoint: "http://api.ideal-postcodes.co.uk/v1",
+        disable_interval: 0,
+        onSearchCompleted: function () {
+          $.event.trigger("completedJsonp");
+        },
+        onSearchError: function () {
+          $.event.trigger("completedJsonp");
+        }
+      });
+      $input_field = $("#"+defaults.input_id);
+      $lookup_button = $("#"+defaults.button_id);
+    },
+    teardown: function () {
+      $(document).off("completedJsonp");
+    }
+  });
+
+  asyncTest("Requests resolve custom API endpoint", 1, function () {
+    $input_field.val("ID11QD");
+    $(document).on("completedJsonp", function () {
+      start();
+      $dropdown = $("#"+defaults.dropdown_id);
+      ok($dropdown.length, "it has a dropdown menu");
+    });
+    $lookup_button.trigger("click");
+  });
+
+  module("Custom endpoint with address search", { 
+    setup: function () {
+      $("#postcode_lookup_field").setupPostcodeLookup({
+        api_key: apiKey,
+        endpoint: "http://api.ideal-postcodes.co.uk/v1",
+        address_search: true,
+        disable_interval: 0,
+        onSearchCompleted: function () {
+          $.event.trigger("completedJsonp");
+        },
+        onSearchError: function () {
+          $.event.trigger("completedJsonp");
+        }
+      });
+      $input_field = $("#"+defaults.input_id);
+      $lookup_button = $("#"+defaults.button_id);
+    },
+    teardown: function () {
+      $(document).off("completedJsonp");
+    }
+  });
+
+  asyncTest("Requests resolve custom API endpoint", 1, function () {
+    $input_field.val("10 Downing Street London");
+    $(document).on("completedJsonp", function () {
+      start();
+      $dropdown = $("#"+defaults.dropdown_id);
+      ok($dropdown.length, "it has a dropdown menu");
+    });
+    $lookup_button.trigger("click");
+  });
+
 }(jQuery));

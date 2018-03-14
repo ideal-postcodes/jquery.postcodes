@@ -1615,7 +1615,9 @@ fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/addresses', functi
 });
 
 fake.registerWebservice('http://api.ideal-postcodes.co.uk/v1/addresses', function(data) {
-	if (data.query === "ID1 1QD") return addressSearchTest;;
+	if (data.query === "ID1 1QD") return addressSearchTest;
+	if (data.query === "10 Downing Street London") return addressSearchTestDowningStreet;
+	return addressSearchNoResults;
 });
   
 })(jQuery);
