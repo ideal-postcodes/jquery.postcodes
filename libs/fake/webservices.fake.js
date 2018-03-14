@@ -1521,6 +1521,17 @@ fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/postcodes/ID11QD',
 	return testPostcodeResult;
 });
 
+fake.registerWebservice('http://api.ideal-postcodes.co.uk/v1/postcodes/ID11QD', function(data) {
+	if (data.tags) {
+		if (data.tags === 'foo,bar') {
+			return testPostcodeResult;
+		} else {
+			return uncataloguedError;
+		}
+	}
+	return testPostcodeResult;
+});
+
 fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/postcodes/ID1%201QD', function(data) {
 	return testPostcodeResult;
 });
@@ -1601,6 +1612,12 @@ fake.registerWebservice('https://api.ideal-postcodes.co.uk/v1/addresses', functi
 	} else {
 		return addressSearchNoResults;
 	}
+});
+
+fake.registerWebservice('http://api.ideal-postcodes.co.uk/v1/addresses', function(data) {
+	if (data.query === "ID1 1QD") return addressSearchTest;
+	if (data.query === "10 Downing Street London") return addressSearchTestDowningStreet;
+	return addressSearchNoResults;
 });
   
 })(jQuery);

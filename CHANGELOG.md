@@ -1,5 +1,10 @@
 # Changelog
 
+## [3.0.7] 2018-03-14
+- Fix: Custom API endpoint can be passed to setup configuration object
+- Fix: Class Methods `lookupPostcode`, `lookupAddress` and `checkKey` accept custom endpoint
+- Reduce library size. Commented out optional configuration attributes which currently serve as documentation. Will be removed altogether in final minified payload
+
 ## [3.0.6] 2017-11-02
 - Fix: Sublicensee key now passed into key checking API calls if `check_key: true`
 
