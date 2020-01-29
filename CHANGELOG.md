@@ -1,5 +1,10 @@
 # Changelog
 
+## [3.0.8] 2020-01-29
+- Fix: Guarantee that form cannot be submitted on Enter keypress
+- Docs: Remove documentation.md. This is maintained on https://ideal-postcodes.co.uk/documentation/jquery-plugin
+- Test: Test on jQuery 3.4 and 3.3
+
 ## [3.0.7] 2018-03-14
 - Fix: Custom API endpoint can be passed to setup configuration object
 - Fix: Class Methods `lookupPostcode`, `lookupAddress` and `checkKey` accept custom endpoint
