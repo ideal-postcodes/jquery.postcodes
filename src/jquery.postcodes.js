@@ -220,6 +220,8 @@
       .keypress(function (event) {
         if (event.which === 13) {
           self.$button.trigger("click");
+          event.preventDefault();
+          return false;
         }
       })
       .focus(function () {
