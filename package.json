@@ -9,6 +9,10 @@
     "start": "./node_modules/.bin/http-server . -o",
     "build": "./node_modules/.bin/grunt"
   },
+  "files": [
+    "dist",
+    "src"
+  ],
   "devDependencies": {
     "grunt": "~1.0.1",
     "grunt-cli": "1.2.0",
