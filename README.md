@@ -2,9 +2,7 @@
 
 Add UK address lookups with a simple postcode input field on any web form with the Ideal-Postcodes.co.uk API. Ideal Postcodes uses Royal Mail's addressing database, the Postcode Address File (PAF).
 
-[![Build Status](https://travis-ci.org/ideal-postcodes/jquery.postcodes.png)](https://travis-ci.org/ideal-postcodes/jquery.postcodes) 
-[![Sauce Test Status](https://saucelabs.com/buildstatus/cablanchard)](https://saucelabs.com/u/cablanchard)
-[![Sauce Test Status](https://saucelabs.com/browser-matrix/cablanchard.svg)](https://saucelabs.com/u/cablanchard)
+[![Build Status](https://travis-ci.org/ideal-postcodes/jquery.postcodes.png)](https://travis-ci.org/ideal-postcodes/jquery.postcodes)
 
 PAF is licensed from the Royal Mail and incurs a license fee per lookup. We make PAF available to the public at **2p** per [external](https://ideal-postcodes.co.uk/termsandconditions#external) lookup.
 
@@ -61,7 +59,7 @@ For examples of the more advanced ways you can configure the plugin take a look 
 Run automated tests with
 
 ```
-grunt test
+npm test
 ```
 
 Please use jQuery 1.9.x or higher. This plugin has been tested against jQuery 1.9.x, 1.10.x, 1.11.x, 2.0.x, 2.1.x, 2.2.x, 3.0.x. 3.1.x and 3.2.x
