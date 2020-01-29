@@ -1,6 +1,6 @@
 {
   "name": "jquery-postcodes",
-  "version": "3.0.7",
+  "version": "3.0.8",
   "engines": {
     "node": ">= 0.8.0"
   },
@@ -9,6 +9,10 @@
     "start": "./node_modules/.bin/http-server . -o",
     "build": "./node_modules/.bin/grunt"
   },
+  "files": [
+    "dist",
+    "src"
+  ],
   "devDependencies": {
     "grunt": "~1.0.1",
     "grunt-cli": "1.2.0",

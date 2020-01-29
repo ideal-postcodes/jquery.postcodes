@@ -1,6 +1,6 @@
-/*! Ideal Postcodes jQuery Plugin - v3.0.7 - 2018-03-14
+/*! Ideal Postcodes jQuery Plugin - v3.0.8 - 2020-01-29
 * https://github.com/ideal-postcodes/jquery.postcodes
-2018 Ideal Postcodes; Licensed MIT */
+2020 Ideal Postcodes; Licensed MIT */
 (function($) {
   "use strict";
   // Cache for all new instances of the plugin
@@ -212,6 +212,8 @@
       .keypress(function (event) {
         if (event.which === 13) {
           self.$button.trigger("click");
+          event.preventDefault();
+          return false;
         }
       })
       .focus(function () {
