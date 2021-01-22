@@ -1,3 +1,5 @@
+> **January 2021** jquery.postcodes has moved (and no longer requires jQuery). Please see our new [Postcode Lookup](https://github.com/ideal-postcodes/postcode-lookup) library
+
 # UK Postcode Lookup jQuery Plugin
 
 Add UK address lookups with a simple postcode input field on any web form with the Ideal-Postcodes.co.uk API. Ideal Postcodes uses Royal Mail's addressing database, the Postcode Address File (PAF).
